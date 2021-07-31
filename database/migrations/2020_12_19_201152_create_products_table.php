@@ -23,7 +23,6 @@ class CreateProductsTable extends Migration
             $table->double('regular_price');
             $table->double('sales_price');
             $table->string('product_name');
-            $table->timestamp('sales_price_expiry')->nullable();
             $table->tinyInteger('product_type')->default(1);
             $table->integer('amount_in_stock')->nullable();
             $table->integer('stock_threshold')->default(0);

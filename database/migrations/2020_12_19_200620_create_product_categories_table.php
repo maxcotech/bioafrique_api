@@ -21,6 +21,7 @@ class CreateProductCategoriesTable extends Migration
             $table->string('display_title')->nullable();
             $table->string('category_slug')->unique();
             $table->string('category_image')->nullable();
+            $table->double('commission_fee')->nullable();
             $table->timestamps();
         });
     }

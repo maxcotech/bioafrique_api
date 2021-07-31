@@ -16,7 +16,6 @@ class CreateProduct extends Action{
            'product_slug' => 'required|string|unique:products,product_slug',
            'regular_price' => 'required|numeric',
            'sales_price' => 'numeric',
-           'sales_price_expiry' => 'date|after:today',
            'stock_threshold' => 'integer',
            'simple_description' => 'required|string',
            'description' => 'string',
@@ -24,9 +23,8 @@ class CreateProduct extends Action{
            'product_gallery'=>'required|json',
            'main_product_image'=>'required|file|mimes:jpg,jpeg,gif,png',
            'brand'=>'integer|exists:brands,id',
-           'video_urls'=>'json',
-           'product_type'=>
-
+           'video_urls'=>'json'
+         
        ]);
        $val->sometimes('amount_in_stock','required|integer',function($input){
            if($this->request->availability == 3 || $this->request->availability == 2){
