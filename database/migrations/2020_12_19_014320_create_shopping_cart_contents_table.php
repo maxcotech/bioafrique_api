@@ -18,6 +18,7 @@ class CreateShoppingCartContentsTable extends Migration
             $table->id();
             $table->bigInteger('shopping_cart_id');
             $table->bigInteger('item_id');
+            $table->bigInteger('variant_id')->nullable();
             $table->string('item_type',60);
             $table->integer('quantity');
             $table->double('total_price');

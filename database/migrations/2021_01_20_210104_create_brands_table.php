@@ -11,14 +11,15 @@ class CreateBrandsTable extends Migration
      *
      * @return void
      */
+    //status 1 = active 2 = 
     public function up()
     {
         Schema::create('brands', function (Blueprint $table) {
             $table->id();
-            $table->bigInteger('user_id');
             $table->string('brand_name');
             $table->string('brand_logo')->nullable();
             $table->string('website_url')->nullable();
+            $table->tinyInteger('status');
             $table->timestamps();
         });
     }

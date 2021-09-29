@@ -3,10 +3,15 @@ namespace App\Actions\Auth;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use App\Actions\Action;
+use App\Models\Cookie;
 use App\Models\User;
+use App\Traits\SyncUserPreferences;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
 class LoginUser extends Action{
+    use SyncUserPreferences;
+
     protected $request;
     public function __construct(Request $request){
        $this->request=$request;
@@ -29,6 +34,16 @@ class LoginUser extends Action{
       $token = $record->createToken('Personal Access Token')->accessToken;
       return $token;
     }
+    protected function syncUserData($user){
+      if(!isset($user)) return;
+      $cookie_pin = $this->request->cookie("basic_access");
+      $cookie = Cookie::where('cookie_value',$cookie_pin)->first();
+      if(!isset($cookie)) return;
+      DB::transaction(function() use($user,$cookie){
+         $this->syncUserCurrency($cookie->id,$user->id);
+         $this->syncUserCountry($cookie->id,$user->id);
+      });
+    }
     protected function getTokenCookie($token){
        return cookie(
          '_token', //name
@@ -49,6 +64,7 @@ class LoginUser extends Action{
           $record = User::where('email',$this->request->email)->first();
           if($this->isCredencialsCorrect($record)){
              $token = $this->generateToken($record);
+             $this->syncUserData($record);
              $cookie = $this->getTokenCookie($token);
              return $this->successWithData([
                'token'=>$token,

@@ -12,26 +12,19 @@ class CreateProduct extends Action{
     protected function validate(){
        $val = validator::make($this->request->all(),[
            'product_name' => 'required|string',
-           'product_sku' => 'string',
-           'product_slug' => 'required|string|unique:products,product_slug',
+           'product_sku' => 'required|string',
            'regular_price' => 'required|numeric',
-           'sales_price' => 'numeric',
-           'stock_threshold' => 'integer',
+           'sales_price' => 'nullable|numeric',
            'simple_description' => 'required|string',
-           'description' => 'string',
-           'product_tags'=>'required|json',
-           'product_gallery'=>'required|json',
+           'description' => 'nullable|string',
+           'amount_in_stock' => 'required|numeric',
+           'category_id' => 'required|integer|exists:categories,id',
            'main_product_image'=>'required|file|mimes:jpg,jpeg,gif,png',
-           'brand'=>'integer|exists:brands,id',
-           'video_urls'=>'json'
-         
+           'brand'=>'required|integer|exists:brands,id',
+           'youtube_video_id'=>'nullable|string',
        ]);
-       $val->sometimes('amount_in_stock','required|integer',function($input){
-           if($this->request->availability == 3 || $this->request->availability == 2){
-              return true;
-           }else{
-              return false;
-           }
+       $val->sometimes('front_image','required|integer',function($input){
+           
        });
 
        return $this->valResult($val);

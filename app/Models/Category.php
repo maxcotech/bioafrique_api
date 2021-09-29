@@ -12,7 +12,7 @@ class Category extends Model
 
     protected $table = "categories";
     protected $fillable = ['category_title','display_title','category_image',
-    'category_slug','parent_id','category_level','image_thumbnail'];
+    'category_slug','parent_id','category_level','category_icon'];
 
     public function products(){
         return $this->belongsToMany(Product::class,'product_category','category_id','product_id')

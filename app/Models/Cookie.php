@@ -15,4 +15,11 @@ class Cookie extends Model
     public function shoppingCarts(){
         return $this->morphMany(ShoppingCart::class,'trackable');
     }
+    public function currency(){
+        return $this->morphToMany(Currency::class,'user_currencies');
+    }
+    public function country(){
+        return $this->morphToMany(Country::class,'user_countries');
+    }
+
 }

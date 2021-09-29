@@ -25,7 +25,8 @@ class User extends Authenticatable
         'user_type',
         'account_status',
         'auth_type',
-        'phone_number'
+        'phone_number',
+        'telephone_code'
     ];
 
     /**
@@ -54,5 +55,11 @@ class User extends Authenticatable
     }
     public function shoppingCarts(){
         return $this->morphMany(ShoppingCart::class,'trackable');
+    }
+    public function currency(){
+        return $this->morphToMany(Currency::class,'user_currencies')->latestOfMany();
+    }
+    public function country(){
+        return $this->morphToMany(Country::class,'user_countries')->latestOfMany();
     }
 }

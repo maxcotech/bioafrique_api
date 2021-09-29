@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Actions\Auth\GetUserIPAddress;
 use App\Actions\Auth\LoginUser;
 use App\Actions\Auth\RegisterUser;
 use App\Http\Controllers\Controller;
@@ -22,5 +23,8 @@ class AuthController extends Controller
         $request->user()->token()->revoke();
         $cookie = Cookie::forget('_token');
         return $this->successMessage('Logout was successful')->withCookie($cookie);
+    }
+    public function getUserIpAddress(Request $request){
+        return (new GetUserIPAddress($request))->execute();
     }
 }

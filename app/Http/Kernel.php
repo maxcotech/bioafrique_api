@@ -30,8 +30,10 @@ class Kernel extends HttpKernel
      */
 
     protected $middlewarePriority = [
+        \App\Http\Middleware\SetAccessCookie::class,
+        \App\Http\Middleware\EnsureCurrencySelected::class,
         \App\Http\Middleware\AddAuthHeader::class,
-        \App\Http\Middleware\Authenticate::class,
+        \App\Http\Middleware\Authenticate::class
     ];
 
     protected $middlewareGroups = [
@@ -77,6 +79,10 @@ class Kernel extends HttpKernel
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         'app_access_guard' => \App\Http\Middleware\AppAccessGuard::class,
-        'teachers_guard'=>\App\Http\Middleware\TeachersGuard::class
+        'teachers_guard' => \App\Http\Middleware\TeachersGuard::class,
+        'ensure_currency_selected' => \App\Http\Middleware\EnsureCurrencySelected::class,
+        'set_access_cookie' => \App\Http\Middleware\SetAccessCookie::class,
+        'sasom_access_guard' => \App\Http\Middleware\SASOMAccessGuard::class,
+        'super_admin_access_guard' => \App\Http\Middleware\SuperAdminAccessGuard::class
     ];
 }

@@ -18,8 +18,7 @@ class CreateCountriesTable extends Migration
             $table->string('country_code',20);
             $table->string('country_name');
             $table->string('country_logo');
-            $table->string('currency');
-            $table->string('currency_code');
+            $table->string('country_tel_code');
             $table->timestamps();
         });
     }

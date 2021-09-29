@@ -13,24 +13,28 @@ class CreateProductsTable extends Migration
      */
     public function up()
     {
-        //product_status 0 = not approved 1 = approved, 3 = blacklisted
+        //availability 1 = Readily available, 2 = specify available , 3 = not available
+        //product_status 0 = not approved 1 = approved, 2 = in draft 3 = blacklisted
         //product_type 1 = simple product, 2 = variation product
         Schema::create('products', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('store_id');
             $table->bigInteger('brand_id');
-            $table->bigInteger('parent_id')->default(0);
-            $table->double('regular_price');
-            $table->double('sales_price');
+            $table->bigInteger('category_id');
             $table->string('product_name');
             $table->tinyInteger('product_type')->default(1);
             $table->integer('amount_in_stock')->nullable();
-            $table->integer('stock_threshold')->default(0);
             $table->string('product_slug')->unique();
             $table->string('product_sku')->nullable();
             $table->string('simple_description')->nullable();
             $table->text('description')->nullable();
+            $table->text("key_features")->nullable();
+            $table->string('dimensions')->nullable();
+            $table->double("weight");
+            $table->string('youtube_video_id',1000)->nullable();
             $table->tinyInteger('product_status');
+            $table->double('regular_price');
+            $table->double('sales_price')->nullable();
             $table->timestamps();
         });
     }

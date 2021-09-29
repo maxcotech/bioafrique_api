@@ -13,14 +13,17 @@ class CreateProductImagesTable extends Migration
      */
     public function up()
     {
-
-        //image_type 1 = main_image, 2 product_gallery 3 = variation_image
+        /**
+         * image_type:
+         * 1 = front_image, 2 = back_image,
+         * 3 = side_image, 4 = gallery_one,
+         * 5 = gallery_two, 6 = gallery_three
+         */
         Schema::create('product_images', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('store_id');
             $table->bigInteger('product_id');
             $table->tinyInteger('image_type')->default(1);
-            $table->string('alt_text')->nullable();
             $table->string('image_url');
             $table->string('image_thumbnail');
             $table->timestamps();

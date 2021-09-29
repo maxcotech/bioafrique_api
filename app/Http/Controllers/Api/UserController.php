@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Actions\User\GetUserProfile;
 use App\Http\Controllers\Controller;
 use App\Traits\HasHttpResponse;
 use Illuminate\Http\Request;
@@ -13,5 +14,8 @@ class UserController extends Controller
     public function show(Request $request){
         $user = Auth::user();
         return $this->successWithData($user);
+    }
+    public function getUserProfile(Request $request){
+        return (new GetUserProfile($request))->execute();
     }
 }

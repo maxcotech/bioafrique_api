@@ -22,15 +22,20 @@ class UpdateCategory extends Action{
             'category_slug' => ['required','string',Rule::unique('categories','category_slug')
             ->where(function($query){
                $query->where('id','!=',$this->request->id);
-            })]
+            })],
+            'display_level' => 'nullable|integer'
        ]);
        return $this->valResult($val);
     }
     protected function updateCategory(){
-       Category::where('id',$this->request->id)->update([
-          'category_title'=>$this->request->category_title,
-          'category_slug'=>$this->request->category_slug
-       ]);
+       $update_data = [
+         'category_title'=>$this->request->category_title,
+         'category_slug'=>$this->request->category_slug,
+       ];
+       if($this->request->filled('display_level')){
+          $update_data['display_level'] = $this->request->display_level;
+       }
+       Category::where('id',$this->request->id)->update($update_data);
 
     }
     public function execute(){

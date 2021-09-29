@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateProductVideosTable extends Migration
+class CreateRecentlyViewedTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,11 +13,11 @@ class CreateProductVideosTable extends Migration
      */
     public function up()
     {
-        Schema::create('product_videos', function (Blueprint $table) {
+        Schema::create('recently_viewed', function (Blueprint $table) {
             $table->id();
-            $table->bigInteger('product_id');
-            $table->string('video_url',500);
-            $table->bigInteger('store_id');
+            $table->bigInteger("product_id");
+            $table->bigInteger("user_id");
+            $table->string('user_type',255);
             $table->timestamps();
         });
     }
@@ -29,6 +29,6 @@ class CreateProductVideosTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('product_videos');
+        Schema::dropIfExists('recently_viewed');
     }
 }
