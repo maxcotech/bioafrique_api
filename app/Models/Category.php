@@ -19,9 +19,15 @@ class Category extends Model
         ->withTimestamps();
     }
     public function getCategoryImageAttribute($value){
+        if(!isset($value)) return null;
+        return $this->getRealPath($value);
+    }
+    public function getCategoryIconAttribute($value){
+        if(!isset($value)) return null;
         return $this->getRealPath($value);
     }
     public function getImageThumbnailAttribute($val){
+        if(!isset($val)) return null;
         return $this->getRealPath($val);
     }
 }

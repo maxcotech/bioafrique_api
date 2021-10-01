@@ -25,6 +25,7 @@ class CreateProductCategoriesTable extends Migration
      * 2 = in review 
      * 4 = blacklisted
      */
+
     public function up()
     {
         Schema::create('categories', function (Blueprint $table) {
@@ -35,7 +36,7 @@ class CreateProductCategoriesTable extends Migration
             $table->string('display_title')->nullable();
             $table->string('category_slug')->unique();
             $table->string('category_image')->nullable();
-            $table->string('category_icon');
+            $table->string('category_icon')->nullable();
             $table->double('commission_fee')->nullable();
             $table->tinyInteger('display_level')->default(1);
             $table->tinyInteger('status')->default(0);

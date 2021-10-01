@@ -14,7 +14,7 @@ class CreateProductsTable extends Migration
     public function up()
     {
         //availability 1 = Readily available, 2 = specify available , 3 = not available
-        //product_status 0 = not approved 1 = approved, 2 = in draft 3 = blacklisted
+        //product_status 0 = not approved 1 = approved, 2 = in draft 4 = blacklisted
         //product_type 1 = simple product, 2 = variation product
         Schema::create('products', function (Blueprint $table) {
             $table->id();

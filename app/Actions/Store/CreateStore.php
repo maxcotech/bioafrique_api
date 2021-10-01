@@ -18,12 +18,16 @@ class CreateStore extends Action{
     protected function validate(){
        $val=Validator::make($this->request->all(),[
            'store_name' => 'required|string',
-           'slug'=>'required|string|unique:stores,slug',
-           'store_logo'=>'file|mimes:jpg,png,webp,jpeg',
+           'slug'=>'required|unique:stores,slug|regex:/^[a-z0-9]+ (?:-[a-z0-9]*)*$/',
+           'store_logo'=>'nullable|file|mimes:jpg,png,webp,jpeg',
+           'store_address' => 'nullable|string',
+           'store_email' => 'nullable|email',
+           'store_telephone' => 'nullable|numeric',
            'country_id'=>'required|integer|exists:countries,id'
        ]);
        return $this->valResult($val);
     }
+    ///^[a-z0-9]+ (?:-[a-z0-9]*)*$/ 
     protected function createStore(){
        Store::create([
           'store_name'=>$this->request->store_name,

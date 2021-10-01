@@ -34,6 +34,9 @@ trait HasHttpResponse{
             return ['code' => 200, 'status'=>'success','message'=>""];
         }
     }
+    public function valMessageObject($message){
+        return $this->payload('validation_failed',[],'403',$message);
+    }
     public function resp($resp){
         return response()->json($resp,$resp['code']);
     }

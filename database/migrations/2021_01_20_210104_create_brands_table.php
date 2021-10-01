@@ -11,7 +11,7 @@ class CreateBrandsTable extends Migration
      *
      * @return void
      */
-    //status 1 = active 2 = 
+    //status: 1 = active 2 = 
     public function up()
     {
         Schema::create('brands', function (Blueprint $table) {

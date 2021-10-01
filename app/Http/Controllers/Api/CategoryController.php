@@ -7,6 +7,7 @@ use App\Actions\Category\DeleteCategory;
 use App\Actions\Category\GetCategories;
 use App\Actions\Category\UpdateCategory;
 use App\Actions\Category\UpdateCategoryImage;
+use App\Actions\Category\UploadCategoryIcon;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
@@ -26,6 +27,9 @@ class CategoryController extends Controller
     }
     public function updateCategoryImage(Request $request){
         return (new UpdateCategoryImage($request))->execute();
+    }
+    public function uploadCategoryIcon(Request $request){
+        return (new UploadCategoryIcon($request))->execute();
     }
     
 }

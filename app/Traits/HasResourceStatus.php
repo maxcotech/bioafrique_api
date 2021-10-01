@@ -2,14 +2,11 @@
 namespace App\Traits;
 
 trait HasResourceStatus{
-    use StringFormatter;
-    /**
-     * status:
-     * 0 = inactive 
-     * 1 = active 
-     * 2 = in review 
-     * 4 = blacklisted
-     */
+    /*
+        resource_status: 0 = not approved 1 = approved, 
+        2 = in draft 4 = blacklisted
+    */
+
     protected $status_list = [
         'inactive' => 0,
         'active' => 1,
@@ -17,27 +14,36 @@ trait HasResourceStatus{
         'blacklisted' => 4
     ];
 
-    public function getActiveStatusId(){
-        return $this->status_list['active'];
-    }
-    public function getInStatusId(){
-        return $this->status_list['inactive'];
-    }
-    public function getInReviewStatusId(){
-        return $this->status_list['in_review'];
-    }
-    public function getBlacklistedStatusId(){
-        return $this->status_list['blacklisted'];
+    public function isResourceActive($type){
+        return $this->getResourceActiveId() == $type;
     }
 
-    public function getResourceStatusText($status){
-        $text = "N/A";
-        foreach($this->status_list as $key => $value){
-            if($value == $status){
-                $text = $key;
-            }
-        }
-        return $this->fromSnakeToCamelCase($text);
+    public function isResourceInactive($type){
+        return $this->getResourceInactiveId() == $type;
+    }
+
+    public function isResourceInReview($type){
+        return $this->getResourceInReviewId() == $type;
+    }
+
+    public function isResourceBlacklisted($type){
+        return $this->getResourceBlacklistedId() == $type;
+    }
+
+    public function getResourceActiveId(){
+        return $this->status_list['active'];
+    }
+
+    public function getResourceInactiveId(){
+        return $this->status_list['inactive'];
+    }
+
+    public function getResourceInReviewId(){
+        return $this->status_list['in_review'];
+    }
+
+    public function getResourceBlacklistedId(){
+        return $this->status_list['blacklisted'];
     }
 
 }
