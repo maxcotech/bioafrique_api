@@ -1,11 +1,13 @@
 <?php
 
+use App\Traits\HasUserStatus;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 class CreateStoresTable extends Migration
 {
+    use HasUserStatus;
     /**
      * Run the migrations.
      *
@@ -23,6 +25,7 @@ class CreateStoresTable extends Migration
             $table->string('store_address')->nullable();
             $table->string('store_email')->nullable();
             $table->string('store_telephone')->nullable();
+            $table->tinyInteger('store_status')->default($this->getActiveUserId());
             $table->timestamps();
         });
     }

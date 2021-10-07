@@ -28,7 +28,7 @@ class EnsureCurrencySelected
      */
     public function handle(Request $request, Closure $next)
     {
-        Log::alert('Accessing ensurecurrencyselected');
+        Log::alert('Middleware: ensure currency selected');
         $this->request = $request;
         $user = $this->request->user();
         $cuser = null;
@@ -76,6 +76,7 @@ class EnsureCurrencySelected
     protected function setUserCurrencyByModel($model,$type){
         if(!$this->isCurrencySet($model,$type)){
             $location = $this->getUserIpLocation();
+            Log::alert(json_encode($location));
             DB::transaction(function()use($location,$model,$type){
                 if(isset($location)){
                     $country = Country::where('country_code',strtoupper($location->country_code))->first();

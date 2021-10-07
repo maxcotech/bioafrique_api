@@ -5,7 +5,7 @@ use Illuminate\Support\Facades\Auth;
 
 trait HasUserStatus{
 
-    protected $status_list = [
+    protected $user_status_list = [
         'active' => 1,
         'inactive' => 0,
         'read_only' => 2,
@@ -20,16 +20,16 @@ trait HasUserStatus{
     }
 
     protected function getActiveUserId(){
-        return $this->status_list['active'];
+        return $this->user_status_list['active'];
     }
     protected function getInactiveUserId(){
-        return $this->status_list['inactive'];
+        return $this->user_status_list['inactive'];
     }
     protected function getReadOnlyUserId(){
-        return $this->status_list['read_only'];
+        return $this->user_status_list['read_only'];
     }
     protected function isValue($key,$value){
-        return $this->status_list[$key] == $value;
+        return $this->user_status_list[$key] == $value;
     }
 
 }

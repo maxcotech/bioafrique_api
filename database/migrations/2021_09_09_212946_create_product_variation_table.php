@@ -16,12 +16,14 @@ class CreateProductVariationTable extends Migration
         Schema::create('product_variations', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('product_id')->nullable();
+            $table->bigInteger('store_id');
             $table->string('variation_image');
             $table->string('variation_name')->nullable();
             $table->string('variation_sku')->nullable();
             $table->double('regular_price')->nullable();
             $table->double('sales_price')->nullable();
             $table->integer('amount_in_stock')->nullable();
+            $table->tinyInteger('variation_status');
             $table->timestamps();
         });
     }

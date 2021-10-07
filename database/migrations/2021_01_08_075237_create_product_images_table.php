@@ -23,7 +23,7 @@ class CreateProductImagesTable extends Migration
             $table->id();
             $table->bigInteger('store_id');
             $table->bigInteger('product_id');
-            $table->tinyInteger('image_type')->default(1);
+            $table->string('image_type',50)->default('front_image');
             $table->string('image_url');
             $table->string('image_thumbnail')->nullable();
             $table->timestamps();

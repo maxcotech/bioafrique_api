@@ -2,12 +2,16 @@
 
 namespace App\Models;
 
+use App\Traits\FilePath;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Product extends Model
 {
-    use HasFactory;
+    use HasFactory,FilePath;
+
+    const simpleProductType = 1;
+    const variationProductType = 2;
 
     protected $table = "products";
     protected $fillable = [
@@ -15,7 +19,9 @@ class Product extends Model
         'sales_price_expiry','amount_in_stock',
         'stock_threshold','product_slug','product_sku',
         'simple_description','description',
-        'product_type','product_status'
+        'product_type','product_status','product_image',
+        'key_features','dimension_height','dimension_width',
+        'dimension_length'
     ];
 
     public function categories(){
@@ -34,6 +40,10 @@ class Product extends Model
     }
     public function dimensions(){
         return $this->hasOne(ProductDimension::class,'product_id');
+    }
+
+    public function getProductImageAttribute($value){
+        return $this->getRealPath($value);
     }
     
 

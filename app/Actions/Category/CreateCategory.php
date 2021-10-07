@@ -9,12 +9,13 @@ use App\Models\Category;
 use App\Traits\FilePath;
 use App\Traits\HasResourceStatus;
 use App\Traits\HasRoles;
+use App\Traits\StringFormatter;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
 class CreateCategory extends Action
 {
-   use FilePath,HasRoles,HasResourceStatus;
+   use FilePath,HasRoles,HasResourceStatus,StringFormatter;
    protected $request;
    public function __construct(Request $request)
    {
@@ -24,7 +25,6 @@ class CreateCategory extends Action
    {
       $val = Validator::make($this->request->all(), [
          'category_title' => 'required|unique:categories,category_title',
-         'category_slug' => 'required|unique:categories,category_slug',
          'category_image' => 'nullable|file|mimes:jpeg,jpg,gif,webp,png',
          'category_icon' => 'nullable|file|mimes:jpeg,jpg,gif,webp,png',
          'parent_id' => 'nullable|integer|exists:categories,id',
@@ -39,6 +39,14 @@ class CreateCategory extends Action
          }
       });
       return $this->valResult($val);
+   }
+
+   protected function generateCategorySlug(){
+      $slug = $this->generateSlugFromString($this->request->category_title);
+      if(Category::where('category_slug',$slug)->exists()){
+         throw new \Exception("It's likely that the category with the title you are trying to create already exists. Please check and try again.");
+      }
+      return $slug;
    }
 
    protected function uploadImage($file)
@@ -66,10 +74,10 @@ class CreateCategory extends Action
    }
 
 
-   protected function createCategory($cat_image,$cat_icon){
+   protected function createCategory($cat_image,$cat_icon,$slug){
       $data = [
          'category_title'=>$this->request->category_title,
-         'category_slug'=>$this->request->category_slug,
+         'category_slug'=>$slug,
          'category_image'=>$cat_image,
          'category_icon'=>$cat_icon,
          'parent_id'=>$this->request->input('parent_id',0),
@@ -103,9 +111,10 @@ class CreateCategory extends Action
       try {
         $val = $this->validate();
         if($val['status'] != 'success') return $this->resp($val);
+        $new_slug = $this->generateCategorySlug();
         $cat_image = $this->uploadImage($this->request->category_image);
         $cat_icon = $this->uploadImage($this->request->category_icon);
-        $this->createCategory($cat_image,$cat_icon);
+        $this->createCategory($cat_image,$cat_icon,$new_slug);
         return $this->successMessage('Category successfully created.');
       } catch (\Exception $e) {
          return $this->internalError($e->getMessage());

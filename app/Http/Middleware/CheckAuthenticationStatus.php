@@ -7,9 +7,11 @@ use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
-class AddAuthHeader
+class CheckAuthenticationStatus
 {
     use HasHttpResponse;
+
+    protected $request;
     /**
      * Handle an incoming request.
      *
@@ -19,13 +21,10 @@ class AddAuthHeader
      */
     public function handle(Request $request, Closure $next)
     {
-        Log::alert('Middleware: Add Auth Header if token exists');
-        if($request->bearerToken() == null){
-            if($request->hasCookie('_token')){
-                $request->headers->add([
-                    'Authorization' => 'Bearer '.$request->cookie('_token')
-                ]);
-            }
+        Log::alert('Middleware: check authentication status');
+        $this->request = $request;
+        if($this->request->user() == null){
+            return $this->notAuthorized('You need to login in order to proceed.');
         }
         return $next($request);
     }

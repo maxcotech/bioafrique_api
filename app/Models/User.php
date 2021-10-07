@@ -57,9 +57,18 @@ class User extends Authenticatable
         return $this->morphMany(ShoppingCart::class,'trackable');
     }
     public function currency(){
-        return $this->morphToMany(Currency::class,'user_currencies')->latestOfMany();
+        return $this->morphToMany(Currency::class,'user_currencies');
     }
     public function country(){
-        return $this->morphToMany(Country::class,'user_countries')->latestOfMany();
+        return $this->morphToMany(Country::class,'user_countries');
+    }
+    public function store(){
+        return $this->hasOne(Store::class,'user_id');
+    }
+    public function authAccessTokens(){
+        return $this->hasMany(OauthAccessToken::class,'user_id');
+    }
+    public function workStores(){
+        return $this->hasMany(StoreStaff::class,'user_id');
     }
 }

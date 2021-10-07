@@ -30,9 +30,9 @@ class Kernel extends HttpKernel
      */
 
     protected $middlewarePriority = [
+        \App\Http\Middleware\AddAuthHeader::class,
         \App\Http\Middleware\SetAccessCookie::class,
         \App\Http\Middleware\EnsureCurrencySelected::class,
-        \App\Http\Middleware\AddAuthHeader::class,
         \App\Http\Middleware\Authenticate::class
     ];
 
@@ -53,6 +53,7 @@ class Kernel extends HttpKernel
         ],
         'auth.apicookie' => [
             \App\Http\Middleware\AddAuthHeader::class,
+            \App\Http\Middleware\CheckAuthenticationStatus::class,
             'throttle:api',
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
             'auth:api',
@@ -83,6 +84,10 @@ class Kernel extends HttpKernel
         'ensure_currency_selected' => \App\Http\Middleware\EnsureCurrencySelected::class,
         'set_access_cookie' => \App\Http\Middleware\SetAccessCookie::class,
         'sasom_access_guard' => \App\Http\Middleware\SASOMAccessGuard::class,
-        'super_admin_access_guard' => \App\Http\Middleware\SuperAdminAccessGuard::class
+        'super_admin_access_guard' => \App\Http\Middleware\SuperAdminAccessGuard::class,
+        'store_owner_access_guard' => \App\Http\Middleware\StoreOwnerAccessGuard::class,
+        'add_auth_header' => \App\Http\Middleware\AddAuthHeader::class,
+        'store_staff_guard' => \App\Http\Middleware\StoreStaffGuard::class,
+        'check_authentication_status' => \App\Http\Middleware\CheckAuthenticationStatus::class
     ];
 }

@@ -3,14 +3,15 @@ namespace App\Traits;
 
 trait HasResourceStatus{
     /*
-        resource_status: 0 = not approved 1 = approved, 
-        2 = in draft 4 = blacklisted
+        resource_status: 0 = not approved 1 = approved, 2 = in review
+        3 = in draft 4 = blacklisted
     */
 
-    protected $status_list = [
+    protected $resource_status_list = [
         'inactive' => 0,
         'active' => 1,
         'in_review' => 2,
+        'in_draft' => 3,
         'blacklisted' => 4
     ];
 
@@ -31,19 +32,23 @@ trait HasResourceStatus{
     }
 
     public function getResourceActiveId(){
-        return $this->status_list['active'];
+        return $this->resource_status_list['active'];
     }
 
     public function getResourceInactiveId(){
-        return $this->status_list['inactive'];
+        return $this->resource_status_list['inactive'];
     }
 
     public function getResourceInReviewId(){
-        return $this->status_list['in_review'];
+        return $this->resource_status_list['in_review'];
     }
 
     public function getResourceBlacklistedId(){
-        return $this->status_list['blacklisted'];
+        return $this->resource_status_list['blacklisted'];
+    }
+
+    public function getResourceInDraftId(){
+        return $this->resource_status_list['in_draft'];
     }
 
 }
