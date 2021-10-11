@@ -5,6 +5,7 @@ namespace App\Http\Middleware;
 use App\Traits\HasHttpResponse;
 use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 
 class CheckAuthenticationStatus
@@ -23,7 +24,7 @@ class CheckAuthenticationStatus
     {
         Log::alert('Middleware: check authentication status');
         $this->request = $request;
-        if($this->request->user() == null){
+        if(Auth::user() == null){
             return $this->notAuthorized('You need to login in order to proceed.');
         }
         return $next($request);

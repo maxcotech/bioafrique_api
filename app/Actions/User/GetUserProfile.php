@@ -1,12 +1,15 @@
 <?php
 namespace App\Actions\User;
-use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use App\Actions\Action;
-use App\Models\Cookie;
+use App\Traits\HasCookie;
+use App\Traits\HasRateConversion;
+use App\Traits\HasRoles;
 use Illuminate\Support\Facades\Auth;
 
 class GetUserProfile extends Action{
+   use HasRoles,HasCookie,HasRateConversion;
+
    protected $request;
    public function __construct(Request $request){
       $this->request=$request;
@@ -21,30 +24,46 @@ class GetUserProfile extends Action{
       return null;
    }
 
-   protected function getUserCurrency($user,$cookie){
+   /*protected function getUserCurrency($user,$cookie){
       if(isset($user)){
          return $user->currency()->first();
       } else if(isset($cookie)) {
          return $cookie->currency()->first();
       }
       return null;
+   }*/
+
+   protected function appendStoreData($data,$user){
+      if(isset($user)){
+         if($this->isStoreOwner()){
+            $store = $user->store;
+            $data['current_store'] = (isset($store) && !empty($store))? $store: null;
+            $data['stores'] = (isset($store) && !empty($store))? [$store] : [];
+         } elseif($this->isStoreManager() || $this->isStoreWorker()) {
+            $stores = $user->workStores;
+            $data['stores'] = isset($stores)? $stores : [];
+            $data['current_store'] = (isset($stores) && count($stores) > 0)? $stores[0] : null;
+         }
+      }
+      return $data;
    }
 
    
    public function execute(){
-     // try{
+      try{
          $data = [];
-         $cookie = Cookie::where('cookie_value',$this->request->cookie('basic_access'))->first();
+         $cookie = $this->getUserByCookie();
          $user = Auth::user();
          $data['currency'] = $this->getUserCurrency($user,$cookie);
          $data['country'] = $this->getUserCountry($user,$cookie);
          $data['user'] = $user;
          $data['logged_in'] = isset($user)? true:false;
+         $data = $this->appendStoreData($data,$user);
          return $this->successWithData($data);
-     /* }
+      }
       catch(\Exception $e){
          return $this->internalError($e->getMessage());
-      }*/
+      }
    }
 
 }

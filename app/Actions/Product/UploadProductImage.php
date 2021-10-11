@@ -31,7 +31,7 @@ class UploadProductImage extends Action{
       $data = [
          'product_image' => $file_url,
          'product_status' => $this->getResourceInDraftId(),
-         'store_id' => $this->request->status_id
+         'store_id' => $this->request->store_id
       ];
       Product::create($data);
    }
@@ -72,6 +72,8 @@ class UploadProductImage extends Action{
             } else {
                $this->createImageRecord($new_file_url);
             }
+         } else {
+            $this->createImageRecord($new_file_url);
          }
          return $this->successWithData([
             'image_full_path' => $this->getRealPath($new_file_url),

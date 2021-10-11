@@ -5,7 +5,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 
 trait HasStore{
-  // use HasUserStatus,HasRoles;
+   use HasUserStatus,HasRoles;
 
    protected function storeIdValidationRule(){
       $data = ['required','integer'];

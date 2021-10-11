@@ -31,6 +31,7 @@ class Kernel extends HttpKernel
 
     protected $middlewarePriority = [
         \App\Http\Middleware\AddAuthHeader::class,
+        \App\Http\Middleware\CheckAuthenticationStatus::class,
         \App\Http\Middleware\SetAccessCookie::class,
         \App\Http\Middleware\EnsureCurrencySelected::class,
         \App\Http\Middleware\Authenticate::class

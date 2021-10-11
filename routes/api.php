@@ -16,6 +16,8 @@ Route::prefix('v1')->group(function(){
             Route::get('/ip_address','AuthController@getUserIpAddress');
             Route::get('/brands','BrandController@index');
             Route::get('/user/profile','UserController@getUserProfile');
+
+            Route::get('/catalog','ProductController@index');
         });
 
         Route::middleware(['auth.apicookie','app_access_guard','ensure_currency_selected'])->group(function(){
@@ -24,10 +26,11 @@ Route::prefix('v1')->group(function(){
             Route::put('/brand','BrandController@update')->middleware('super_admin_access_guard');
             Route::delete('/brand/{brand_id}','BrandController@delete')->middleware('super_admin_access_guard');
 
+            Route::post('/product','ProductController@create')->middleware('store_staff_guard');
+            Route::put('/product','ProductController@update')->middleware('store_staff_guard');
             Route::post('/product/gallery_image','ProductController@uploadGalleryImage')->middleware('store_staff_guard');
             Route::post('/product/image','ProductController@uploadProductImage')->middleware('store_staff_guard');
             Route::post('/product/variation_image','ProductController@uploadProductVariationImage')->middleware('store_staff_guard');
-            Route::post('/product','productController@create')->middleware('store_staff_guard');
             
             Route::post('/category','CategoryController@create')->middleware('sasom_access_guard');
             Route::put('/category','CategoryController@update')->middleware('super_admin_access_guard');
