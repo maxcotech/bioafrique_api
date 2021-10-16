@@ -74,7 +74,6 @@ class GetProducts extends Action{
          if($val['status'] != "success") return $this->resp($val);
          $query = $this->getProductsQuery();
          $data = $query->paginate($this->default_page_count);
-         $data[1] = "Chisom Maxwell";
          return $this->successWithData($data);
       }
       catch(\Exception $e){

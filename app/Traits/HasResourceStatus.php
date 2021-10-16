@@ -15,6 +15,15 @@ trait HasResourceStatus{
         'blacklisted' => 4
     ];
 
+    protected function getResourceStatusTextById($status){
+        foreach($this->resource_status_list as $key => $value){
+            if($value == $status){
+                return $key;
+            }
+        }
+        return "N/A";
+    }
+
     public function isResourceActive($type){
         return $this->getResourceActiveId() == $type;
     }

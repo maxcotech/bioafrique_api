@@ -19,11 +19,13 @@ class LoginUser extends Action{
     protected function validate(){
        $val = Validator::make($this->request->all(),[
          'email' => 'required|email|exists:users,email',
-         'password' => 'required|string'
+         'password' => 'required|string',
+         'user_type' => 'required|integer'
        ]);
        return $this->valResult($val);
     }
     protected function isCredencialsCorrect($record){
+       if(!isset($record)) return false;
        if(Hash::check($this->request->password,$record->password)){
           return true;
        }else{

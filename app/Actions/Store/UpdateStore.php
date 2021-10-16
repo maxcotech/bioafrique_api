@@ -39,7 +39,7 @@ class UpdateStore extends Action{
       $store_name = $this->request->store_name;
       $store_id = $this->request->store_id;
       $slug = $this->generateSlugFromString($store_name);
-      if(Store::where('id','!=',$store_id)->where('slug',$slug)->exists()){
+      if(Store::where('id','!=',$store_id)->where('store_slug',$slug)->exists()){
          throw new \Exception("The category title you are trying to use, already belongs to another category.");
       }
       return $slug;
@@ -49,7 +49,7 @@ class UpdateStore extends Action{
       Store::where('user_id',$this->user->id)
       ->where('id',$this->request->store_id)->update([
          'store_name' => $this->request->store_name,
-         'slug' => $slug,
+         'store_slug' => $slug,
          'country_id' => $this->request->country_id,
          'store_address' => $this->request->store_address,
          'store_email' => $this->request->store_email,

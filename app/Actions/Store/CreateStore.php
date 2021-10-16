@@ -33,7 +33,7 @@ class CreateStore extends Action{
    protected function createStore($slug){
       Store::create([
          'store_name'=>$this->request->store_name,
-         'slug'=>$slug,
+         'store_slug'=>$slug,
          'store_logo'=>$this->uploadStoreLogo(),
          'store_address'=>$this->request->store_address,
          'store_email'=>$this->request->store_email,
@@ -56,7 +56,7 @@ class CreateStore extends Action{
    protected function generateStoreSlug(){
       $store_name = $this->request->store_name;
       $slug = $this->generateSlugFromString($store_name);
-      if(Store::where('slug',$slug)->exists()){
+      if(Store::where('store_slug',$slug)->exists()){
          throw new \Exception("A store bearing the name you wish to use here already exists.");
       }
       return $slug;

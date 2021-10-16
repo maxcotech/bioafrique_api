@@ -21,6 +21,24 @@ trait HasRoles{
         return null;
     }
 
+    public function isInRoles($val){
+        foreach($this->roles as $key => $value){
+            if($value === $val){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public function getRoleTextById($role){
+        foreach($this->roles as $key => $value){
+            if($value == $role){
+                return $key;
+            }
+        }
+        return "N/A";
+    }
+
     public function getUserRole(Request $request = null){
         $req = isset($request) ? $request: $this->request;
         if(isset($req)){

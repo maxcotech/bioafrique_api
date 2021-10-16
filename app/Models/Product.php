@@ -24,7 +24,6 @@ class Product extends Model
         'key_features','dimension_height','dimension_width',
         'dimension_length','product_name','weight','youtube_video_id',
         'category_id'
-
     ];
 
     public function variations(){
@@ -62,7 +61,7 @@ class Product extends Model
     }
 
     public function setRegularPriceAttribute($value){
-        $this->attributes['regular_price'] = $this->userToBaseCurrency($value);
+        $this->attributes['regular_price'] = round($this->userToBaseCurrency($value));
     }
 
     public function setSalesPriceAttribute($value){
