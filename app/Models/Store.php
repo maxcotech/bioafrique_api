@@ -23,7 +23,8 @@ class Store extends Model
     public function images(){
         return $this->hasMany(ProductImage::class,'images_id');
     }
-    public function store(){
-        return $this->belongsTo(User::class,'user_id');
+
+    public function staffTokens(){
+        return $this->hasMany(StoreStaffToken::class,'store_id');
     }
 }

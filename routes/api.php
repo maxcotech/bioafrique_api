@@ -39,6 +39,10 @@ Route::prefix('v1')->group(function(){
             Route::delete('/category/{category_id}','CategoryController@delete')->middleware('super_admin_access_guard');
             Route::post('/store','StoreController@create')->middleware('store_owner_access_guard');
             Route::put('/store','StoreController@update')->middleware('store_owner_access_guard');
+            Route::post('/store/staff/token','StoreStaffTokenController@create')->middleware('store_owner_access_guard');
+            Route::get('/store/staff/tokens','StoreStaffTokenController@index')->middleware('store_owner_access_guard');
+            Route::delete('/store/staff/token/{id}','StoreStaffTokenController@delete')->middleware('store_owner_access_guard');
+
             Route::get('/user','UserController@show');
             Route::delete('/user/logout','AuthController@logout');
         });
