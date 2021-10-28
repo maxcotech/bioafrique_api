@@ -1,9 +1,8 @@
 <?php
 namespace App\Actions\StoreStaffToken;
-use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use App\Actions\Action;
-use App\Http\Resources\StoreStaffToken;
+
 
 class GetStoreStaffTokens extends Action{
    protected $request;
@@ -14,8 +13,8 @@ class GetStoreStaffTokens extends Action{
    public function execute(){
       try{
          $user = $this->request->user();
-         $tokens = $user->store->staffTokens()->paginate();
-         return $this->successWithData(StoreStaffToken::collection($tokens));
+         $data = $user->store->staffTokens()->paginate(15,['id','staff_token','staff_type']);
+         return $this->successWithData($data);
       }
       catch(\Exception $e){
          return $this->internalError($e->getMessage());
