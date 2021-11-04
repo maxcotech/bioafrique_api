@@ -6,7 +6,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->group(function(){
     Route::namespace('Api')->group(function(){
-        Route::middleware(['add_auth_header','set_access_cookie','ensure_currency_selected'])->group(function(){
+        Route::middleware(['add_auth_header','set_access_cookie','ensure_currency_selected','cors'])->group(function(){
             Route::get('/generate/cookie','CookieController@create');
             Route::get('/check/cookie',"CookieController@checkCookie");
             Route::post('/user/register','AuthController@register');
@@ -16,11 +16,13 @@ Route::prefix('v1')->group(function(){
             Route::get('/ip_address','AuthController@getUserIpAddress');
             Route::get('/brands','BrandController@index');
             Route::get('/user/profile','UserController@getUserProfile');
-
+            Route::get('/store/search','StoreController@search');
             Route::get('/catalog','ProductController@index');
+
+            Route::get('/countries','CountryController@index');
         });
 
-        Route::middleware(['auth.apicookie','app_access_guard','ensure_currency_selected'])->group(function(){
+        Route::middleware(['auth.apicookie','app_access_guard','ensure_currency_selected','cors'])->group(function(){
             Route::post('/brand','BrandController@create')->middleware('sasom_access_guard');
             Route::post('/brand/logo','BrandController@uploadLogo')->middleware('super_admin_access_guard');
             Route::put('/brand','BrandController@update')->middleware('super_admin_access_guard');
@@ -39,9 +41,12 @@ Route::prefix('v1')->group(function(){
             Route::delete('/category/{category_id}','CategoryController@delete')->middleware('super_admin_access_guard');
             Route::post('/store','StoreController@create')->middleware('store_owner_access_guard');
             Route::put('/store','StoreController@update')->middleware('store_owner_access_guard');
-            Route::post('/store/staff/token','StoreStaffTokenController@create')->middleware('store_owner_access_guard');
-            Route::get('/store/staff/tokens','StoreStaffTokenController@index')->middleware('store_owner_access_guard');
-            Route::delete('/store/staff/token/{id}','StoreStaffTokenController@delete')->middleware('store_owner_access_guard');
+            Route::post('/store/staff/token','StoreStaffTokenController@create')->middleware('sasom_access_guard');
+            Route::get('/store/staff/tokens','StoreStaffTokenController@index')->middleware('sasom_access_guard');
+            Route::get('/store/staff/type','StoreStaffController@getStoreStaffType');
+            Route::post('/store/add_user','StoreController@addUserToStore')->middleware('store_staff_guard');
+            Route::delete('/store/staff/token/{id}','StoreStaffTokenController@delete')->middleware('sasom_access_guard');
+            Route::patch('/store/staff/token/{id}/toggle_expiry','StoreStaffTokenController@toggleExpiry')->middleware('sasom_access_guard');
 
             Route::get('/user','UserController@show');
             Route::delete('/user/logout','AuthController@logout');

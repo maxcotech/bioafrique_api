@@ -37,7 +37,7 @@ class GetUserProfile extends Action{
             $store = $user->store;
             $data['current_store'] = (isset($store) && !empty($store))? new StoreResource($store): null;
             $data['stores'] = []; //(isset($store) && !empty($store))? StoreResource::collection([$store]) : [];
-         } elseif($this->isStoreManager() || $this->isStoreWorker()) {
+         } elseif($this->isStoreStaff()) {
             $stores = $user->workStores;
             $data['stores'] = isset($stores)? StoreResource::collection($stores) : [];
             $data['current_store'] = null;
@@ -56,9 +56,11 @@ class GetUserProfile extends Action{
          $data = [];
          $cookie = $this->getUserByCookie();
          $user = Auth::user();
-         $data['currency'] = new CurrencyResource($this->getUserCurrency($user,$cookie));
-         $data['country'] = new CountryResource($this->getUserCountry($user,$cookie));
-         $data['user'] =  new UserResource($user);
+         $currency = $this->getUserCurrency($user,$cookie);
+         $country = $this->getUserCountry($user,$cookie);
+         $data['currency'] = isset($currency)? new CurrencyResource($currency):null;
+         $data['country'] = isset($country)? new CountryResource($country):null;
+         $data['user'] = isset($user)? new UserResource($user):null;
          $data['logged_in'] = isset($user)? true:false;
          $data = $this->appendStoreData($data,$user);
          return $this->successWithData($data);

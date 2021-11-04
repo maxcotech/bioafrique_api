@@ -31,6 +31,23 @@ trait StringFormatter{
         return $slug_value;
     }
 
+    public function capitalizeByDelimiter($text,$delimiter = " "){
+        if(isset($text)){
+            if(str_contains($text,$delimiter)){
+                $text_list = explode($delimiter,$text);
+                $formatted_list = [];
+                foreach($text_list as $text){
+                    array_push($formatted_list,ucfirst($text));
+                }
+                $output = implode(" ",$formatted_list);
+                return $output;
+            } else {
+                return ucfirst($text);
+            }
+        }
+        return null;
+    }
+
 }
 
 

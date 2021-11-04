@@ -6,13 +6,14 @@ use App\Actions\Action;
 use App\Models\StoreStaff;
 use App\Models\StoreStaffToken;
 use App\Models\User;
+use App\Traits\HasRoles;
 use App\Traits\HasUserStatus;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
 
 class RegisterUser extends Action{
-   use HasUserStatus;
+   use HasUserStatus,HasRoles;
    protected $request;
    public function __construct(Request $request){
       $this->request=$request;
@@ -21,7 +22,7 @@ class RegisterUser extends Action{
       $val = Validator::make($this->request->all(),[
       'first_name' => 'required|string',
       'last_name' => 'required|string',
-      'phone_number' => 'nullable|numeric|min:10',
+      'phone_number' => 'nullable|integer|min:10',
       'email' => 'required|email|unique:users,email',
       'password' => 'required|string',
       'confirm_password' => 'required|same:password',
@@ -35,7 +36,7 @@ class RegisterUser extends Action{
       }
    });
    $val->sometimes('staff_token',$this->staffTokenValidationRules(),function($input){
-      if($this->request->account_type != null && ($this->request->account_type == 10 || $this->request->account_type == 11)){
+      if($this->request->account_type != null && $this->request->account_type == $this->getStoreStaffRoleId()){
          return true;
       } 
       return false;
@@ -92,7 +93,7 @@ class RegisterUser extends Action{
             if(!$this->validateStaffToken($token_model)) return $this->validationError('The store staff token you entered does not match the type of account you wish to create.');
             if(isset($token_model)){
                DB::transaction(function()use($token_model){
-                  $user = $this->createUser($token_model->staff_type);
+                  $user = $this->createUser($this->getStoreStaffRoleId());
                   $this->addStaffToStore($user->id,$token_model);
                   $token_model->update(['expired' => 1]); //expires token after use
                });

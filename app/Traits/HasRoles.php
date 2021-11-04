@@ -7,8 +7,7 @@ trait HasRoles{
 
     protected $roles = [
         'customer' => 1,
-        'store_worker' => 10,
-        'store_manager' => 11,
+        'store_staff' => 10,
         'store_owner' => 12,
         'super_admin' => 24
     ];
@@ -62,18 +61,15 @@ trait HasRoles{
         return $this->isRole('store_owner',$type);
     }
 
-    public function isStoreWorker($user_type = null){
+    public function isStoreStaff($user_type = null){
         $type = (isset($user_type)) ? $user_type: $this->getUserRole();
-        return $this->isRole('store_worker',$type);
+        return $this->isRole('store_staff',$type);
     }
     public function isCustomer($user_type = null){
         $type = (isset($user_type)) ? $user_type: $this->getUserRole();
         return $this->isRole('customer',$type);
     }
-    public function isStoreManager($user_type = null){
-        $type = (isset($user_type)) ? $user_type: $this->getUserRole();
-        return $this->isRole('store_manager',$type);
-    }
+    
 
     protected function isRole($key,$user_type){
         if($this->roles[$key] == $user_type){
@@ -85,11 +81,8 @@ trait HasRoles{
     public function getCustomerRoleId(){
         return $this->roles['customer'];
     }
-    public function getStoreWorkerRoleId(){
-        return $this->roles['store_worker'];
-    }
-    public function getStoreManagerRoleId(){
-        return $this->roles['store_manager'];
+    public function getStoreStaffRoleId(){
+        return $this->roles['store_staff'];
     }
     public function getStoreOwnerRoleId(){
         return $this->roles['store_owner'];

@@ -44,11 +44,11 @@ class CreateStore extends Action{
    }
    protected function uploadStoreLogo(){
       $file_url = null;
-      if($this->request->filled('store_logo')){
-      $file_url = Storage::disk(env('CURRENT_DISK'))->put(
-         'stores',
-         $this->request->store_logo
-      );
+      if($this->request->store_logo != null){
+         $file_url = Storage::disk(env('CURRENT_DISK'))->put(
+            'stores',
+            $this->request->store_logo
+         );
       }
       return $file_url;
    }

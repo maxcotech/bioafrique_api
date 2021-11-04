@@ -25,7 +25,7 @@ class CreateBrand extends Action{
    }
 
    protected function getBrandDefaultStatus(){
-      if($this->isStoreOwner() || $this->isStoreManager()){
+      if($this->isStoreOwner() || $this->isStoreStaff()){
          return $this->getResourceInactiveId();
       } else if($this->isSuperAdmin()){
          return $this->getResourceActiveId();

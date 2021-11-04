@@ -23,7 +23,7 @@ class StoreStaffGuard
     public function handle(Request $request, Closure $next)
     {
         $this->request = $request;
-        if(($this->isStoreManager() || $this->isStoreOwner() || $this->isStoreWorker()) && $this->userHasStore()){
+        if(($this->isStoreStaff() || $this->isStoreOwner()) && $this->userHasStore() && $this->isUserActive($request->user())){
             return $next($request);
         } else {
             return $this->notAuthorized('You are not authorized to carry out this operation, please contact super admin or your superior.');

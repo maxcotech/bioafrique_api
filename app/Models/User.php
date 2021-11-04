@@ -69,6 +69,6 @@ class User extends Authenticatable
         return $this->hasMany(OauthAccessToken::class,'user_id');
     }
     public function workStores(){
-        return $this->hasMany(StoreStaff::class,'user_id');
+        return $this->belongsToMany(Store::class,'store_staffs','user_id','store_id');
     }
 }

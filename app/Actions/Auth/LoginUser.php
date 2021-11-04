@@ -20,7 +20,6 @@ class LoginUser extends Action{
        $val = Validator::make($this->request->all(),[
          'email' => 'required|email|exists:users,email',
          'password' => 'required|string',
-         'user_type' => 'required|integer'
        ]);
        return $this->valResult($val);
     }

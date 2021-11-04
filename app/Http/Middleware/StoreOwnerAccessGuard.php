@@ -22,7 +22,7 @@ class StoreOwnerAccessGuard
     public function handle(Request $request, Closure $next)
     {
         $this->request = $request;
-        if($this->isStoreOwner() && $this->isUserActive()){
+        if($this->isStoreOwner() && $this->isUserActive($this->request->user())){
             return $next($request);
         } else {
             return $this->notAuthorized('You are not eligible to carry out this operation. please contact the super admin.');

@@ -64,7 +64,7 @@ class CreateCategory extends Action
    protected function getNewCategoryStatus(){
       $user = Auth::user();
       $user_type = isset($user)? $user->user_type:null;
-      if($this->isStoreManager($user_type) || $this->isStoreOwner($user_type)){
+      if($this->isStoreStaff($user_type) || $this->isStoreOwner($user_type)){
          return $this->getResourceInReviewId();
       } else if($this->isSuperAdmin($user_type)){
          return $this->getResourceActiveId();

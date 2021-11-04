@@ -14,7 +14,7 @@ class CreateUsersTable extends Migration
     public function up()
     {
         //auth_type 0 for form auth, 1 for facebook, 2 for google
-        //user_type 1 for customers,10 for store workers, 11 for store managers, 12 for store owners, 
+        //user_type 1 for customers,10 for store staffs,
         // 24 for super owner
         //account_status 1 = enabled , 2 = disabled
         Schema::create('users', function (Blueprint $table) {

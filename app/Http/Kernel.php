@@ -21,6 +21,7 @@ class Kernel extends HttpKernel
         \Illuminate\Foundation\Http\Middleware\ValidatePostSize::class,
         \App\Http\Middleware\TrimStrings::class,
         \Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class,
+        \App\Http\Middleware\Cors::class
     ];
 
     /**
@@ -89,6 +90,7 @@ class Kernel extends HttpKernel
         'store_owner_access_guard' => \App\Http\Middleware\StoreOwnerAccessGuard::class,
         'add_auth_header' => \App\Http\Middleware\AddAuthHeader::class,
         'store_staff_guard' => \App\Http\Middleware\StoreStaffGuard::class,
-        'check_authentication_status' => \App\Http\Middleware\CheckAuthenticationStatus::class
+        'check_authentication_status' => \App\Http\Middleware\CheckAuthenticationStatus::class,
+        'cors' => \App\Http\Middleware\Cors::class
     ];
 }

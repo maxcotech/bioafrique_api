@@ -1,12 +1,14 @@
 <?php
 namespace App\Traits;
 
+use App\Models\StoreStaff;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
 
 trait HasStore{
-   use HasRoles,HasResourceStatus;
+   use HasRoles,HasResourceStatus,HasUserStatus;
 
    protected function storeIdValidationRule(){
       $data = ['required','integer'];
@@ -17,7 +19,7 @@ trait HasStore{
          }));
       } else {
          array_push($data,Rule::exists('store_staffs','store_id')->where(function($query)use($user){
-            return $query->where('user_id',$user->id)->where('status',$this->getResourceActiveId());
+            return $query->where('user_id',$user->id)->where('status',$this->getActiveUserId());
          }));
       }
       return $data;
@@ -35,13 +37,73 @@ trait HasStore{
       return false;
    }
 
+   protected function userWorksAtStore($user,$store){
+      if(StoreStaff::where('store_id',$store->id)->where('user_id',$user->id)
+      ->where('status',$this->getActiveUserId())->exists()){
+         return true;
+      } else {
+         return false;
+      }
+   }
+
    protected function generateStoreStaffToken($store_id){
       if(isset($store_id)){
-         $random_int = random_int(10000000,900000000);
-         $hash = Hash::make($random_int);
-         return $store_id.$hash;
+         $random_int = random_int(10000000000000,90000000000000000);
+         return $store_id.$random_int;
       }
       return null;
+   }
+
+   protected function getStoreIndexFromRequest(Request $request){
+      if($request->query('store_id',null) != null){
+         return [
+            'value' => $request->query('store_id'),
+            'key' => 'id'
+         ];
+      } else if($request->store_id != null){
+         return [
+            'value' => $request->store_id,
+            'key' => 'id'
+         ];
+      } else if($request->query('store',null) != null){
+         return [
+            'value' => $request->query('store'),
+            'key' => 'id'
+         ];
+      } else if($request->query('store_id',null) != null){
+         return [
+            'value' => $request->query('store_id'),
+            'key' => 'id'
+         ];
+      } else if($request->store != null){
+         return [
+            'value' => $request->store,
+            'key' => 'id'
+         ];
+      }
+      else if($request->query('store_slug',null) != null){
+         return [
+            'value' => $request->query('store_slug'),
+            'key' => 'store_slug'
+         ];
+      } else if($request->store_slug != null){
+         return [
+            'value' => $request->store_slug,
+            'key' => 'store_slug'
+         ];
+      } else if($request->route('store_id',null) != null){
+         return [
+            'value' => $request->route('store_id'),
+            'key' => 'id'
+         ];
+      } else if($request->route('store_slug',null) != null){
+         return [
+            'value' => $request->route('store_slug'),
+            'key' => 'store_slug'
+         ];
+      }
+      else { return null; }
+
    }
 
    

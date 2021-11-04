@@ -6,10 +6,11 @@ use App\Actions\Action;
 use App\Models\StoreStaffToken;
 use App\Traits\HasRoles;
 use App\Traits\HasStore;
+use App\Traits\HasStoreRoles;
 use Illuminate\Support\Facades\DB;
 
 class CreateStoreStaffToken extends Action{
-   use HasStore,HasRoles;
+   use HasStore,HasRoles,HasStoreRoles;
    protected $request,$user;
    public function __construct(Request $request){
       $this->request=$request;
@@ -61,14 +62,26 @@ class CreateStoreStaffToken extends Action{
 
    protected function staffTypeIsValid(){
       $staff_type = $this->request->staff_type;
-      if($this->isStoreManager($staff_type) || $this->isStoreWorker($staff_type)){
+      if($this->inStoreStaffRoles($staff_type)){
          return true;
       } else {
          return false;
       }
    }
 
-
+   protected function isUserEligible(){
+      if($this->isStoreOwner($this->user->user_type)){
+         return true;
+      } else if($this->isStoreStaff($this->user->user_type)){
+         $role_type = $this->getStoreRoleId($this->user->id,$this->request->store_id);
+         if(!isset($role_type)) return false;
+         if($this->request->staff_type >= $role_type){
+            return false;
+         } 
+         return true;
+      }
+      return false;
+   }
 
 
    public function execute(){
@@ -76,8 +89,12 @@ class CreateStoreStaffToken extends Action{
          $val = $this->validate();
          if($val['status'] != "success") return $this->resp($val);
          if($this->staffTypeIsValid()){
-            $this->saveStoreStaffTokens();
-            return $this->successMessage('Successfully created staff token(s)');
+            if($this->isUserEligible()){
+               $this->saveStoreStaffTokens();
+               return $this->successMessage('Successfully created staff token(s)');
+            } else {
+               return $this->validationError('You are not eligible to create token(s) of this level.');
+            }
          } else {
             return $this->validationError('The Staff Type you selected is invalid.');
          }
