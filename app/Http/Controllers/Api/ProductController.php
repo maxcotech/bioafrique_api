@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Actions\Product\CreateProduct;
 use App\Actions\Product\GetProducts;
+use App\Actions\Product\GetStoreProducts;
 use App\Actions\Product\UpdateProduct;
 use App\Actions\Product\UploadGalleryImage;
 use App\Actions\Product\UploadProductImage;
@@ -35,5 +36,9 @@ class ProductController extends Controller
 
     public function index(Request $request){
         return (new GetProducts($request))->execute();
+    }
+
+    public function getStoreProducts(Request $request){
+        return (new GetStoreProducts($request))->execute();
     }
 }
