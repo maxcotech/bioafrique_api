@@ -18,7 +18,8 @@ Route::prefix('v1')->group(function(){
             Route::get('/user/profile','UserController@getUserProfile');
             Route::get('/store/search','StoreController@search');
             Route::get('/catalog','ProductController@index');
-
+            
+            Route::get('/product/{slug}','ProductController@show');
             Route::get('/countries','CountryController@index');
         });
 

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Actions\Product\CreateProduct;
+use App\Actions\Product\GetAProduct;
 use App\Actions\Product\GetProducts;
 use App\Actions\Product\GetStoreProducts;
 use App\Actions\Product\UpdateProduct;
@@ -40,5 +41,9 @@ class ProductController extends Controller
 
     public function getStoreProducts(Request $request){
         return (new GetStoreProducts($request))->execute();
+    }
+
+    public function show(Request $request,$slug){
+        return (new GetAProduct($request,$slug))->execute();
     }
 }
