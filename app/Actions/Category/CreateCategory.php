@@ -95,20 +95,22 @@ class CreateCategory extends Action
    }
    
    public function getNewCategoryLevel(){
-      $parent_id = $this->request->input('parent_id');
-      if(isset($parent_id)){
-         $parent = Category::first($parent_id);
+      $parent_id = $this->request->input('parent_id',0);
+      if(isset($parent_id) && $parent_id !== 0){
+         $parent = Category::where('id',$parent_id)->first();
          if(isset($parent)){
             return $parent->category_level + 1;
+         } else {
+            return 1;
          }
-      }else{
+      } else {
          return 1;
       }
-      
    }
+
    public function execute()
    {
-      try {
+     try {
         $val = $this->validate();
         if($val['status'] != 'success') return $this->resp($val);
         $new_slug = $this->generateCategorySlug();

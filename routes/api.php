@@ -21,6 +21,7 @@ Route::prefix('v1')->group(function(){
             
             Route::get('/product/{slug}','ProductController@show');
             Route::get('/countries','CountryController@index');
+            Route::get('/search/{search_type}','SearchController@index');
         });
 
         Route::middleware(['auth.apicookie','app_access_guard','ensure_currency_selected','cors'])->group(function(){

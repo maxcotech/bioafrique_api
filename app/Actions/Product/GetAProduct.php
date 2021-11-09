@@ -14,7 +14,8 @@ class GetAProduct extends Action{
    }
 
    protected function getProductBySlug(){
-      return Product::with(['images','variations'])->where('product_slug',$this->slug)
+      return Product::with(['images','variations','category','brand'])
+      ->where('product_slug',$this->slug)
       ->first();
 
    }

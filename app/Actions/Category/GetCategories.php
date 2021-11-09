@@ -19,11 +19,11 @@ class GetCategories extends Action{
          'category_level'=>'integer',
          'verbose'=>'integer',
          'limit'=>'integer',
-         'sub_cat_limit' => 'integer',
-         'max_level'=>'integer',
-         'min_level'=>'integer',
-         'parent'=>'integer|exists:categories,id',
-         'parent_slug'=>'string|exists:categories,categories,category_slug'
+         'sub_cat_limit' => 'nullable|integer',
+         'max_level'=>'nullable|integer',
+         'min_level'=>'nullable|integer',
+         'parent'=>'nullable|integer|exists:categories,id',
+         'parent_slug'=>'nullable|string|exists:categories,categories,category_slug'
        ]);
        return $this->valResult($val);
     }
@@ -32,7 +32,7 @@ class GetCategories extends Action{
       if($this->request->filled('parent')){
          $query->where('parent_id',$this->request->query('parent'));
       }
-      if($this->request->filled('category_slug')){
+      if($this->request->filled('parent_slug')){
          $query->where('category_slug',$this->request->query('parent_slug'));
       }
       $this->selectByVerboseLevel($query);
@@ -43,10 +43,10 @@ class GetCategories extends Action{
     protected function selectByVerboseLevel(&$query){
       if($this->request->filled('verbose')){
         switch($this->request->query('verbose')){
-           case 1:$query->select('id','category_title','category_level','parent_id');break;
-           case 2:$query->select('id','category_title','category_level','parent_id','display_title');break;
-           case 3:$query->select('id','category_title','category_level','parent_id','display_title','image_thumbnail');break;
-           case 4:$query->select('id','category_title','category_level','parent_id','display_title','image_thumbnail','category_image');break;
+           case 1:$query->select('id','category_title','category_level','parent_id','category_slug');break;
+           case 2:$query->select('id','category_title','category_level','parent_id','category_icon','category_slug');break;
+           case 3:$query->select('id','category_title','category_level','parent_id','display_title','category_icon','category_slug');break;
+           case 4:$query->select('id','category_title','category_level','parent_id','display_title','category_icon','category_image','category_slug');break;
            default:;
         }
       }
