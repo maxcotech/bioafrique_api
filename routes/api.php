@@ -22,6 +22,7 @@ Route::prefix('v1')->group(function(){
             Route::get('/product/{slug}','ProductController@show');
             Route::get('/countries','CountryController@index');
             Route::get('/search/{search_type}','SearchController@index');
+            Route::get('/variation_options','VariationOptionsController@index');
         });
 
         Route::middleware(['auth.apicookie','app_access_guard','ensure_currency_selected','cors'])->group(function(){
@@ -29,6 +30,8 @@ Route::prefix('v1')->group(function(){
             Route::post('/brand/logo','BrandController@uploadLogo')->middleware('super_admin_access_guard');
             Route::put('/brand','BrandController@update')->middleware('super_admin_access_guard');
             Route::delete('/brand/{brand_id}','BrandController@delete')->middleware('super_admin_access_guard');
+
+            Route::post('/variation_option','VariationOptionsController@create')->middleware('super_admin_access_guard');
 
             Route::post('/product','ProductController@create')->middleware('store_staff_guard');
             Route::put('/product','ProductController@update')->middleware('store_staff_guard');
