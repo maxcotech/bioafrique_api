@@ -105,11 +105,11 @@ class UpdateProduct extends Action{
                   VariationAttribute::updateOrCreate([
                      'id' => $option['attribute_id'],'variation_id' => $var_record->id,
                   ],[
-                     'option_id' => $option['option_id'],'option_value' => $option['option_value']
+                     'option_id' => $option['id'],'option_value' => $option['option_value']
                   ]);
                } else {
                   VariationAttribute::create([
-                     'variation_id' => $var_record->id, 'option_id' => $option['option_id'],
+                     'variation_id' => $var_record->id, 'option_id' => $option['id'],
                      'option_value' => $option['option_value']
                   ]);
                }

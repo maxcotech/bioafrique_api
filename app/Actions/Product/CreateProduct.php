@@ -129,7 +129,7 @@ class CreateProduct extends Action{
             foreach($variation_options as $option){
                VariationAttribute::create([
                   'variation_id' => $var_record->id,
-                  'option_id' => $option['option_id'],
+                  'option_id' => $option['id'],
                   'option_value' => $option['option_value']
                ]);
             }
