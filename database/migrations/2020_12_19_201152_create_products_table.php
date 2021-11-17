@@ -27,7 +27,7 @@ class CreateProductsTable extends Migration
             $table->integer('amount_in_stock')->nullable();
             $table->string('product_slug')->unique()->nullable();
             $table->string('product_sku')->nullable();
-            $table->string('simple_description')->nullable();
+            $table->text('simple_description')->nullable();
             $table->text('description')->nullable();
             $table->text("key_features")->nullable();
             $table->double('dimension_height')->nullable();

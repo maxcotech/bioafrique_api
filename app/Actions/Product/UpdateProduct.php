@@ -73,8 +73,28 @@ class UpdateProduct extends Action{
       ]);
    }
 
+   protected function deleteExcludedVariations($variations){
+      $conserved = [];
+      $count = 0;
+      foreach($variations as $variation){
+         $count = array_push($conserved,$variation['id']);
+      }
+      if($count > 0){
+         $excluded_variations = ProductVariation::where('store_id',$this->request->store_id)
+         ->where('product_id',$this->request->product_id)
+         ->whereNotIn('id',$conserved)->get();
+         if(isset($excluded_variations) && count($excluded_variations) > 0){
+            foreach($excluded_variations as $ex_variation){
+               VariationAttribute::where('variation_id',$ex_variation->id)->delete();
+               $ex_variation->delete();
+            }
+         }
+      }
+   }
+
    protected function updateProductVariations($variations){
       if(isset($variations) && count($variations) > 0){
+         $this->deleteExcludedVariations($variations);
          foreach($variations as $variation){
             $init_val_img = $this->getInitialPath($variation['variation_image_url'],'product_variation_images');
             $filters = [
@@ -101,15 +121,15 @@ class UpdateProduct extends Action{
          $variation_options = $variation['options'] ?? [];
          if(isset($variation_options) && count($variation_options) > 0){
             foreach($variation_options as $option){
-               if(isset($option['attribute_id'])){
+               if(isset($option['id'])){
                   VariationAttribute::updateOrCreate([
-                     'id' => $option['attribute_id'],'variation_id' => $var_record->id,
+                     'id' => $option['id'],'variation_id' => $var_record->id,
                   ],[
-                     'option_id' => $option['id'],'option_value' => $option['option_value']
+                     'option_id' => $option['option_id'],'option_value' => $option['option_value']
                   ]);
                } else {
                   VariationAttribute::create([
-                     'variation_id' => $var_record->id, 'option_id' => $option['id'],
+                     'variation_id' => $var_record->id, 'option_id' => $option['option_id'],
                      'option_value' => $option['option_value']
                   ]);
                }
