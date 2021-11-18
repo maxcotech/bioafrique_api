@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Actions\Product\CreateProduct;
+use App\Actions\Product\DeleteProduct;
 use App\Actions\Product\GetAProduct;
 use App\Actions\Product\GetProducts;
 use App\Actions\Product\GetStoreProducts;
@@ -45,5 +46,9 @@ class ProductController extends Controller
 
     public function show(Request $request,$slug){
         return (new GetAProduct($request,$slug))->execute();
+    }
+
+    public function delete(Request $request,$product_id){
+        return (new DeleteProduct($request,$product_id))->execute();
     }
 }

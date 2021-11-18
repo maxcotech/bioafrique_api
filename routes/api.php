@@ -38,7 +38,7 @@ Route::prefix('v1')->group(function(){
             Route::post('/product/gallery_image','ProductController@uploadGalleryImage')->middleware('store_staff_guard');
             Route::post('/product/image','ProductController@uploadProductImage')->middleware('store_staff_guard');
             Route::post('/product/variation_image','ProductController@uploadProductVariationImage')->middleware('store_staff_guard');
-            
+            Route::delete('/product/{product_id}','ProductController@delete')->middleware('store_staff_guard');
             Route::post('/category','CategoryController@create')->middleware('sasom_access_guard');
             Route::put('/category','CategoryController@update')->middleware('super_admin_access_guard');
             Route::post('/category/image','CategoryController@updateCategoryImage')->middleware('super_admin_access_guard');

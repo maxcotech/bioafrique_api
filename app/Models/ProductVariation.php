@@ -37,4 +37,8 @@ class ProductVariation extends Model
     public function getVariationImageAttribute($value){
         return $this->getRealPath($value);
     }
+
+    public function options(){
+        return $this->hasMany(VariationAttributes::class,'variation_id');
+    }
 }
