@@ -51,9 +51,12 @@ Route::prefix('v1')->group(function(){
             Route::post('/store/staff/token','StoreStaffTokenController@create')->middleware('sasom_access_guard');
             Route::get('/store/staff/tokens','StoreStaffTokenController@index')->middleware('sasom_access_guard');
             Route::get('/store/staff/type','StoreStaffController@getStoreStaffType');
+            Route::get('/store/staffs','StoreStaffController@getStoreStaffs')->middleware('sasom_access_guard');
             Route::delete('/store/staff/token/{id}','StoreStaffTokenController@delete')->middleware('sasom_access_guard');
             Route::patch('/store/staff/token/{id}/toggle_expiry','StoreStaffTokenController@toggleExpiry')->middleware('sasom_access_guard');
-
+            Route::put('/store/staff/position','StoreStaffController@changeStaffPosition')->middleware('store_owner_access_guard');
+            Route::patch('/store/staff/{staff_id}/toggle_status','StoreStaffController@toggleStaffStatus')->middleware('store_staff_guard');
+            Route::delete('/store/staff/{staff_id}','StoreStaffController@removeStoreStaff')->middleware('sasom_access_guard');
             Route::get('/user','UserController@show');
             Route::delete('/user/logout','AuthController@logout');
         });

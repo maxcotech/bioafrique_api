@@ -32,4 +32,8 @@ class Store extends Model
     public function staffTokens(){
         return $this->hasMany(StoreStaffToken::class,'store_id');
     }
+    
+    public function staffs(){
+        return $this->hasMany(StoreStaff::class,'store_id');
+    }
 }

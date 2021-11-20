@@ -71,4 +71,7 @@ class User extends Authenticatable
     public function workStores(){
         return $this->belongsToMany(Store::class,'store_staffs','user_id','store_id');
     }
+    public function storeStaffAccounts(){
+        return $this->hasMany(StoreStaff::class,'user_id');
+    }
 }

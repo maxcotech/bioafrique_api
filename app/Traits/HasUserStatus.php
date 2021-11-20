@@ -19,6 +19,15 @@ trait HasUserStatus{
         return false;
     }
 
+    protected function getUserStatusText($status){
+        foreach($this->user_status_list as $key => $value){
+            if($status == $value){
+                return $key;
+            }
+        }
+        return "N/A";
+    }
+
     protected function getActiveUserId(){
         return $this->user_status_list['active'];
     }
