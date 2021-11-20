@@ -25,4 +25,8 @@ class Country extends Model
         }
         return null;
     }
+
+    public function states(){
+        return $this->hasMany(State::class,'country_id');
+    }
 }

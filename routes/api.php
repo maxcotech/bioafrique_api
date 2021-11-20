@@ -59,6 +59,8 @@ Route::prefix('v1')->group(function(){
             Route::delete('/store/staff/{staff_id}','StoreStaffController@removeStoreStaff')->middleware('sasom_access_guard');
             Route::get('/user','UserController@show');
             Route::delete('/user/logout','AuthController@logout');
+
+            Route::post('/locations/populate','LocationController@populateLocations');
         });
     });
 });
