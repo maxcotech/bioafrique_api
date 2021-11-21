@@ -61,6 +61,11 @@ Route::prefix('v1')->group(function(){
             Route::delete('/user/logout','AuthController@logout');
 
             Route::post('/locations/populate','LocationController@populateLocations');
+
+            Route::get('/cities/{route_param?}','CityController@index');
+
+            Route::get('/states/{route_params?}','StateController@index');
+            
         });
     });
 });
