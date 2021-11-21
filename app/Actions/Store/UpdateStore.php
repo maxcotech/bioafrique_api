@@ -3,6 +3,8 @@ namespace App\Actions\Store;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use App\Actions\Action;
+use App\Models\City;
+use App\Models\State;
 use App\Models\Store;
 use App\Traits\StringFormatter;
 use Illuminate\Validation\Rule;
@@ -30,7 +32,17 @@ class UpdateStore extends Action{
          'country_id' => 'required|integer|exists:countries,id',
          'store_address' => 'nullable|string',
          'store_email' => 'nullable|email',
-         'store_telephone' => 'nullable|numeric'
+         'store_telephone' => 'nullable|numeric',
+         'state' => ['required','string',Rule::exists('states','state_name')->where(function($query){
+            return $query->where('country_id',$this->request->country_id);
+         })],
+         'city' => ['required','string',Rule::exists('cities','city_name')->where(function($query){
+            $state = State::where('country_id',$this->request->country_id)
+            ->where('state_name',$this->request->state)->first();
+            if(isset($state)){
+               return $query->where('state_id',$state->id);
+            }
+         })]
       ]);
       return $this->valResult($val);
    }
@@ -45,7 +57,7 @@ class UpdateStore extends Action{
       return $slug;
    }
 
-   protected function updateStore($slug){
+   protected function updateStore($slug,$state,$city){
       Store::where('user_id',$this->user->id)
       ->where('id',$this->request->store_id)->update([
          'store_name' => $this->request->store_name,
@@ -53,8 +65,23 @@ class UpdateStore extends Action{
          'country_id' => $this->request->country_id,
          'store_address' => $this->request->store_address,
          'store_email' => $this->request->store_email,
-         'store_telephone' => $this->request->store_telephone
+         'store_telephone' => $this->request->store_telephone,
+         'state_id' => $state->id,
+         'city_id' => $city->id
       ]);
+   }
+
+   protected function getCityFromNameAndState($state){
+      $city = City::where('state_id',$state->id)
+      ->where('city_name',$this->request->city)
+      ->first();
+      return $city;
+   }
+
+   protected function getStateFromNameAndCountry(){
+      $state = State::where('state_name',$this->request->state)
+      ->where('country_id',$this->request->country_id)->first();
+      return $state;
    }
 
    public function execute(){
@@ -62,7 +89,9 @@ class UpdateStore extends Action{
          $val = $this->validate();
          if($val['status'] != "success") return $this->resp($val);
          $slug = $this->generateNewStoreSlug();
-         $this->updateStore($slug);
+         $state = $this->getStateFromNameAndCountry();
+         $city = $this->getCityFromNameAndState($state);
+         $this->updateStore($slug,$state,$city);
          return $this->successMessage('Your store update was uploaded successfully');
       }
       catch(\Exception $e){

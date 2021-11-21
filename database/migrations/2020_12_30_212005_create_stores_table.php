@@ -21,6 +21,8 @@ class CreateStoresTable extends Migration
             $table->string('store_name');
             $table->string('store_logo')->nullable();
             $table->integer('country_id');
+            $table->bigInteger('state_id');
+            $table->bigInteger('city_id');
             $table->string('store_slug')->unique();
             $table->string('store_address')->nullable();
             $table->string('store_email')->nullable();
