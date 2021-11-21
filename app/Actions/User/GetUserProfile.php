@@ -36,7 +36,7 @@ class GetUserProfile extends Action{
          if($this->isStoreOwner()){
             $store = $user->store;
             $data['current_store'] = (isset($store) && !empty($store))? new StoreResource($store): null;
-            $data['stores'] = []; //(isset($store) && !empty($store))? StoreResource::collection([$store]) : [];
+            $data['stores'] = []; 
          } elseif($this->isStoreStaff()) {
             $stores = $user->workStores;
             $data['stores'] = isset($stores)? StoreResource::collection($stores) : [];

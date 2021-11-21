@@ -27,6 +27,8 @@ class StoreResource extends JsonResource
             'store_email' => $this->store_email,
             'store_telephone' => $this->store_telephone,
             'store_status' => $this->store_status,
+            'state' => isset($this->state)? $this->state->state_name:null,
+            'city' => isset($this->city)? $this->city->city_name:null,
             'store_status_text' => $this->getResourceStatusTextById($this->store_status)
         ];
     }

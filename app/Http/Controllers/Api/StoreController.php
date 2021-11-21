@@ -6,6 +6,7 @@ use App\Actions\Store\AddUserToStore;
 use App\Actions\Store\CreateStore;
 use App\Actions\Store\SearchStore;
 use App\Actions\Store\UpdateStore;
+use App\Actions\Store\UploadStoreLogo;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
@@ -22,5 +23,8 @@ class StoreController extends Controller
     }
     public function addUserToStore(Request $request){
         return (new AddUserToStore($request))->execute();
+    }
+    public function uploadStoreLogo(Request $request){
+        return (new UploadStoreLogo($request))->execute();
     }
 }

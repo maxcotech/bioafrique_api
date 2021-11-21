@@ -10,9 +10,11 @@ class Store extends Model
 {
     use HasFactory,FilePath;
     protected $table = 'stores';
+    protected $with = ['state','city'];
     protected $fillable = [
         'user_id','store_name','store_slug','store_logo',
-        'country_id','store_address','store_email','store_telephone'
+        'country_id','store_address','store_email','store_telephone',
+        'state_id','city_id'
     ];
 
     public function getStoreLogoAttribute($value){
@@ -35,5 +37,13 @@ class Store extends Model
     
     public function staffs(){
         return $this->hasMany(StoreStaff::class,'store_id');
+    }
+
+    public function state(){
+        return $this->belongsTo(State::class,'state_id');
+    }
+
+    public function city(){
+        return $this->belongsTo(City::class,'city_id');
     }
 }

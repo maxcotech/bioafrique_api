@@ -25,7 +25,7 @@ class CreateStore extends Action{
       $val=Validator::make($this->request->all(),[
          'store_name' => 'required|string|unique:stores,store_name',
          'store_logo'=>'nullable|file|mimes:jpg,png,webp,jpeg',
-         'store_address' => 'nullable|string',
+         'store_address' => 'required|string',
          'store_email' => 'nullable|email',
          'store_telephone' => 'nullable|numeric',
          'country_id'=>'required|integer|exists:countries,id',

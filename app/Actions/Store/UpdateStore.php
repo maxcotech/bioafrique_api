@@ -30,7 +30,7 @@ class UpdateStore extends Action{
             })],
          
          'country_id' => 'required|integer|exists:countries,id',
-         'store_address' => 'nullable|string',
+         'store_address' => 'required|string',
          'store_email' => 'nullable|email',
          'store_telephone' => 'nullable|numeric',
          'state' => ['required','string',Rule::exists('states','state_name')->where(function($query){
