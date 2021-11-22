@@ -33,5 +33,26 @@ trait HasRateConversion{
         return $amount * $user_currency->base_rate;
     }
 
+    protected function convertNestedRates($data,$keys,$function,$json = true){
+        $new_data = [];
+        $input_data = [];
+        if($json === true){
+            $input_data = json_decode($data,true);
+        } else {
+            $input_data = $data;
+        }
+        if(isset($input_data) && is_array($input_data) && count($input_data) > 0){
+            foreach($input_data as $data_row){
+                $new_row = $data_row;
+                foreach($keys as $key){
+                    $new_row[$key] = $function($data_row[$key]);
+                }
+                array_push($new_data,$new_row);
+            }
+        }
+        return ($json === true)? json_encode($new_data) : $new_data;
+
+    }
+
 }
     

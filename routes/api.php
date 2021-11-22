@@ -66,7 +66,11 @@ Route::prefix('v1')->group(function(){
             Route::get('/cities/{route_param?}','CityController@index');
 
             Route::get('/states/{route_params?}','StateController@index');
-            
+
+            Route::post('/shipping/group','ShippingGroupController@create')->middleware('sasom_access_guard');
+            Route::get('/shipping/groups','ShippingGroupController@index')->middleware('sasom_access_guard');
+            Route::put('/shipping/group','ShippingGroupController@update')->middleware('sasom_access_guard');
+            Route::delete('/shipping/group/{group_id}','ShippingGroupController@delete')->middleware('sasom_access_guard');
         });
     });
 });
