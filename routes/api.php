@@ -68,9 +68,13 @@ Route::prefix('v1')->group(function(){
             Route::get('/states/{route_params?}','StateController@index');
 
             Route::post('/shipping/group','ShippingGroupController@create')->middleware('sasom_access_guard');
-            Route::get('/shipping/groups','ShippingGroupController@index')->middleware('sasom_access_guard');
+            Route::get('/shipping/groups','ShippingGroupController@index')->middleware('store_staff_guard');
             Route::put('/shipping/group','ShippingGroupController@update')->middleware('sasom_access_guard');
             Route::delete('/shipping/group/{group_id}','ShippingGroupController@delete')->middleware('sasom_access_guard');
+            Route::post('/shipping/location','ShippingLocationController@create')->middleware('sasom_access_guard');
+            Route::get('/shipping/locations','ShippingLocationController@index')->middleware('store_staff_guard');
+            Route::put('/shipping/location','ShippingLocationController@update')->middleware('sasom_access_guard');
+            Route::delete('/shipping/location/{location_id}','ShippingLocationController@delete')->middleware('sasom_access_guard');
         });
     });
 });
