@@ -27,11 +27,11 @@ class GetShippingLocations extends Action{
    }
 
    protected function getShippingLocations(){
-      return ShippingLocation::with(['state:id,state_name','city:id,city_name'])
+      return ShippingLocation::with(['country:id,country_name','state:id,state_name','city:id,city_name'])
       ->where('shipping_group_id',$this->request->query('shipping_group_id'))
       ->where('store_id',$this->request->query('store_id'))
       ->paginate(
-         $this->request->query('limit',15),
+         $this->request->query('limit',3),
          ['shipping_group_id','id','store_id','state_id','city_id','country_id']);
    }
 
