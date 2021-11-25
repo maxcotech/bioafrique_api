@@ -9,6 +9,8 @@ class BillingAddress extends Model
 {
     use HasFactory;
 
+    public static $current_id = 1;
+    public static $not_current_id = 0;
     protected $table = "billing_addresses";
     protected $fillable=[
         'user_id','country_id','state_id','city_id',
@@ -16,4 +18,18 @@ class BillingAddress extends Model
         'additional_number','additional_telephone_code',
         'postal_code','is_current'
     ];
+
+    public function country(){
+        return $this->belongsTo(Country::class,'country_id');
+    }
+
+    public function state(){
+        return $this->belongsTo(State::class,'state_id');
+    }
+
+    public function city(){
+        return $this->belongsTo(City::class,'city_id');
+    }
+
+    
 }

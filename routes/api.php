@@ -75,6 +75,11 @@ Route::prefix('v1')->group(function(){
             Route::get('/shipping/locations','ShippingLocationController@index')->middleware('store_staff_guard');
             Route::put('/shipping/location','ShippingLocationController@update')->middleware('sasom_access_guard');
             Route::delete('/shipping/location/{location_id}','ShippingLocationController@delete')->middleware('sasom_access_guard');
+
+            Route::post('/billing/address','BillingAddressController@create');
+            Route::put('/billing/address','BillingAddressController@update');
+            Route::delete('/billing/address/{address_id}','BillingAddressController@delete');
+            Route::get('/billing/addresses','BillingAddressController@index');
         });
     });
 });
