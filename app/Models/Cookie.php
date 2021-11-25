@@ -13,7 +13,7 @@ class Cookie extends Model
     protected $fillable = ['cookie_name','cookie_value','expiry','status'];
 
     public function shoppingCarts(){
-        return $this->morphMany(ShoppingCart::class,'trackable');
+        return $this->morphMany(ShoppingCartItem::class,'trackable');
     }
     public function currency(){
         return $this->morphToMany(Currency::class,'user_currencies');

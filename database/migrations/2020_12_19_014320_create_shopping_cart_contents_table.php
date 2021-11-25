@@ -16,7 +16,8 @@ class CreateShoppingCartContentsTable extends Migration
         
         Schema::create('shopping_cart_items', function (Blueprint $table) {
             $table->id();
-            $table->bigInteger('shopping_cart_id');
+            $table->bigInteger('user_id');
+            $table->string('user_type',60)->default('App\Model\Cookie');
             $table->bigInteger('item_id');
             $table->bigInteger('variant_id')->nullable();
             $table->string('item_type',60);

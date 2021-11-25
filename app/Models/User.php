@@ -54,7 +54,7 @@ class User extends Authenticatable
         return $this->hasOne(UserDevice::class,'user_id');
     }
     public function shoppingCarts(){
-        return $this->morphMany(ShoppingCart::class,'trackable');
+        return $this->morphMany(ShoppingCartItem::class,'trackable');
     }
     public function currency(){
         return $this->morphToMany(Currency::class,'user_currencies');

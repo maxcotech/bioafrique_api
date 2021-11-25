@@ -34,5 +34,9 @@ trait SyncUserPreferences{
         //to be implemented 
     }
 
+    protected function syncUserWishList($cookie,$user_id){
+        //to be implemented
+    }
+
 }
     
