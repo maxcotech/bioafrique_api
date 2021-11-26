@@ -28,6 +28,14 @@ class Product extends Model
 
     public const simple_product_type = "simple_product";
     public const variation_product_type = "variation_product";
+    protected $appends = ['current_price'];
+
+    public function getCurrentPriceAttribute(){
+        if($this->sales_price == 0 || $this->sales_price == null){
+            return $this->regular_price;
+        }
+        return $this->sales_price;
+    }
 
     public function variations(){
         return $this->hasMany(ProductVariation::class,'product_id');

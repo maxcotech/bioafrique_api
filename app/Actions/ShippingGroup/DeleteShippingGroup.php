@@ -13,7 +13,7 @@ class DeleteShippingGroup extends Action{
 
    protected $request;
    protected $group_id;
-   public function __construct(Request $request,int $group_id){
+   public function __construct(Request $request,$group_id){
       $this->request=$request;
       $this->group_id = $group_id;
    }

@@ -27,6 +27,8 @@ Route::prefix('v1')->group(function(){
             Route::post('/shopping_cart/item','ShoppingCartController@create');
             Route::put('/shopping_cart/item','ShoppingCartController@update');
             Route::get('/shopping_cart/items','ShoppingCartController@index');
+            Route::delete('/shopping_cart/item/{cart_id}','ShoppingCartController@delete');
+            Route::get('/shopping_cart/item/count','ShoppingCartController@getCartCount');
         });
 
         Route::middleware(['auth.apicookie','app_access_guard','ensure_currency_selected','cors'])->group(function(){

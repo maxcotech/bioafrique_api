@@ -3,13 +3,18 @@
 namespace App\Http\Controllers\Api;
 
 use App\Actions\ShoppingCart\AddShoppingCartItem;
+use App\Actions\ShoppingCart\DeleteShoppingCartItem;
 use App\Actions\ShoppingCart\GetShoppingCart;
 use App\Actions\ShoppingCart\UpdateShoppingCart;
 use App\Http\Controllers\Controller;
+use App\Models\ShoppingCartItem;
+use App\Traits\HasAuthStatus;
+use App\Traits\HasHttpResponse;
 use Illuminate\Http\Request;
 
 class ShoppingCartController extends Controller
 {
+    use HasAuthStatus,HasHttpResponse;
     public function create(Request $request){
         return (new AddShoppingCartItem($request))->execute();
     }
@@ -20,5 +25,25 @@ class ShoppingCartController extends Controller
 
     public function index(Request $request){
         return (new GetShoppingCart($request))->execute();
+    }
+
+    public function delete(Request $request,$cart_id){
+        return (new DeleteShoppingCartItem($request,$cart_id))->execute();
+    }
+
+    public function getCartCount(Request $request){
+        try{
+            $auth_type = $this->getUserAuthTypeObject($request->user());
+            if(!isset($auth_type)){
+                throw new \Exception('An Error occurred, please make sure your browser allows cookies on this app.');
+            }
+            $count = ShoppingCartItem::where('user_id',$auth_type->id)
+            ->where('user_type',$auth_type->type)->count();
+            return $this->successWithData($count);
+        }
+        catch(\Exception $e){
+            return $this->internalError($e->getMessage());
+        }
+
     }
 }

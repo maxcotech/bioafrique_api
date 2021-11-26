@@ -29,13 +29,14 @@ class AddShoppingCartItem extends Action{
    }
 
 
-   protected function addItemToCart(object $auth_type){
+   protected function addItemToCart(object $auth_type,$store_id){
       ShoppingCartItem::create([
          'user_id' => $auth_type->id,
          'user_type' => $auth_type->type,
          'item_id' => $this->request->item_id,
          'variant_id' => $this->request->input('variant_id',null),
          'quantity' => self::default_quantity,
+         'store_id' => $store_id,
          'item_type' => ($this->request->input('variant_id',null) != null)? Product::variation_product_type: Product::simple_product_type
       ]);
    }
@@ -55,7 +56,7 @@ class AddShoppingCartItem extends Action{
             if($this->quantityIsBeyondAvailable($product,$this->request->input('variant_id',null),self::default_quantity)){
                return $this->validationError("Sorry, ".$product->product_name." is currently out of stock.");
             }
-            $this->addItemToCart($auth_type_obj);
+            $this->addItemToCart($auth_type_obj,$product->store_id);
             return $this->successMessage($product->product_name." successfully added to cart.");
          } else {
             throw new \Exception('An error occurred, please make sure that your browser allows cookies on this app.');

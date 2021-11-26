@@ -10,7 +10,7 @@ class DeleteShippingLocation extends Action{
    use HasStore;
    protected $request;
    protected $location_id;
-   public function __construct(Request $request,int $location_id){
+   public function __construct(Request $request,$location_id){
       $this->request=$request;
       $this->location_id = $location_id;
    }

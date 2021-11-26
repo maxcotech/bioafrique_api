@@ -1,6 +1,5 @@
 <?php
 namespace App\Actions\ShoppingCart;
-use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use App\Actions\Action;
 use App\Models\ShoppingCartItem;
@@ -16,10 +15,12 @@ class GetShoppingCart extends Action{
    protected function onGetShoppingCart($auth_type){
       return ShoppingCartItem::with([
          'variation:id,variation_image,variation_name',
-         'product:id,product_name,product_image,regular_price,sales_price'])
+         'product:id,product_name,product_image,regular_price,sales_price',
+         'store:id,store_name,store_slug'
+      ])
       ->where('user_id',$auth_type->id)
       ->where('user_type',$auth_type->type)
-      ->paginate(15,['id','item_id','variant_id','item_type','quantity']);
+      ->paginate(15,['id','item_id','variant_id','item_type','quantity','store_id']);
    }
 
 

@@ -12,7 +12,7 @@ class DeleteBillingAddress extends Action
    protected $request;
    protected $id;
    protected $user;
-   public function __construct(Request $request, int $id){
+   public function __construct(Request $request,$id){
       $this->request = $request;;
       $this->id = $id;
       $this->user = $request->user();

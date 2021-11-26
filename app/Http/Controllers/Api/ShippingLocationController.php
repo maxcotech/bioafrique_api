@@ -20,7 +20,7 @@ class ShippingLocationController extends Controller
     public function update(Request $request){
         return (new UpdateShippingLocation($request))->execute();
     }
-    public function delete(Request $request,int $location_id){
+    public function delete(Request $request,$location_id){
         return (new DeleteShippingLocation($request,$location_id))->execute();
     }
 }

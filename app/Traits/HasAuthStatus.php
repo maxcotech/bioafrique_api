@@ -10,7 +10,7 @@ trait HasAuthStatus{
     
 
     protected function getUserAuthTypeObject($user = null): object {
-        $user_acct = $user ?? $this->request->user();
+        $user_acct = $user ?? request()->user();
         if(isset($user_acct)){
             return (object) ["id" => $user_acct->id,"type" => $this->auth_type];
         } else {

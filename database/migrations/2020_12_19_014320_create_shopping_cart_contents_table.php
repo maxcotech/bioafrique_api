@@ -20,6 +20,7 @@ class CreateShoppingCartContentsTable extends Migration
             $table->string('user_type',60)->default('App\Model\Cookie');
             $table->bigInteger('item_id');
             $table->bigInteger('variant_id')->nullable();
+            $table->bigInteger('store_id');
             $table->string('item_type',60);
             $table->integer('quantity');
             $table->timestamps();

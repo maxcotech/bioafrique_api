@@ -17,7 +17,7 @@ class BillingAddressController extends Controller
     public function update(Request $request){
         return (new UpdateBillingAddress($request))->execute();
     }
-    public function delete(Request $request,int $address_id){
+    public function delete(Request $request,$address_id){
         return (new DeleteBillingAddress($request,$address_id))->execute();
     }
     public function index(Request $request){
