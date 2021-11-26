@@ -26,6 +26,9 @@ class Product extends Model
         'category_id'
     ];
 
+    public const simple_product_type = "simple_product";
+    public const variation_product_type = "variation_product";
+
     public function variations(){
         return $this->hasMany(ProductVariation::class,'product_id');
     }

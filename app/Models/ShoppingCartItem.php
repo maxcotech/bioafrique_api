@@ -11,7 +11,7 @@ class ShoppingCartItem extends Model
 
     protected $table = "shopping_cart_items";
     protected $fillable = [
-        'user_id','user_type','item_id','item_type','quantity','total_price'
+        'user_id','user_type','item_id','item_type','quantity'
     ];
 
     public function itemable(){
@@ -20,6 +20,14 @@ class ShoppingCartItem extends Model
 
     public function trackable(){
         return $this->morphTo(__FUNCTION__,'user_type','user_id');
+    }
+
+    public function product(){
+        return $this->belongsTo(Product::class,'item_id');
+    }
+
+    public function variation(){
+        return $this->belongsTo(ProductVariation::class,'variant_id');
     }
     
 }

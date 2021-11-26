@@ -23,6 +23,10 @@ Route::prefix('v1')->group(function(){
             Route::get('/countries','CountryController@index');
             Route::get('/search/{search_type}','SearchController@index');
             Route::get('/variation_options','VariationOptionsController@index');
+
+            Route::post('/shopping_cart/item','ShoppingCartController@create');
+            Route::put('/shopping_cart/item','ShoppingCartController@update');
+            Route::get('/shopping_cart/items','ShoppingCartController@index');
         });
 
         Route::middleware(['auth.apicookie','app_access_guard','ensure_currency_selected','cors'])->group(function(){

@@ -22,7 +22,6 @@ class CreateShoppingCartContentsTable extends Migration
             $table->bigInteger('variant_id')->nullable();
             $table->string('item_type',60);
             $table->integer('quantity');
-            $table->double('total_price');
             $table->timestamps();
         });
     }
