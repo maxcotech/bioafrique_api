@@ -43,6 +43,9 @@ class LoginUser extends Action{
       DB::transaction(function() use($user,$cookie){
          $this->syncUserCurrency($cookie->id,$user->id);
          $this->syncUserCountry($cookie->id,$user->id);
+         $this->syncUserCart($cookie->id,$user->id);
+         $this->syncUserRecentlyViewed($cookie->id,$user->id);
+         $this->syncUserWishList($cookie->id,$user->id);
       });
     }
     protected function getTokenCookie($token){

@@ -11,6 +11,7 @@ class Cookie extends Model
 
     protected $table = "cookies";
     protected $fillable = ['cookie_name','cookie_value','expiry','status'];
+    public const auth_type = "App\Models\Cookie";
 
     public function shoppingCarts(){
         return $this->morphMany(ShoppingCartItem::class,'trackable');

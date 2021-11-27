@@ -17,6 +17,7 @@ class User extends Authenticatable
      *
      * @var array
      */
+    public const auth_type = "App\Models\User";
     protected $fillable = [
         'first_name',
         'last_name',

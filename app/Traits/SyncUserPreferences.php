@@ -1,12 +1,16 @@
 <?php
 namespace App\Traits;
 
+use App\Models\Cookie;
+use App\Models\ShoppingCartItem;
+use App\Models\User;
 use App\Models\UserCountry;
 use App\Models\UserCurrency;
+use Illuminate\Support\Facades\Log;
 
 trait SyncUserPreferences{
-    protected $old_type = "App\Models\Cookie";
-    protected $new_type = "App\Models\User";
+    protected $old_type = Cookie::auth_type;
+    protected $new_type = User::auth_type;
 
     protected function syncUserCountry($cookie_id,$user_id){
         UserCountry::where('user_countries_id',$user_id)->delete();
@@ -27,7 +31,13 @@ trait SyncUserPreferences{
     }
 
     protected function syncUserCart($cookie_id,$user_id){
-        //to be implemented 
+        Log::alert('current cookie is '.$cookie_id);
+        ShoppingCartItem::where('user_id',$cookie_id)
+        ->where('user_type',$this->old_type)
+        ->update([
+            'user_id' => $user_id,
+            'user_type' => $this->new_type
+        ]);
     }
 
     protected function syncUserRecentlyViewed($cookie_id,$user_id){
