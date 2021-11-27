@@ -29,6 +29,10 @@ Route::prefix('v1')->group(function(){
             Route::get('/shopping_cart/items','ShoppingCartController@index');
             Route::delete('/shopping_cart/item/{cart_id}','ShoppingCartController@delete');
             Route::get('/shopping_cart/item/count','ShoppingCartController@getCartCount');
+
+            Route::post('/wish_list','ProductWishListController@create');
+            Route::get('/wish_list','ProductWishListController@index');
+            Route::delete('/wish_list','ProductWishListController@delete');
         });
 
         Route::middleware(['auth.apicookie','app_access_guard','ensure_currency_selected','cors'])->group(function(){
