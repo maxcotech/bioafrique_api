@@ -6,11 +6,12 @@ use App\Actions\Action;
 use App\Models\Product;
 use App\Models\ShoppingCartItem;
 use App\Traits\HasAuthStatus;
+use App\Traits\HasResourceStatus;
 use App\Traits\HasShoppingCartItem;
 use Illuminate\Validation\Rule;
 
 class AddShoppingCartItem extends Action{
-   use HasAuthStatus,HasShoppingCartItem;
+   use HasAuthStatus,HasShoppingCartItem,HasResourceStatus;
    protected $request;
    protected const default_quantity = 1;
    public function __construct(Request $request){
@@ -19,7 +20,9 @@ class AddShoppingCartItem extends Action{
 
    protected function validate(){
       $val = Validator::make($this->request->all(),[
-         'item_id' => 'required|integer|exists:products,id',
+         'item_id' => ['required','integer',Rule::exists('products','id')->where(function($query){
+            return $query->where('product_status',$this->getResourceActiveId());
+         })],
          'variant_id' => ['nullable','integer',Rule::exists('product_variations','id')
          ->where(function($query){
             return $query->where('product_id',$this->request->item_id);
@@ -40,6 +43,16 @@ class AddShoppingCartItem extends Action{
          'item_type' => ($this->request->input('variant_id',null) != null)? Product::variation_product_type: Product::simple_product_type
       ]);
    }
+
+   protected function variationIsRequired($product_type){
+      if($product_type == Product::variation_product_type){
+         if($this->request->input('variant_id',null) == null){
+            return true;
+         }
+         return false;
+      }
+      return false;
+   }
   
 
    
@@ -53,6 +66,7 @@ class AddShoppingCartItem extends Action{
             if(!isset($product)) return $this->validationError('Invalid product selected.');
             $variant_id = $this->request->input('variant_id',null);
             if($this->productAlreadyInCart($auth_type_obj,$product->id,$variant_id)) return $this->validationError("This Product is already added to cart.");
+            if($this->variationIsRequired($product->product_type)) return $this->validationError('Please select a variation.');
             if($this->quantityIsBeyondAvailable($product,$this->request->input('variant_id',null),self::default_quantity)){
                return $this->validationError("Sorry, ".$product->product_name." is currently out of stock.");
             }

@@ -23,7 +23,7 @@ class CreateProductsTable extends Migration
             $table->bigInteger('category_id')->nullable();
             $table->string('product_image',1000);
             $table->string('product_name')->nullable();
-            $table->tinyInteger('product_type')->default(1);
+            $table->string('product_type',60)->default("simple_product");
             $table->integer('amount_in_stock')->nullable();
             $table->string('product_slug')->unique()->nullable();
             $table->string('product_sku')->nullable();

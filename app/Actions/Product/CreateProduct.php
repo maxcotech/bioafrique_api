@@ -38,12 +38,11 @@ class CreateProduct extends Action{
          'product_image'=>'required|string',
          'brand_id'=>'required|integer|exists:brands,id',
          'youtube_video_id'=>'nullable|string',
-         'product_type' => 'nullable|integer',
          'weight' => 'nullable|numeric',
-         'key_features' => 'nullable|string'
+         'key_features' => 'nullable|string',
+         'variations' => 'nullable|json'
       ]);
       $this->validateGalleryImages($val);
-      $this->validateVariationsRequirements($val);
       $this->dimensionsValidation($val);
       return $this->valResult($val);
    }
@@ -68,7 +67,7 @@ class CreateProduct extends Action{
          'product_status' => $this->getResourceInReviewId(),
          'brand_id' => $this->request->brand_id,
          'youtube_video_id' => $this->request->youtube_video_id,
-         'product_type' => $this->request->product_type ?? $this->inferProductType($variations),
+         'product_type' => $this->inferProductType($variations),
          'product_slug' => $this->generateProductSlug(),
          'dimension_height' => $this->request->dimension_height,
          'dimension_width' => $this->request->dimension_width,

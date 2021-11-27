@@ -11,9 +11,8 @@ class Product extends Model
 {
     use HasFactory,FilePath,HasRateConversion;
 
-    const simpleProductType = 1;
-    const variationProductType = 2;
-
+    public const simple_product_type = "simple_product";
+    public const variation_product_type = "variation_product";
     protected $table = "products";
     protected $fillable = [
         'store_id','brand_id','parent_id','regular_price','sales_price',
@@ -26,8 +25,7 @@ class Product extends Model
         'category_id'
     ];
 
-    public const simple_product_type = "simple_product";
-    public const variation_product_type = "variation_product";
+    
     protected $appends = ['current_price'];
 
     public function getCurrentPriceAttribute(){

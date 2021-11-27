@@ -41,9 +41,9 @@ trait HasProduct
     protected function inferProductType($variations)
     {
         if (isset($variations) && count($variations) > 0) {
-            return Product::variationProductType;
+            return Product::variation_product_type;
         } else {
-            return Product::simpleProductType;
+            return Product::simple_product_type;
         }
     }
 
@@ -65,7 +65,7 @@ trait HasProduct
 
     protected function validateVariationsRequirements(ValidationObj $val){
         $val->sometimes('variations','required|json',function(){
-            if($this->request->product_type != Product::variationProductType){
+            if($this->request->product_type != Product::variation_product_type){
                return false;
             } else {
                return true;
