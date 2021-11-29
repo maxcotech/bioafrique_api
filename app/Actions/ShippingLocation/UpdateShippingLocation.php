@@ -4,12 +4,12 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use App\Actions\Action;
 use App\Models\ShippingLocation;
-use App\Traits\HasShippingLocations;
+use App\Traits\HasShipping;
 use App\Traits\HasStore;
 use Illuminate\Validation\Rule;
 
 class UpdateShippingLocation extends Action{
-   use HasStore,HasShippingLocations;
+   use HasStore,HasShipping;
    protected $request;
    public function __construct(Request $request){
       $this->request=$request;

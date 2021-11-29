@@ -32,6 +32,12 @@ trait HasShoppingCartItem{
         ->where('variant_id',$variant_id)
         ->exists();
      }
+
+     protected function getShoppingCartItems($user_id,$user_type){
+        return ShoppingCartItem::where('user_id',$user_id)
+        ->where('user_type',$user_type)
+        ->get();
+     }
      
 
 }
