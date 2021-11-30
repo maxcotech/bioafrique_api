@@ -6,7 +6,6 @@ use App\Models\City;
 use App\Models\Product;
 use App\Models\ShippingGroup;
 use App\Models\ShippingLocation;
-use App\Models\ShoppingCartItem;
 use App\Models\State;
 use App\Models\User;
 
@@ -30,7 +29,7 @@ trait HasShipping{
       return $city;
    }
 
-   protected function collateShippingFeesByLocation($user,$convert_rates = true){
+   protected function collateShippingDetailsByLocation($user,$convert_rates = true){
       if(!isset($user)) throw new \Exception('You need to login inorder to continue.');
       $cart_items = $this->getShoppingCartItems($user->id,User::auth_type);
       if(!isset($cart_items) || count($cart_items) == 0) throw new \Exception('Could not find any cart item.');
@@ -39,8 +38,39 @@ trait HasShipping{
       $shipping_groups = $this->getShippingGroups($store_ids,$address);
       $shipping_fee_data = [];
       $shipping_fee_data['total_shipping_fees'] = $this->getShippingFeesForEachItem($cart_items,$shipping_groups,$convert_rates);
-      $shipping_fee_data['grand_total_shipping_fees'] = $this->sumArrayValuesByKey($shipping_fee_data['shipping_fees'],'total_shipping_fee');
+      $shipping_fee_data['grand_total_shipping_fees'] = $this->sumArrayValuesByKey($shipping_fee_data['total_shipping_fees'],'total_shipping_fee');
+      $shipping_fee_data['shipping_list'] = $this->getShippingList($cart_items,$shipping_groups);
       return $shipping_fee_data;
+   }
+
+   protected function getShippingList($cart_items,$shipping_groups){
+      $shipping_list = [];
+      $shipping_groups = json_decode(json_encode($shipping_groups));
+      $cart_items = json_decode(json_encode($cart_items));
+      $count = 1;
+      $total_shipping = count($shipping_groups);
+      foreach($shipping_groups as $group){
+         $data = [];
+         $data['shipping_label'] = "Shipping ".$count." of ".$total_shipping;
+         $data['items'] = [];
+         foreach($cart_items as $cart_item){
+            if($cart_item->store_id == $group->store_id){
+               $product = Product::find($cart_item->item_id);
+               array_push($data['items'],[
+                  'item_name' => $product->product_name,
+                  'quantity' => $cart_item->quantity,
+                  'delivery_note' => "Item(s) will be delivered between "
+                  .now()->addDays($group->delivery_duration)->toFormattedDateString()
+                  ." and ".now()->addDays($group->delivery_duration + 3)->toFormattedDateString()
+                  .".\n(PLEASE NOTE: Items(s) may arrive before these dates)."
+               ]);
+            }
+         }
+         array_push($shipping_list,$data);
+         $count++;
+
+      }
+      return $shipping_list;
    }
 
 
@@ -49,16 +79,17 @@ trait HasShipping{
       $fees = [];
       foreach($cart_items as $cart_item){
          $group = $this->selectArrayItemByKeyPair('store_id',$cart_item->store_id,$shipping_groups);
+         $group = json_decode(json_encode($group));
          $product = Product::find($cart_item->item_id);
          $total_shipping_fee = $this->getTotalShippingFeeForItem($product,$group);
-         array_push([
+         array_push($fees,[
             'id' => $cart_item->id,
             'item_id' => $cart_item->item_id,
             'item_type' => $cart_item->item_type,
             'store_id' => $cart_item->store_id,
-            'delivery_date' => now()->addDays($group->delivery_duration),
-            'total_shipping_fee' => $convert_rates == true? $this->baseToUserCurrency($total_shipping_fee):$total_shipping_fee
-         ],$fees);
+            'delivery_date' => now()->addDays($group->delivery_duration)->toFormattedDateString(),
+            'total_shipping_fee' => ($convert_rates == true)? $this->baseToUserCurrency($total_shipping_fee):$total_shipping_fee
+         ]);
       }
       return $fees;
    }
@@ -107,7 +138,6 @@ trait HasShipping{
       return $groups;
    }
 
-   
 
    protected function getShippingGroup($store_id,$user_addr){
       $store_location = ShippingLocation::where('store_id',$store_id)
@@ -133,10 +163,12 @@ trait HasShipping{
 
 
    protected function getCurrentBillingAddress($user_id){
-      $address = BillingAddress::where('user_id',$user_id)
+      $with_data = ['country:id,country_name','state:id,state_name','city:id,city_name'];
+      $address = BillingAddress::with($with_data)->where('user_id',$user_id)
       ->where('is_current',1)->first();
       if(!isset($address)){
-         $address = BillingAddress::where('user_id',$user_id)->first();
+         $address = BillingAddress::with($with_data)
+         ->where('user_id',$user_id)->first();
          if(!isset($address)){
             throw new \Exception('You must create a billing address before you can continue.');
          }

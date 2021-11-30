@@ -90,6 +90,8 @@ Route::prefix('v1')->group(function(){
             Route::put('/billing/address','BillingAddressController@update');
             Route::delete('/billing/address/{address_id}','BillingAddressController@delete');
             Route::get('/billing/addresses','BillingAddressController@index');
+
+            Route::get('/checkout','CheckoutController@index');
         });
     });
 });

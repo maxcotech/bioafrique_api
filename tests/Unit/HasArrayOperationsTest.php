@@ -53,9 +53,24 @@ class HasArrayOperationsTest extends TestCase
             ['key' => 2,'gin' => 'menu']
         ];
         $in_data2 = (object) $in_data;
+        $in_data3 = [
+            [
+                "id" => 8,
+                "user_id"=> 3,
+                "user_type"=> "App\\Models\\User",
+                "item_id"=> 16,
+                "variant_id"=> null,
+                "store_id"=> 11,
+                "item_type"=> "simple_product",
+                "quantity"=> 1,
+                "created_at"=> "2021-11-27T07:01:48.000000Z",
+                "updated_at"=> "2021-11-27T07:02:39.000000Z"
+            ]
+        ];
         $this->assertEqualsCanonicalizing([1,2],$this->extractUniqueValueList($in_data,"key"));
         $this->assertEqualsCanonicalizing(['manu','menu'],$this->extractUniqueValueList($in_data,"gin"));
         $this->assertEqualsCanonicalizing([1,2],$this->extractUniqueValueList($in_data2,"key"));
         $this->assertEqualsCanonicalizing(['manu','menu'],$this->extractUniqueValueList($in_data2,"gin"));
+        $this->assertEqualsCanonicalizing([11],$this->extractUniqueValueList($in_data3,"store_id"));
     }
 }
