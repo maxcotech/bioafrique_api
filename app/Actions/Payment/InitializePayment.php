@@ -9,9 +9,17 @@ class InitializePayment extends Action{
    public function __construct(Request $request){
    $this->request=$request;
    }
+
+   protected function validate(){
+      $val = Validator::make($this->request->all(),[
+         'payment_gateway' => 'required|integer',
+      ]);
+      return $this->valResult($val);
+   }
    public function execute(){
       try{
-         //
+         $val = $this->validate();
+         if($val['status'] !== "success") return $this->resp($val);
       }
       catch(\Exception $e){
          return $this->internalError($e->getMessage());

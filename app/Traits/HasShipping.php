@@ -29,7 +29,7 @@ trait HasShipping{
       return $city;
    }
 
-   protected function collateShippingDetailsByLocation($user,$convert_rates = true){
+   protected function collateShippingDetailsByLocation($user,$convert_to_base_rates = true){
       if(!isset($user)) throw new \Exception('You need to login inorder to continue.');
       $cart_items = $this->getShoppingCartItems($user->id,User::auth_type);
       if(!isset($cart_items) || count($cart_items) == 0) throw new \Exception('Could not find any cart item.');
@@ -37,7 +37,7 @@ trait HasShipping{
       $store_ids = $this->extractUniqueValueList($cart_items,"store_id");
       $shipping_groups = $this->getShippingGroups($store_ids,$address);
       $shipping_fee_data = [];
-      $shipping_fee_data['total_shipping_fees'] = $this->getShippingFeesForEachItem($cart_items,$shipping_groups,$convert_rates);
+      $shipping_fee_data['total_shipping_fees'] = $this->getShippingFeesForEachItem($cart_items,$shipping_groups,$convert_to_base_rates);
       $shipping_fee_data['grand_total_shipping_fees'] = $this->sumArrayValuesByKey($shipping_fee_data['total_shipping_fees'],'total_shipping_fee');
       $shipping_fee_data['shipping_list'] = $this->getShippingList($cart_items,$shipping_groups);
       return $shipping_fee_data;
@@ -59,6 +59,7 @@ trait HasShipping{
                array_push($data['items'],[
                   'item_name' => $product->product_name,
                   'quantity' => $cart_item->quantity,
+                  'group_name' => $group->group_name,
                   'delivery_note' => "Item(s) will be delivered between "
                   .now()->addDays($group->delivery_duration)->toFormattedDateString()
                   ." and ".now()->addDays($group->delivery_duration + 3)->toFormattedDateString()
@@ -75,7 +76,7 @@ trait HasShipping{
 
 
 
-   protected function getShippingFeesForEachItem($cart_items,$shipping_groups,$convert_rates = true){
+   protected function getShippingFeesForEachItem($cart_items,$shipping_groups,$convert_to_base_rates = true){
       $fees = [];
       foreach($cart_items as $cart_item){
          $group = $this->selectArrayItemByKeyPair('store_id',$cart_item->store_id,$shipping_groups);
@@ -88,7 +89,7 @@ trait HasShipping{
             'item_type' => $cart_item->item_type,
             'store_id' => $cart_item->store_id,
             'delivery_date' => now()->addDays($group->delivery_duration)->toFormattedDateString(),
-            'total_shipping_fee' => ($convert_rates == true)? $this->baseToUserCurrency($total_shipping_fee):$total_shipping_fee
+            'total_shipping_fee' => ($convert_to_base_rates == true)? $this->userToBaseCurrency($total_shipping_fee):$total_shipping_fee
          ]);
       }
       return $fees;
@@ -118,7 +119,8 @@ trait HasShipping{
 
    protected function getDimensionRangeRateValue($dimension,$range_rates,$max_key = "max",$min_key = "min",$rate_key = "rate"){
       if(!isset($range_rates) || !isset($dimension)) return 0;
-      $ranges = (array) $range_rates;
+      $ranges = json_decode(json_encode($range_rates),true);
+      if(count($ranges) == 0) return 0;
       $range_value = 0;
       foreach($ranges as $range){
          if($dimension <= $range[$max_key] && $dimension >= $range[$min_key]){
@@ -147,10 +149,14 @@ trait HasShipping{
       if(!isset($store_location)){
          $store_location = ShippingLocation::where('store_id',$store_id)
          ->where('country_id',$user_addr->country_id)
-         ->where('state_id',$user_addr->state_id)->first();
+         ->where('state_id',$user_addr->state_id)
+         ->where('city_id',null)->first();
          if(!isset($store_location)){
             $store_location = ShippingLocation::where('store_id',$store_id)
-            ->where('country_id',$user_addr->country_id)->first();
+            ->where('country_id',$user_addr->country_id)
+            ->where('state_id',null)
+            ->where('city_id',null)
+            ->first();
          }
       }
       if(isset($store_location)){

@@ -11,6 +11,7 @@ Route::prefix('v1')->group(function(){
             Route::get('/check/cookie',"CookieController@checkCookie");
             Route::post('/user/register','AuthController@register');
             Route::post('/user/login','AuthController@login');
+            Route::put('/user/currency','UserController@updateUserCurrency');
             Route::get('/categories','CategoryController@index');
             Route::post('/create/filer','FilerController@create');
             Route::get('/ip_address','AuthController@getUserIpAddress');

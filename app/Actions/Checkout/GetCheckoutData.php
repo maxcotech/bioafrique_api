@@ -15,7 +15,7 @@ class GetCheckoutData extends Action{
 
    protected function getCheckoutDetails(){
       $data = [];
-      $data['shipping_details'] = $this->collateShippingDetailsByLocation($this->user,true);
+      $data['shipping_details'] = $this->collateShippingDetailsByLocation($this->user,false);
       $data['current_billing_address'] = $this->getCurrentBillingAddress($this->user->id);
       return $data;
    }

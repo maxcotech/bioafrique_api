@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Actions\User\GetUserProfile;
+use App\Actions\User\UpdateCurrency;
 use App\Http\Controllers\Controller;
 use App\Traits\HasHttpResponse;
 use Illuminate\Http\Request;
@@ -17,5 +18,9 @@ class UserController extends Controller
     }
     public function getUserProfile(Request $request){
         return (new GetUserProfile($request))->execute();
+    }
+
+    public function updateUserCurrency(Request $request){
+        return (new UpdateCurrency($request))->execute();
     }
 }
