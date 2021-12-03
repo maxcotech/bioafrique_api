@@ -37,63 +37,51 @@ trait HasShipping{
       $store_ids = $this->extractUniqueValueList($cart_items,"store_id");
       $shipping_groups = $this->getShippingGroups($store_ids,$address);
       $shipping_fee_data = [];
-      $shipping_fee_data['total_shipping_fees'] = $this->getShippingFeesForEachItem($cart_items,$shipping_groups,$convert_to_base_rates);
-      $shipping_fee_data['grand_total_shipping_fees'] = $this->sumArrayValuesByKey($shipping_fee_data['total_shipping_fees'],'total_shipping_fee');
-      $shipping_fee_data['shipping_list'] = $this->getShippingList($cart_items,$shipping_groups);
+      $shipping_fee_data['group_shipping_details'] = $this->getShippingDetailsForEachShippingGroup($cart_items,$shipping_groups,$convert_to_base_rates);
+      $shipping_fee_data['grand_total_shipping_fees'] = $this->sumArrayValuesByKey($shipping_fee_data['group_shipping_details'],'total_shipping_fee');
       return $shipping_fee_data;
    }
 
-   protected function getShippingList($cart_items,$shipping_groups){
-      $shipping_list = [];
-      $shipping_groups = json_decode(json_encode($shipping_groups));
+   protected function getShippingDetailsForEachShippingGroup($cart_items,$unique_groups,$convert_to_base_rates = true){
       $cart_items = json_decode(json_encode($cart_items));
-      $count = 1;
-      $total_shipping = count($shipping_groups);
-      foreach($shipping_groups as $group){
-         $data = [];
-         $data['shipping_label'] = "Shipping ".$count." of ".$total_shipping;
-         $data['items'] = [];
+      $groups = json_decode(json_encode($unique_groups));
+      $output = []; $count = 1; $total_shipping = count($unique_groups);
+      foreach($groups as $group){
+         $total_shipping_fee = 0;
+         $items = [];
+         $total_dimensions = 0;
          foreach($cart_items as $cart_item){
             if($cart_item->store_id == $group->store_id){
                $product = Product::find($cart_item->item_id);
-               array_push($data['items'],[
-                  'item_name' => $product->product_name,
-                  'quantity' => $cart_item->quantity,
-                  'group_name' => $group->group_name,
-                  'delivery_note' => "Item(s) will be delivered between "
-                  .now()->addDays($group->delivery_duration)->toFormattedDateString()
-                  ." and ".now()->addDays($group->delivery_duration + 3)->toFormattedDateString()
-                  .".\n(PLEASE NOTE: Items(s) may arrive before these dates)."
+               $total_dimensions += $this->getShippingDimension($product,$cart_item->quantity);
+               array_push($items,[
+                  'item_id' => $cart_item->item_id, 'variant_id' => $cart_item->variant_id,
+                  'item_type' => $cart_item->item_type,'item_name' => $product->product_name
                ]);
             }
          }
-         array_push($shipping_list,$data);
-         $count++;
-
-      }
-      return $shipping_list;
-   }
-
-
-
-   protected function getShippingFeesForEachItem($cart_items,$shipping_groups,$convert_to_base_rates = true){
-      $fees = [];
-      foreach($cart_items as $cart_item){
-         $group = $this->selectArrayItemByKeyPair('store_id',$cart_item->store_id,$shipping_groups);
-         $group = json_decode(json_encode($group));
-         $product = Product::find($cart_item->item_id);
-         $total_shipping_fee = $this->getTotalShippingFeeForItem($product,$group);
-         array_push($fees,[
-            'id' => $cart_item->id,
-            'item_id' => $cart_item->item_id,
-            'item_type' => $cart_item->item_type,
-            'store_id' => $cart_item->store_id,
-            'delivery_date' => now()->addDays($group->delivery_duration)->toFormattedDateString(),
-            'total_shipping_fee' => ($convert_to_base_rates == true)? $this->userToBaseCurrency($total_shipping_fee):$total_shipping_fee
+         $total_shipping_fee = $this->getNonDimensionalShippingFees($group);
+         $total_shipping_fee += $this->getDimensionRangeRateValue($total_dimensions,json_decode($group->dimension_range_rates));
+         array_push($output,[
+            'shipping_label' => "Shipping ".$count." of ".$total_shipping,'store_id' => $group->store_id,
+            'total_shipping_fee' => ($convert_to_base_rates == true)? $this->userToBaseCurrency($total_shipping_fee):$total_shipping_fee,
+            "delivery_note" => "Item(s) will be delivered between "
+            .now()->addDays($group->delivery_duration)->toFormattedDateString()
+            ." and ".now()->addDays($group->delivery_duration + 3)->toFormattedDateString()
+            .".\n(PLEASE NOTE: Items(s) may arrive before these dates).",'items' => $items
          ]);
+         $count++;
       }
-      return $fees;
+      return $output;
    }
+
+   
+   protected function getNonDimensionalShippingFees($group){
+      $total = 0;
+      $total += $group->shipping_rate ?? 0;
+      return $total;
+   }
+
 
    protected function getTotalShippingFeeForItem($product,$group){
       $total = 0;
@@ -104,9 +92,9 @@ trait HasShipping{
       return $total;
    }
 
-   protected function getShippingDimension($product){
+   protected function getShippingDimension($product,$quantity = 1){
       $dimension = 0;
-      $dim_divisor = 139; //using fedex dim divisor value for both national and international shipping.
+      $dim_divisor = 3500; //converts dimensions to kilogram.
       if($product->dimension_width != null && $product->dimension_height != null && $product->dimension_length != null){
          $dimensions = $product->dimension_width * $product->dimension_height * $product->dimension_length;
          $dimension = round($dimensions / $dim_divisor);
@@ -114,7 +102,7 @@ trait HasShipping{
       } else {
          $dimension = $product->weight;
       }
-      return $dimension;
+      return $dimension * $quantity;
    }
 
    protected function getDimensionRangeRateValue($dimension,$range_rates,$max_key = "max",$min_key = "min",$rate_key = "rate"){

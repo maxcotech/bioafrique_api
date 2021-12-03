@@ -93,6 +93,8 @@ Route::prefix('v1')->group(function(){
             Route::get('/billing/addresses','BillingAddressController@index');
 
             Route::get('/checkout','CheckoutController@index');
+
+            Route::post('/payment/init','PaymentController@create');
         });
     });
 });

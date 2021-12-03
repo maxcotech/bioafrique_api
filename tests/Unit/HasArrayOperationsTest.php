@@ -20,16 +20,18 @@ class HasArrayOperationsTest extends TestCase
 
     public function testSumArrayValuesByKey(){
         $arr = [
-            [ 'key' => 50,'other_key' => 60],
-            [ 'key' => 50,'other_key' => 60],
-            [ 'key' => 50,'other_key' => 60]
+            [ 'key' => 50,'other_key' => 60, 'mis_key' => 1],
+            [ 'key' => 50,'other_key' => 60, "mis_key" => 2],
+            [ 'key' => 50,'other_key' => 60, "mis_key" => 1]
         ];
         $arr2 = (object) $arr;
         $this->assertEquals(150,$this->sumArrayValuesByKey($arr,"key"));
         $this->assertEquals(150,$this->sumArrayValuesByKey($arr2,"key"));
         $this->assertEquals(180,$this->sumArrayValuesByKey($arr,"other_key"));
-        $this->assertEquals(180,$this->sumArrayValuesByKey($arr,"other_key"));
+        $this->assertEquals(180,$this->sumArrayValuesByKey($arr2,"other_key"));
         $this->assertEquals(0,$this->sumArrayValuesByKey(null,"key"));
+        $this->assertEquals(100,$this->sumArrayValuesByKey($arr,"key","mis_key",1));
+        $this->assertEquals(100,$this->sumArrayValuesByKey($arr2,"key","mis_key",1));
     }
 
     public function testSelectArrayItemByKeyPair(){
@@ -72,5 +74,18 @@ class HasArrayOperationsTest extends TestCase
         $this->assertEqualsCanonicalizing([1,2],$this->extractUniqueValueList($in_data2,"key"));
         $this->assertEqualsCanonicalizing(['manu','menu'],$this->extractUniqueValueList($in_data2,"gin"));
         $this->assertEqualsCanonicalizing([11],$this->extractUniqueValueList($in_data3,"store_id"));
+    }
+
+    public function testGetValueFromArrayByCondition(){
+        $data = [
+            [ 'key' => 50,'other_key' => 60, 'mis_key' => 1],
+            [ 'key' => 50,'other_key' => 61, "mis_key" => 2],
+            [ 'key' => 50,'other_key' => 60, "mis_key" => 1]
+        ];
+        $data2 = json_decode(json_encode($data));
+        $this->assertEquals(61,$this->getValueFromArrayByCondition($data,"other_key","mis_key",2));
+        $this->assertEquals(61,$this->getValueFromArrayByCondition($data2,"other_key","mis_key",2));
+        $this->assertEquals(50,$this->getValueFromArrayByCondition($data,"key","mis_key",1));
+
     }
 }

@@ -32,7 +32,7 @@ class HasShippingTest extends TestCase
         $product2 = $this->getFakeDimensionProduct(null,10,20,30);
         $product3 = $this->getFakeDimensionProduct(100,10,20,30);
         $this->assertEquals(20,$this->getShippingDimension($product1));
-        $this->assertEquals(round((10 * 20 * 30) / 139),$this->getShippingDimension($product2));
+        $this->assertEquals(round((10 * 20 * 30) / 3500),$this->getShippingDimension($product2));
         $this->assertEquals(100,$this->getShippingDimension($product3));
     }
 

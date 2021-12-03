@@ -31,15 +31,35 @@ trait HasArrayOperations{
         return null;
     }
 
-    public function sumArrayValuesByKey($arr,$key){
+    public function sumArrayValuesByKey($arr,$key,$cond_key = null,$cond_value = null){
         if(!is_object($arr) && !is_array($arr)) return 0;
-        $in_arr = (array) $arr;
+        $in_arr = json_decode(json_encode($arr),true);
         $total = 0;
-        foreach($in_arr as $item){
-            $total += $item[$key];
+        if(isset($cond_key) && isset($cond_value)){
+            foreach($in_arr as $item){
+                if($item[$cond_key] == $cond_value){
+                    $total += $item[$key];
+                }
+            }
+        } else {
+            foreach($in_arr as $item){
+                $total += $item[$key];
+            }
         }
+        
         return $total;
     }
 
+    public function getValueFromArrayByCondition($arr,$value_key,$cond_key,$cond_value){
+        if(!is_object($arr) && !is_array($arr)) return null;
+        $arr = json_decode(json_encode($arr),true);
+        foreach($arr as $item){
+            if($item[$cond_key] == $cond_value){
+                return $item[$value_key];
+            }
+        }
+        return null;
+    }
+        
 }
-    
+

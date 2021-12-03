@@ -3,14 +3,17 @@
 namespace App\Models;
 
 use App\Traits\HasPayment;
+use App\Traits\HasRateConversion;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class OrderTransaction extends Model
 {
-    use HasFactory,HasPayment;
+    use HasFactory,HasPayment,HasRateConversion;
     public const STATUS_PENDING = 0;
     public const STATUS_COMPLETED = 1;
+    public const STATUS_VERIFIED = 2;
+    public const STATUS_CANCELLED = 3;
 
     //payment gateways 
 
@@ -31,11 +34,19 @@ class OrderTransaction extends Model
         return null;
     }
 
+    public function setAmountAttribute($value){
+        $this->attributes['amount'] = $this->userToBaseCurrency($value);
+    }
+
     public function getStatusTextAttribute(){
         if($this->status != null){
             return $this->payment_status_list[$this->status];
         }
         return null;
+    }
+
+    public function attributes(){
+        return $this->hasMany(OrderTransactionAttribute::class,"order_transaction_id");
     }
     
 }

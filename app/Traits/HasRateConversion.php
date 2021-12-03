@@ -28,6 +28,10 @@ trait HasRateConversion{
         return $amount / $user_currency->base_rate;
     }
 
+    protected function convertBaseAmountByRate($amount,$rate){
+        return $amount * $rate;
+    }
+
     protected function baseToUserCurrency($amount,$user = null,$cookie = null){
         $user_currency = $this->getUserCurrency($user,$cookie);
         return $amount * $user_currency->base_rate;
