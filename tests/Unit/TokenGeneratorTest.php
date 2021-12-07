@@ -24,7 +24,6 @@ class TokenGeneratorTest extends TestCase
 
     public function testGeneratePassword(){
         $passlen10 = $this->generatePassword(10);
-        echo $passlen10;
         $this->assertEquals(10,strlen($passlen10));
     }
 }

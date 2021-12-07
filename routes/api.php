@@ -34,6 +34,9 @@ Route::prefix('v1')->group(function(){
             Route::post('/wish_list','ProductWishListController@create');
             Route::get('/wish_list','ProductWishListController@index');
             Route::delete('/wish_list','ProductWishListController@delete');
+
+            Route::get('/reviews/{review_id?}','ProductReviewController@index');
+            Route::delete('/review/{review_id}','ProductReviewController@delete');
         });
 
         Route::middleware(['auth.apicookie','app_access_guard','ensure_currency_selected','cors'])->group(function(){
@@ -96,6 +99,9 @@ Route::prefix('v1')->group(function(){
 
             Route::post('/payment/init','PaymentController@create');
             Route::put('/payment/verify','PaymentController@verifyPayment');
+
+            Route::post('/review','ProductReviewController@create');
+            Route::put('/review','ProductReviewController@update');
         });
     });
 });
