@@ -19,6 +19,7 @@ class CreateOrderTransactionAttributes extends Migration
             $table->bigInteger('store_id');
             $table->double('shipping_fee');
             $table->double('cart_amount');
+            $table->integer('delivery_duration')->default(3);
             $table->timestamps();
         });
     }

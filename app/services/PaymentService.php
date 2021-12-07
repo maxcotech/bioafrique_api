@@ -11,7 +11,7 @@ class PaymentService{
     public $gateway_type = null;
     public $site_ref = null;
     public $currency = null;
-    public function __construct(string $gateway,string $site_ref,string $curr_code,mixed $amount){
+    public function __construct(string $gateway,string $site_ref,string $curr_code, $amount){
        $this->gateway_type = $gateway;
        $this->site_ref = $site_ref;
        $this->currency_code = $curr_code;

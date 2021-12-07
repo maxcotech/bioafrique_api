@@ -105,8 +105,14 @@ trait HasPayment{
         return $output_array;
     }
 
-
-
-
+    protected function calculateCommissionAmount($amount,$commission){
+        return round($amount / $commission,2);
+    }
+    protected function getCommissionAndRemainderAmount($amount,$commission){
+        $output = [];
+        $output['commission_amount'] = $this->calculateCommissionAmount($amount,$commission);
+        $output['remainder'] = $amount - $output['commission_amount'];
+        return (object) $output;
+    }
 }
     

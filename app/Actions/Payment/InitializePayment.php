@@ -72,10 +72,14 @@ class InitializePayment extends Action{
          $shipping_fee = $this->getValueFromArrayByCondition(
             $shipping_details,"total_shipping_fee","store_id",$store_id
          ); 
+         $delivery_duration = $this->getValueFromArrayByCondition(
+            $shipping_details,"delivery_duration","store_id",$store_id
+         ); 
          $trx_attr = OrderTransactionAttribute::create([
             'order_transaction_id' => $order_trx->id,'store_id' => $store_id,
             'cart_amount' => $cart_amount,
-            'shipping_fee' => $shipping_fee
+            'shipping_fee' => $shipping_fee,
+            'delivery_duration' => $delivery_duration
          ]);
          $this->createOrderTransactionAttrItems($trx_attr,$price_list,$store_id);
       }

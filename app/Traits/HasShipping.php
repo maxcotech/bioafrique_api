@@ -65,6 +65,7 @@ trait HasShipping{
          array_push($output,[
             'shipping_label' => "Shipping ".$count." of ".$total_shipping,'store_id' => $group->store_id,
             'total_shipping_fee' => ($convert_to_base_rates == true)? $this->userToBaseCurrency($total_shipping_fee):$total_shipping_fee,
+            'delivery_duration' => $group->delivery_duration,
             "delivery_note" => "Item(s) will be delivered between "
             .now()->addDays($group->delivery_duration)->toFormattedDateString()
             ." and ".now()->addDays($group->delivery_duration + 3)->toFormattedDateString()

@@ -11,6 +11,7 @@ class OrderTransactionAttribute extends Model
     use HasFactory,HasRateConversion;
     protected $table = "order_transaction_attributes";
     protected $fillable = [
+        'delivery_duration',
         'order_transaction_id','store_id','shipping_fee','cart_amount'
     ];
     public function items(){

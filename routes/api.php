@@ -95,6 +95,7 @@ Route::prefix('v1')->group(function(){
             Route::get('/checkout','CheckoutController@index');
 
             Route::post('/payment/init','PaymentController@create');
+            Route::put('/payment/verify','PaymentController@verifyPayment');
         });
     });
 });

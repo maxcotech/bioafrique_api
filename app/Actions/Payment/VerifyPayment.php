@@ -3,11 +3,13 @@ namespace App\Actions\Payment;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use App\Actions\Action;
-use App\Models\Currency;
 use App\Models\OrderTransaction;
-use App\Services\PaymentService;
 use App\Traits\HasPayment;
 use App\Traits\HasRateConversion;
+use App\Models\Currency;
+use App\Models\User;
+use App\Services\OrderServices\CreateOrder;
+use App\Services\PaymentService;
 use Illuminate\Validation\Rule;
 
 class VerifyPayment extends Action{
@@ -46,11 +48,7 @@ class VerifyPayment extends Action{
    }
 
    protected function markTransactionAsVerified($transaction){
-      //to be implemented
-   }
-
-   protected function initializeOrder(){
-
+      $transaction->update(['status' => OrderTransaction::STATUS_VERIFIED]);
    }
 
    protected function verifyPayment($transaction){
@@ -65,15 +63,27 @@ class VerifyPayment extends Action{
       return $payment_service->verifyPayment($transaction_id);
    }
 
+   
+  
+
    public function execute(){
       try{
          $val = $this->validate();
          if($val['status'] != "success") return $this->resp($val);
          if(!$this->paymentGatewayExists($this->request->gateway_code)) return $this->validationError('Invalid payment gateway code submitted.');
          $transaction = $this->getCurrentTransaction();
+         if($transaction->status == OrderTransaction::STATUS_VERIFIED){
+            return $this->validationError('This transaction is already verified');
+         }
          $this->markTransactionAsCompleted($transaction);
+         $transaction->refresh();
          if($this->verifyPayment($transaction)){
-
+            $this->markTransactionAsVerified($transaction);
+            $order_service = new CreateOrder($this->user,User::auth_type);
+            $result = $order_service->onCreateOrder($transaction);
+            return $this->successWithData(
+               $result->getResult(),
+               'Your payment has been verified and your order was successfully created.');
          }
          return $this->internalError('Sorry, your payment verification failed.');
       }

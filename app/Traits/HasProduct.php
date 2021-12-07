@@ -4,6 +4,7 @@ namespace App\Traits;
 
 use App\Models\Category;
 use App\Models\Product;
+use App\Models\SuperAdminPreference;
 use Illuminate\Contracts\Validation\Validator as ValidationObj;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
@@ -129,5 +130,32 @@ trait HasProduct
            }
         }
         return $this->payload();
-     }
+    }
+
+    protected function getProductComissionFee($product_id){
+        $product = Product::find($product_id);
+        if(!isset($product)) throw new \Exception('Invalid product was selected');
+        $category = $product->category;
+        if(isset($category) && $category->commission_fee != null){
+            return $category->commission_fee;
+        }
+        $pref_key = SuperAdminPreference::COMMISSION_PREFERENCE;
+        $default_fee = SuperAdminPreference::where('preference_key',$pref_key)->first();
+        if(isset($default_fee)){
+            return $default_fee->preference_value;
+        }
+        return 0.1;
+    }
+
+    protected function getOrderItemDetails($order_items){
+        //$order_items = json_decode(json_encode($order_items));
+        $output = [];
+        foreach($order_items as $item){
+            $item->product = $item->product()->select('product_name','product_image')->first();
+            $item->variation = $item->variation()->select('variation_name','variation_image')->first();
+            array_push($output,$item);
+        }
+        return $output;
+    }
+     
 }

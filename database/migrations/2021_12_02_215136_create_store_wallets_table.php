@@ -16,7 +16,7 @@ class CreateStoreWalletsTable extends Migration
         Schema::create('store_wallets', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('store_id');
-            $table->tinyInteger('lock_status');
+            $table->string('previous_row_hash',1000)->nullable();
             $table->double('amount');
             $table->bigInteger('sender_id');
             $table->string('sender_type',50);

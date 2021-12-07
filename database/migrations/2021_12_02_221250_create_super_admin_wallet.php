@@ -16,8 +16,9 @@ class CreateSuperAdminWallet extends Migration
         Schema::create('super_admin_wallet', function (Blueprint $table) {
             $table->id();
             $table->double('amount');
+            $table->string('previous_row_hash')->nullable();
             $table->bigInteger('sender_id');
-            $table->string('sender_type',50);
+            $table->string('sender_type',50); // User , Store, 
             $table->bigInteger('ledger_type'); // credit = 1, debit = 0
             $table->string('transaction_type',50)->nullable(); //order, transfer , bonus, gift;
             $table->bigInteger('transaction_id')->nullable(); //primary key of table containing the specified transaction type.

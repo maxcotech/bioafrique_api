@@ -13,6 +13,22 @@ class HasPaymentTest extends TestCase
      *
      * @return void
      */
+    public function testCalculateCommissionAmount(){
+        $amount = 200;
+        $commission = 10;
+        $this->assertEquals(20,$this->calculateCommissionAmount($amount,$commission));
+    }
+
+    public function testGetCommissionAndRemainderAmount(){
+        $amount = 200;
+        $commission = 10;
+        $expected = (object) [
+            'commission_amount' => 20,
+            'remainder' => 180
+        ];
+        $this->assertEquals($expected,$this->getCommissionAndRemainderAmount($amount,$commission));
+    }
+
     public function testSumPriceInTwoRelatedArraysByKeys(){
         $arr1 = [
             ['key'=>2,'price1'=>2],['key'=>4,'price1'=>4]
