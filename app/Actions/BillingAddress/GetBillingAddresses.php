@@ -31,7 +31,8 @@ class GetBillingAddresses extends Action{
             $this->request->query('limit',15),
             [
                'id','street_address','country_id','state_id','city_id','phone_number',
-               'telephone_code','additional_number','additional_telephone_code','postal_code'
+               'telephone_code','additional_number','additional_telephone_code','postal_code',
+               'is_current'
             ]
          );
    }

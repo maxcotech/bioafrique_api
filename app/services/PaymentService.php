@@ -22,6 +22,27 @@ class PaymentService{
         if($this->gateway_type == OrderTransaction::FLUTTERWAVE && isset($transaction_id)){
             return $this->verifyFlutterwavePayment($transaction_id);
         }
+        if($this->gateway_type == OrderTransaction::PAYSTACK){
+            return $this->verifyPaystackPayment();
+        }
+        return false;
+    }
+
+    protected function verifyPaystackPayment(){
+        $base_url = env('PAYSTACK_BASE_URL');
+        $verify_url = $base_url."transaction/verify/".$this->site_ref;
+        $response = Http::withHeaders([
+            'Authorization' => 'Bearer '.$this->getSecretKey()
+        ])->get($verify_url);
+        if($response->successful()){
+            $result = json_decode($response->body());
+            if($result->status == true && $result->data->status == "success"){
+                $paid_amount = round($result->data->amount,2);
+                if($paid_amount >= $this->amount && $this->currency_code == $result->data->currency){
+                    return true;
+                }
+            }
+        }
         return false;
     }
 
