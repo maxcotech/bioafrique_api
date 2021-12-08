@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Traits\HasRateConversion;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -18,15 +19,32 @@ class SubOrder extends Model
         'shipping_fee','payment_status'
     ];
 
+    public function getDeliveryDateAttribute($value){
+        $carbon = new Carbon($value);
+        return $carbon->toFormattedDateString();
+    }
+
+    public function getCreatedAtAttribute($value){
+        $carbon = new Carbon($value);
+        return $carbon->toFormattedDateString();
+    }
+    public function getUpdatedAtAttribute($value){
+        $carbon = new Carbon($value);
+        return $carbon->toFormattedDateString();
+    }
+
+    public function order(){
+        return $this->belongsTo(Order::class,"order_id");
+    }
+
     public function items(){
         return $this->hasMany(OrderItem::class,"sub_order_id");
     }
     public function fundLockPassword(){
-        $user = request()->user();
-        if($this->user_id == $user->id){
-            return $this->belongsTo(OrderFundLock::class,'wallet_fund_id');
-        }
-        return null;
+        return $this->hasOne(OrderFundLock::class,'sub_order_id','id');
+    }
+    public function user(){
+        return $this->belongsTo(User::class,'user_id');
     }
 
     public function getShippingFeeAttribute($value){
@@ -34,6 +52,12 @@ class SubOrder extends Model
     }
     public function setShippingFeeAttribute($value){
         $this->attributes['shipping_fee'] = $this->userToBaseCurrency($value);
+    }
+    public function getAmountAttribute($value){
+        return $this->baseToUserCurrency($value);
+    }
+    public function setAmountAttribute($value){
+        $this->attributes['amount'] = $this->userToBaseCurrency($value);
     }
     
 

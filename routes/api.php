@@ -102,6 +102,10 @@ Route::prefix('v1')->group(function(){
 
             Route::post('/review','ProductReviewController@create');
             Route::put('/review','ProductReviewController@update');
+
+            Route::get('/sub_orders/{sub_order_id?}','SubOrderController@index');
+
+            Route::get('/order_items/{order_item_id?}','OrderItemController@index');
         });
     });
 });

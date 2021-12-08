@@ -25,16 +25,16 @@ trait HasRateConversion{
 
     protected function userToBaseCurrency($amount,$user = null,$cookie = null){
         $user_currency = $this->getUserCurrency($user,$cookie);
-        return $amount / $user_currency->base_rate;
+        return round($amount / $user_currency->base_rate,2);
     }
 
     protected function convertBaseAmountByRate($amount,$rate){
-        return $amount * $rate;
+        return round($amount * $rate,2);
     }
 
     protected function baseToUserCurrency($amount,$user = null,$cookie = null){
         $user_currency = $this->getUserCurrency($user,$cookie);
-        return $amount * $user_currency->base_rate;
+        return round($amount * $user_currency->base_rate,2);
     }
 
     protected function convertNestedRates($data,$keys,$function,$json = true){
