@@ -13,6 +13,7 @@ class SubOrder extends Model
     public const PAYMENT_STATUS_PAID = 1;
     public const PAYMENT_STATUS_NOT_PAID = 0;
     protected $table = "sub_orders";
+    protected $appends =['payment_status_text'];
     protected $fillable = [
         'order_id','user_id','store_id','amount',
         'delivery_date','status','wallet_fund_id',
@@ -22,6 +23,13 @@ class SubOrder extends Model
     public function getDeliveryDateAttribute($value){
         $carbon = new Carbon($value);
         return $carbon->toFormattedDateString();
+    }
+
+    public function getPaymentStatusTextAttribute(){
+        if($this->payment_status == self::PAYMENT_STATUS_PAID){
+            return "Paid";
+        }
+        return "Not Paid";
     }
 
     public function getCreatedAtAttribute($value){

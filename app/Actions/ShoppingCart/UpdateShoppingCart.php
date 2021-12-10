@@ -30,10 +30,12 @@ class UpdateShoppingCart extends Action{
    }
 
    protected function onUpdateCart($auth_type){
-      ShoppingCartItem::where('item_id',$this->request->item_id)
-      ->where('variant_id',$this->request->input('variant_id',null))
-      ->where('user_id',$auth_type->id)
-      ->where('user_type',$auth_type->type)->update([
+      ShoppingCartItem::updateOrCreate([
+         'item_id' => $this->request->item_id,
+         'variant_id' => $this->request->input('variant_id',null),
+         'user_id' => $auth_type->id,
+         'user_type' => $auth_type->type
+      ],[
          'quantity' => $this->request->quantity
       ]);
    }

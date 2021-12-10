@@ -21,6 +21,7 @@ use App\Services\WalletServices\Utilities\LockDetails;
 use App\Services\WalletServices\Utilities\SenderObject;
 use App\Services\WalletServices\Utilities\TransactionDetails;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class CreateOrder
 {
@@ -81,7 +82,7 @@ class CreateOrder
         $order = Order::create([
             'billing_address_id' => $current_billing->id ?? null,
             'user_id' => $this->user->id,
-            'order_number' => $this->createNumberToken(18),
+            'order_number' => $this->createNumberToken(12),
             'total_amount' => $transaction->amount,
             'status' => Order::STATUS_AWAITING_SHIPPING,
             'transaction_id' => $transaction->id

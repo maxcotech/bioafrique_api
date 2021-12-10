@@ -16,6 +16,12 @@ class OrderFundLock extends LockModel
     ];
 
     public function getLockPasswordAttribute($value){
-        return $this->decryptData($value,$this->user_id);
+        $user = request()->user();
+        if(isset($user)){
+            if($user->id == $this->user_id){
+                return $this->decryptData($value,$this->user_id);            
+            }
+        }
+        return $value; 
     }
 }

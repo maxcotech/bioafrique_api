@@ -94,7 +94,7 @@ Route::prefix('v1')->group(function(){
             Route::put('/billing/address','BillingAddressController@update');
             Route::delete('/billing/address/{address_id}','BillingAddressController@delete');
             Route::get('/billing/addresses','BillingAddressController@index');
-
+            Route::patch('/billing/current/{address_id}','BillingAddressController@changeCurrentAddress');
             Route::get('/checkout','CheckoutController@index');
 
             Route::post('/payment/init','PaymentController@create');

@@ -15,7 +15,8 @@ trait HasPayment{
     public $payment_status_list = [
         OrderTransaction::STATUS_COMPLETED => "Completed",
         OrderTransaction::STATUS_PENDING => "Pending",
-        OrderTransaction::STATUS_CANCELLED => "Cancelled"
+        OrderTransaction::STATUS_CANCELLED => "Cancelled",
+        OrderTransaction::STATUS_VERIFIED => "Verified"
     ];
 
     public function getGatewayPublicKey($gateway){
@@ -106,7 +107,7 @@ trait HasPayment{
     }
 
     protected function calculateCommissionAmount($amount,$commission){
-        return round($amount / $commission,2);
+        return round($commission / 100 * $amount,2);
     }
     protected function getCommissionAndRemainderAmount($amount,$commission){
         $output = [];

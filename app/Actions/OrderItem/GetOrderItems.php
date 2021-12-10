@@ -25,7 +25,8 @@ class GetOrderItems extends Action{
          'sub_order_id' => 'nullable|integer|exists:sub_orders,id',
          'user_id' => 'nullable|integer|exists:users,id',
          'order_item_id' => 'nullable|integer|exists:order_items,id',
-         'limit' => 'nullable|integer|min:1'
+         'limit' => 'nullable|integer|min:1',
+         'paginate' => 'nullable|integer'
       ]);
       return $this->valResult($val);
    }
@@ -60,7 +61,15 @@ class GetOrderItems extends Action{
       } elseif ($this->request->query('user_id',null) != null) {
          $query = $query->where('user_id',$this->request->query('user_id'));
       }
-      return (isset($query))? $query->paginate($this->request->query('limit',15)) : null;
+      return (isset($query))? $this->getQueryData($query) : null;
+   }
+
+   protected function getQueryData($query){
+      if($this->request->query('paginate',1) == 1){
+         return $query->paginate($this->request->query('limit',15));
+      } else {
+         return $query->get();
+      }
    }
 
    protected function getRelationshipArray(){
