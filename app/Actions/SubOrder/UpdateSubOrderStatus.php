@@ -42,7 +42,11 @@ class UpdateSubOrderStatus extends Action{
 
    protected function getFundPasswordRules(){
       if($this->isStoreOwner($this->user_type) || $this->isStoreStaff($this->user_type)){
-         return 'required|string';
+         if($this->request->new_status == Order::STATUS_COMPLETED){
+            return 'required|string';
+         } else {
+            return 'nullable|string';
+         }
       } elseif ($this->isSuperAdmin($this->user_type)){
          return 'nullable|string';
       } elseif ($this->isCustomer($this->user_type)){
@@ -77,7 +81,7 @@ class UpdateSubOrderStatus extends Action{
             } else {
                $decrypted = $this->decryptData($encrypted,$sub_order->user_id);
             }
-            if($decrypted != $this->request->lock_password){
+            if($decrypted != $this->request->fund_password){
                return $this->boolMessage("The fund lock password you entered is incorrect",true);
             }
          }
@@ -119,7 +123,7 @@ class UpdateSubOrderStatus extends Action{
    protected function updateMainOrderWhenPossible($sub_order){
       if(!SubOrder::where('order_id',$sub_order->order_id)
          ->where('status','!=',$this->request->new_status)->exists()){
-         Order::where('id',$sub_order->id)
+         Order::where('id',$sub_order->order_id)
          ->update([
             'status'=>$this->request->new_status
          ]);

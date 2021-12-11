@@ -105,7 +105,7 @@ class GetSubOrders extends Action{
       }
       if($this->isStoreStaff($user_type) || $this->isStoreOwner($user_type) || $this->isCustomer($user_type)){
          array_push($data,'order:id,user_id,order_number,total_amount,status,billing_address_id');
-         array_push($data,'order.billingAddress:id,street_address,city_id,state_id,country_id,phone_number,telephone_code,additional_number,additional_telephone_code,postal_code');
+         array_push($data,'order.billingAddress:id,street_address,city_id,state_id,country_id,phone_number,telephone_code,additional_number,additional_telephone_code,postal_code,first_name,last_name');
          array_push($data,'order.billingAddress.state:id,state_name');
          array_push($data,'order.billingAddress.city:id,city_name');
          array_push($data,'order.billingAddress.country:id,country_name');

@@ -22,6 +22,7 @@ Route::prefix('v1')->group(function(){
             
             Route::get('/product/{slug}','ProductController@show');
             Route::get('/countries','CountryController@index');
+            Route::get('/currencies','CountryController@getCurrencies');
             Route::get('/search/{search_type}','SearchController@index');
             Route::get('/variation_options','VariationOptionsController@index');
 
@@ -104,6 +105,7 @@ Route::prefix('v1')->group(function(){
             Route::put('/review','ProductReviewController@update');
 
             Route::get('/sub_orders/{sub_order_id?}','SubOrderController@index');
+            Route::put('/sub_order/status','SubOrderController@updateStatus');
 
             Route::get('/order_items/{order_item_id?}','OrderItemController@index');
         });
