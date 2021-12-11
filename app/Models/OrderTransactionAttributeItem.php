@@ -19,4 +19,7 @@ class OrderTransactionAttributeItem extends Model
     public function setTotalAmountAttribute($value){
         $this->attributes['total_amount'] = $this->userToBaseCurrency($value);
     }
+    public function getTotalAmountAttribute($value){
+        return $this->baseToUserCurrency($value);
+    }
 }

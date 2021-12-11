@@ -26,6 +26,8 @@ class CreateBillingAddress extends Action{
             return $query->where('state_id',$this->request->state_id);
          })
           ],
+         'first_name' => 'required|string',
+         'last_name' => 'required|string',
          'street_address' => 'required|string',
          'postal_code' => 'nullable|string',
          'phone_number' => 'required|integer',
@@ -55,6 +57,8 @@ class CreateBillingAddress extends Action{
 
    protected function createNewBillingAddress(){
       BillingAddress::create([
+         'first_name' => $this->request->first_name,
+         'last_name' => $this->request->last_name,
          'country_id' => $this->request->country_id,
          'state_id' => $this->request->state_id,
          'city_id' => $this->request->city_id,

@@ -29,6 +29,8 @@ class UpdateBillingAddress extends Action{
             return $query->where('state_id',$this->request->state_id);
          })
           ],
+         'first_name' => 'required|string',
+         'last_name' => 'required|string',
          'street_address' => 'required|string',
          'postal_code' => 'nullable|string',
          'phone_number' => 'required|integer',

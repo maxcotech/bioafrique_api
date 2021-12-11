@@ -144,7 +144,7 @@ trait HasProduct
         if(isset($default_fee)){
             return $default_fee->preference_value;
         }
-        return 0.1;
+        return 0.5;
     }
 
     protected function getOrderItemDetails($order_items){

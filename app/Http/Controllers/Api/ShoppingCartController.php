@@ -10,10 +10,12 @@ use App\Http\Controllers\Controller;
 use App\Models\ShoppingCartItem;
 use App\Traits\HasAuthStatus;
 use App\Traits\HasHttpResponse;
+use App\Traits\HasShoppingCartItem;
 use Illuminate\Http\Request;
 
 class ShoppingCartController extends Controller
 {
+    use HasShoppingCartItem;
     use HasAuthStatus,HasHttpResponse;
     public function create(Request $request){
         return (new AddShoppingCartItem($request))->execute();
@@ -37,13 +39,11 @@ class ShoppingCartController extends Controller
             if(!isset($auth_type)){
                 throw new \Exception('An Error occurred, please make sure your browser allows cookies on this app.');
             }
-            $count = ShoppingCartItem::where('user_id',$auth_type->id)
-            ->where('user_type',$auth_type->type)->count();
+            $count = $this->getTotalCartCount($auth_type);
             return $this->successWithData($count);
         }
         catch(\Exception $e){
             return $this->internalError($e->getMessage());
         }
-
     }
 }

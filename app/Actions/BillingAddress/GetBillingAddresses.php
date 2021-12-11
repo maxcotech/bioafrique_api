@@ -32,7 +32,7 @@ class GetBillingAddresses extends Action{
             [
                'id','street_address','country_id','state_id','city_id','phone_number',
                'telephone_code','additional_number','additional_telephone_code','postal_code',
-               'is_current'
+               'is_current','first_name','last_name'
             ]
          );
    }

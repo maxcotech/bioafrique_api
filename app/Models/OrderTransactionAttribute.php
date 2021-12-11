@@ -23,4 +23,10 @@ class OrderTransactionAttribute extends Model
     public function setCartAmountAttribute($value){
         $this->attributes['cart_amount'] = $this->userToBaseCurrency($value);
     }
+    public function getShippingFeeAttribute($value){
+        return $this->baseToUserCurrency($value);
+    }
+    public function getCartAmountAttribute($value){
+        return $this->baseToUserCurrency($value);
+    }
 }

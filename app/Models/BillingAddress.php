@@ -16,7 +16,7 @@ class BillingAddress extends Model
         'user_id','country_id','state_id','city_id',
         'street_address','phone_number','telephone_code',
         'additional_number','additional_telephone_code',
-        'postal_code','is_current'
+        'postal_code','is_current','first_name','last_name'
     ];
 
     public function country(){

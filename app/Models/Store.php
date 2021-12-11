@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Store extends Model
 {
-    use HasFactory,FilePath;
+    use HasFactory,FilePath,FilePath;
     protected $table = 'stores';
     protected $with = ['state','city'];
     protected $fillable = [
@@ -46,4 +46,5 @@ class Store extends Model
     public function city(){
         return $this->belongsTo(City::class,'city_id');
     }
+
 }

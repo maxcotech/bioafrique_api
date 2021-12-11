@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Actions\BillingAddress\ChangeCurrentAddress;
 use App\Actions\BillingAddress\CreateBillingAddress;
 use App\Actions\BillingAddress\DeleteBillingAddress;
 use App\Actions\BillingAddress\GetBillingAddresses;
@@ -22,5 +23,8 @@ class BillingAddressController extends Controller
     }
     public function index(Request $request){
         return (new GetBillingAddresses($request))->execute();
+    }
+    public function changeCurrentAddress(Request $request,$address_id){
+        return (new ChangeCurrentAddress($request,$address_id))->execute();
     }
 }
