@@ -20,6 +20,7 @@ Route::prefix('v1')->group(function(){
             Route::get('/store/search','StoreController@search');
             Route::get('/catalog','ProductController@index');
             
+            Route::get('/category/products/{category_param}','ProductController@getCategoryProducts');
             Route::get('/product/{slug}','ProductController@show');
             Route::get('/countries','CountryController@index');
             Route::get('/currencies','CountryController@getCurrencies');

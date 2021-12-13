@@ -7,21 +7,28 @@ use App\Models\Product;
 class GetAProduct extends Action{
    
    protected $request;
-   protected $slug;
-   public function __construct(Request $request,$slug){
+   protected $param;
+   public function __construct(Request $request,$param){
       $this->request=$request;
-      $this->slug = $slug;
+      $this->param = $param;
    }
 
-   protected function getProductBySlug(){
-      return Product::with(['images','variations','category','brand'])
-      ->where('product_slug',$this->slug)
-      ->first();
+   protected function getProductBySlugOrId(){
+      $query = Product::with(['images','variations','category','brand']);
+      if(is_numeric($this->param)){
+         $query = $query->where('id',$this->param);
+      } else {
+         $query = $query->where('product_slug',$this->param);
 
+      }
+      return $query->first();
    }
+
    public function execute(){
       try{
-         return $this->successWithData($this->getProductBySlug());
+         $data = $this->getProductBySlugOrId();
+         $data->append('review_summary');
+         return $this->successWithData($data);
       }
       catch(\Exception $e){
          return $this->internalError($e->getMessage());

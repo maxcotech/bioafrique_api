@@ -10,13 +10,20 @@ use Illuminate\Database\Eloquent\Model;
 class ProductVariation extends Model
 {
     use HasFactory,FilePath,HasRateConversion;
-
+    protected $appends = ['current_price'];
     protected $table = 'product_variations';
     protected $fillable = [
         'product_id','store_id','variation_name','variation_sku',
         'regular_price','sales_price','amount_in_stock','variation_status',
         'variation_image'
     ];
+
+    public function getCurrentPriceAttribute(){
+        if($this->sales_price == 0 || $this->sales_price == null){
+            return $this->regular_price;
+        }
+        return $this->sales_price;
+    }
 
     public function getRegularPriceAttribute($value){
         return $this->baseToUserCurrency($value);

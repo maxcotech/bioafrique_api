@@ -3,13 +3,14 @@
 namespace App\Models;
 
 use App\Traits\FilePath;
+use App\Traits\HasDataProcessing;
 use App\Traits\HasRateConversion;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Product extends Model
 {
-    use HasFactory,FilePath,HasRateConversion;
+    use HasFactory,FilePath,HasRateConversion,HasDataProcessing;
 
     public const simple_product_type = "simple_product";
     public const variation_product_type = "variation_product";
@@ -26,7 +27,7 @@ class Product extends Model
     ];
 
     
-    protected $appends = ['current_price'];
+    protected $appends = ['current_price','review_average'];
 
     public function getCurrentPriceAttribute(){
         if($this->sales_price == 0 || $this->sales_price == null){
@@ -69,6 +70,22 @@ class Product extends Model
         return $this->hasOne(ProductDimension::class,'product_id');
     }
 
+    public function reviews(){
+        return $this->hasMany(ProductReview::class,'product_id');
+    }
+
+    public function getReviewAverageAttribute(){
+        $reviews = ProductReview::where('product_id',$this->id)->get();
+        if(count($reviews) > 0){
+            return $this->getReviewAverage($reviews,'star_rating');
+        }
+        return 0;
+    }
+    public function getReviewSummaryAttribute(){
+        $reviews = ProductReview::where('product_id',$this->id)->get();
+        return $this->getReviewSummary($reviews,"star_rating");
+    }
+
     public function getProductImageAttribute($value){
         return $this->getRealPath($value);
     }
@@ -82,7 +99,7 @@ class Product extends Model
     }
 
     public function setRegularPriceAttribute($value){
-        $this->attributes['regular_price'] = round($this->userToBaseCurrency($value));
+        $this->attributes['regular_price'] = $this->userToBaseCurrency($value);
     }
 
     public function setSalesPriceAttribute($value){

@@ -22,7 +22,8 @@ class UploadProductVariationImage extends Action{
          'image_file' => 'required|file|mimes:jpg,jpeg,png,gif,webp',
          'store_id' => $this->storeIdValidationRule(),
          'old_image_url' => 'nullable|string',
-         'variation_id' => 'nullable|integer|exists:product_variations,id'
+         'variation_id' => 'nullable|integer|exists:product_variations,id',
+         'product_id' => 'nullable|integer|exists:products,id'
       ]);
       return $this->valResult($val);
    }
@@ -32,6 +33,8 @@ class UploadProductVariationImage extends Action{
       ->where('variation_image',$old_path);
       if($this->request->has('variation_id') && $this->request->variation_id != null){
          $query->where('id',$this->request->variation_id);
+      } elseif($this->request->product_id != null){
+         $query->where('product_id',$this->request->product_id);
       } else {
          $query->where('variation_status',$this->getResourceInDraftId());
       }
@@ -41,11 +44,15 @@ class UploadProductVariationImage extends Action{
    }
 
    protected function createImageRecord($new_path){
-      ProductVariation::create([
-         'variation_image' => $new_path,
-         'variation_status' => $this->getResourceInDraftId(),
-         'store_id' => $this->request->store_id
-      ]);
+      $data = [
+            'variation_image' => $new_path,
+            'variation_status' => $this->getResourceInDraftId(),
+            'store_id' => $this->request->store_id
+      ];
+      if($this->request->product_id != null){
+         $data['product_id'] = $this->request->product_id;
+      }
+     ProductVariation::create($data);
    }
 
    protected function variationImgExistsInRecord($url){
@@ -66,6 +73,8 @@ class UploadProductVariationImage extends Action{
             if(isset($initial_old_path) && $this->variationImgExistsInRecord($initial_old_path)){
                $this->updateImageRecord($initial_old_path,$new_file_url);
                $this->deleteFile($initial_old_path);
+            } else {
+               $this->createImageRecord($new_file_url);
             }
          } else {
             $this->createImageRecord($new_file_url);

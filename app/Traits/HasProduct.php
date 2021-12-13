@@ -6,12 +6,13 @@ use App\Models\Category;
 use App\Models\Product;
 use App\Models\SuperAdminPreference;
 use Illuminate\Contracts\Validation\Validator as ValidationObj;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 
 trait HasProduct
 {
-    use StringFormatter;
+    use StringFormatter,FilePath;
     protected $img_labels = [
         'front_image', 'back_image', 'side_image',
         'fourth_image', 'fifth_image', 'sixth_image'
@@ -124,6 +125,8 @@ trait HasProduct
        
         if(count($variations) < 1) return $this->valMessageObject('At least one variation required for variation products.');
         foreach($variations as $variation){
+           Log::alert('variation image '.$this->getInitialPath($variation['variation_image_url'],'product_variation_images'));
+           $variation['variation_image_url'] = $this->getInitialPath($variation['variation_image_url'],'product_variation_images');
            $val = Validator::make($variation,$validation_rules);
            if($val->fails()){
               return $this->valResult($val);
