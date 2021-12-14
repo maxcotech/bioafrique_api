@@ -104,6 +104,7 @@ Route::prefix('v1')->group(function(){
 
             Route::post('/review','ProductReviewController@create');
             Route::put('/review','ProductReviewController@update');
+            Route::get('/pending/reviews','ProductReviewController@getPendingReviews');
 
             Route::get('/sub_orders/{sub_order_id?}','SubOrderController@index');
             Route::put('/sub_order/status','SubOrderController@updateStatus');

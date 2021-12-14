@@ -46,7 +46,7 @@ class GetCategories extends Action
             $query->where('parent_id', $category->id);
          }
       }
-      $this->selectByVerboseLevel($query);
+      $query = $this->selectByVerboseLevel($query,$this->request->query('verbose',1));
       $data = $query->paginate($this->request->query('limit', 15));
       return $data;
    }

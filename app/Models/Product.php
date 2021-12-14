@@ -5,12 +5,13 @@ namespace App\Models;
 use App\Traits\FilePath;
 use App\Traits\HasDataProcessing;
 use App\Traits\HasRateConversion;
+use App\Traits\HasResourceStatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Product extends Model
 {
-    use HasFactory,FilePath,HasRateConversion,HasDataProcessing;
+    use HasFactory,FilePath,HasRateConversion,HasDataProcessing,HasResourceStatus;
 
     public const simple_product_type = "simple_product";
     public const variation_product_type = "variation_product";
@@ -75,14 +76,16 @@ class Product extends Model
     }
 
     public function getReviewAverageAttribute(){
-        $reviews = ProductReview::where('product_id',$this->id)->get();
+        $reviews = ProductReview::where('product_id',$this->id)
+        ->where('status',$this->getResourceActiveId())->get();
         if(count($reviews) > 0){
             return $this->getReviewAverage($reviews,'star_rating');
         }
         return 0;
     }
     public function getReviewSummaryAttribute(){
-        $reviews = ProductReview::where('product_id',$this->id)->get();
+        $reviews = ProductReview::where('product_id',$this->id)
+        ->where('status',$this->getResourceActiveId())->get();
         return $this->getReviewSummary($reviews,"star_rating");
     }
 

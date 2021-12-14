@@ -5,6 +5,7 @@ use Illuminate\Http\Request;
 use App\Actions\Action;
 use App\Models\Order;
 use App\Models\OrderFundLock;
+use App\Models\ProductReview;
 use App\Models\SubOrder;
 use App\Traits\HasEncryption;
 use App\Traits\HasRoles;
@@ -102,6 +103,7 @@ class UpdateSubOrderStatus extends Action{
       $sub_order->update(['status'=>$this->request->new_status]);
       if($this->request->new_status == Order::STATUS_COMPLETED){
          $this->unlockFunds($sub_order);
+         $this->onAddItemsToPendingReviews($sub_order);
       }
    }
 
@@ -128,6 +130,35 @@ class UpdateSubOrderStatus extends Action{
             'status'=>$this->request->new_status
          ]);
       }
+   }
+
+   protected function onAddItemsToPendingReviews($sub_order){
+      $order_items = $sub_order->items;
+      if(isset($order_items) && count($order_items) > 0){
+         foreach($order_items as $item){
+            if(!$this->itemExistsInReviews($item)){
+               $this->addItemToPendingReviews($item);
+            }
+         }
+      }
+   }
+
+   protected function addItemToPendingReviews($item){
+      ProductReview::create([
+         'product_id' => $item->product_id,
+         'variation_id' => $item->variation_id,
+         'product_type' => $item->product_type,
+         'status' => $this->getResourceInactiveId(),
+         'user_id' => $item->user_id
+      ]);
+   }
+
+   protected function itemExistsInReviews($item){
+      return ProductReview::where('product_id',$item->product_id)
+      ->where('variation_id',$item->variation_id)
+      ->where('product_type',$item->product_type)
+      ->where('user_id',$item->user_id)
+      ->exists();
    }
 
    public function execute(){

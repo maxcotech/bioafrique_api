@@ -19,7 +19,9 @@ trait HasProductFilters
             Product::where('product_status', $this->getResourceActiveId())
                 ->chunkById(100, function ($products) use ($rating, &$selected_ids) {
                     foreach ($products as $product) {
-                        $review_average = $product->reviews()->avg('star_rating');
+                        $review_average = $product->reviews()
+                        ->where('status',$this->getResourceActiveId())
+                        ->avg('star_rating');
                         if ($review_average >= $rating) {
                             if (!in_array($product->id, $selected_ids)) {
                                 array_push($selected_ids, $product->id);
