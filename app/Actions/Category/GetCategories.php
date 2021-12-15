@@ -7,70 +7,68 @@ use Illuminate\Http\Request;
 use App\Actions\Action;
 use App\Models\Category;
 use App\Traits\HasCategory;
+use App\Traits\HasResourceStatus;
+use App\Traits\HasRoles;
 
 class GetCategories extends Action
 {
-   use HasCategory;
+   use HasCategory,HasRoles,HasResourceStatus;
    protected $request;
    protected $max_cat_level;
    protected $min_cat_level;
+   protected $user;
+
    public function __construct(Request $request)
    {
       $this->request = $request;
       $this->max_cat_level = 10;
       $this->min_cat_level = 1;
+      $this->user = $request->user();
    }
    protected function validate()
    {
       $val = Validator::make($this->request->all(), [
-         'category_level' => 'integer',
-         'verbose' => 'integer',
-         'limit' => 'integer',
-         'sub_cat_limit' => 'nullable|integer',
-         'max_level' => 'nullable|integer',
-         'min_level' => 'nullable|integer',
          'parent' => 'nullable|integer|exists:categories,id',
-         'parent_slug' => 'nullable|string|exists:categories,categories,category_slug'
+         'parent_slug' => 'nullable|string|exists:categories,category_slug',
+         'levels' => 'nullable|integer|min:0,max:100',
+         'limit' => 'nullable|integer|min:1',
+         'verbose' => 'nullable|integer',
+         'child_verbose' => 'nullable|integer'
       ]);
       return $this->valResult($val);
    }
 
    protected function getCategories()
    {
-      $query = Category::where('category_level', $this->request->query('min_level', $this->min_cat_level));
-      if ($this->request->filled('parent')) {
-         $query->where('parent_id', $this->request->query('parent'));
-      } elseif ($this->request->filled('parent_slug') && $this->request->query('parent_slug', null) != null) {
-         $category = Category::where('category_slug', $this->request->query('parent_slug'))->first();
-         if (isset($category)) {
-            $query->where('parent_id', $category->id);
-         }
+      $query = null;
+      if($this->request->query('parent',null) != null){
+         $query = Category::where('parent_id',$this->request->query('parent'));
+      } elseif ($this->request->query('parent_slug',null) != null){
+         $category = Category::where('category_slug',$this->request->query('parent_slug'))->first();
+         $query = Category::where('parent_id',$category->id);
+      } else {
+         $query = Category::where('category_level',Category::MAIN_CATEGORY_LEVEL);
+      }
+      if(!$this->isSuperAdmin($this->user->user_type)){
+         $query = $query->where('status',$this->getResourceActiveId());
       }
       $query = $this->selectByVerboseLevel($query,$this->request->query('verbose',1));
-      $data = $query->paginate($this->request->query('limit', 15));
-      return $data;
+      return $query->paginate($this->request->query('limit',15));
    }
 
 
-   protected function generateSubCategories($data, $level = 1, $parent_id = 0)
+   protected function generateSubCategories($data, $init_level = 1, $max_level = 100)
    {
       $new_data = [];
-      if (empty($data)) return [];
-      foreach ($data as $cat) {
-         if ($cat['category_level'] == $level && $cat['parent_id'] == $parent_id) {
-            $next_level = $level + 1;
-            if ($this->request->filled('max_level')) {
-               if ($next_level > $this->request->query('max_level', $this->max_cat_level)) {
-                  break;
-               }
-            }
-            $query = Category::where('category_level', $next_level)
-               ->where('parent_id', $cat['id'])->limit($this->request->query('sub_cat_limit', 1000));
-            $query = $this->selectByVerboseLevel($query,$this->request->query('verbose'));
-            $sub_cats = $query->get();
-            $cat['sub_categories'] = $this->generateSubCategories($sub_cats, $next_level, $cat['id']);
-            array_push($new_data, $cat);
-         }
+      if (empty($data) || $init_level == $max_level) return $data;
+      $child_verbose = $this->request->query('child_verbose',$this->request->query('verbose',1));
+      foreach($data as $category){
+         $query = Category::where('parent_id',$category['id']);
+         $query = $this->selectByVerboseLevel($query,$child_verbose);
+         $sub_cats = $query->get();
+         $sub_cats = json_decode(json_encode($sub_cats),true);
+         $category['sub_categories'] = $this->generateSubCategories($sub_cats,$init_level + 1,$max_level);
+         array_push($new_data,$category);
       }
       return $new_data;
    }
@@ -85,7 +83,11 @@ class GetCategories extends Action
          $data = $this->getCategories();
          $data_json = $data->toJson();
          $new_data = json_decode($data_json, true);
-         $new_data['data'] = $this->generateSubCategories($new_data['data']);
+         $new_data['data'] = $this->generateSubCategories(
+            $new_data['data'],
+            $this->min_cat_level,
+            $this->request->query('levels',$this->min_cat_level)
+         );
          return $this->successWithData($new_data);
       } catch (\Exception $e) {
          return $this->internalError($e->getMessage());
