@@ -33,7 +33,8 @@ class GetCategories extends Action
          'levels' => 'nullable|integer|min:0,max:100',
          'limit' => 'nullable|integer|min:1',
          'verbose' => 'nullable|integer',
-         'child_verbose' => 'nullable|integer'
+         'child_verbose' => 'nullable|integer',
+         'status' => 'nullable|integer'
       ]);
       return $this->valResult($val);
    }
@@ -51,6 +52,10 @@ class GetCategories extends Action
       }
       if(!$this->isSuperAdmin($this->user->user_type)){
          $query = $query->where('status',$this->getResourceActiveId());
+      } else {
+         if($this->request->query('status',null) != null){
+            $query = $query->where('status',$this->request->query('status'));
+         }
       }
       $query = $this->selectByVerboseLevel($query,$this->request->query('verbose',1));
       return $query->paginate($this->request->query('limit',15));

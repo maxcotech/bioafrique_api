@@ -16,7 +16,8 @@ class Category extends Model
     public const SUB_SUB_CATEGORY_LEVEL = 3;
 
     protected $table = "categories";
-    protected $fillable = ['category_title','display_title','category_image',
+    protected $fillable = [
+    'category_title','display_title','category_image','status',
     'category_slug','parent_id','category_level','category_icon','commission_fee'];
 
     public function products(){
@@ -41,11 +42,4 @@ class Category extends Model
         return $this->getRealPath($val);
     }
 
-    public function getCommissionFeeAttribute($value){
-        return $this->baseToUserCurrency($value);
-    }
-
-    public function setCommissionFeeAttribute($value){
-        $this->attributes['commission_fee'] = $this->userToBaseCurrency($value);
-    }
 }

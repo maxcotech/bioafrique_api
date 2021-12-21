@@ -24,16 +24,7 @@ class DeleteCategory extends Action{
       ]);
       return $this->valResult($val);
    }
-   protected function deleteCategory(){
-      DB::transaction(function(){
-         Product::chunkById(100,function($products){
-            $products->categories()->detach($this->category_id);
-         });
-         $cat = Category::find($this->category_id);
-         $this->deleteCategoryImages($cat);
-         $cat->delete();
-      });
-   }
+   
    protected function deleteCategoryImages($cat){
       if($cat->category_image != null){
          Storage::disk(env('CURRENT_DISK'))->delete($this->getInitialPath(
@@ -47,11 +38,26 @@ class DeleteCategory extends Action{
       }
       
    }
+
+   protected function deleteCategoryAndSubs($cat){
+      $subs = $cat->subCategories;
+      if(count($subs) > 0){
+         foreach($subs as $sub){
+            $this->deleteCategoryAndSubs($sub);
+         }
+      }
+      $cat->delete();
+      $this->deleteCategoryImages($cat);
+   }
+
    public function execute(){
       try{
          $val = $this->validate();
          if($val['status'] != "success") return $this->resp($val);
-         $this->deleteCategory();
+         $cat = Category::find($this->category_id);
+         DB::transaction(function() use($cat){
+            $this->deleteCategoryAndSubs($cat);
+         });
          return $this->successMessage('Successfully deleted category');
       }
       catch(\Exception $e){

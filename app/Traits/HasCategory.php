@@ -21,9 +21,9 @@ trait HasCategory
                     $query->select('id', 'category_title', 'category_level', 'parent_id', 'display_title', 'category_icon', 'category_slug');
                     break;
                 case 4:
-                    $query->select('id', 'category_title', 'category_level', 'parent_id', 'display_title', 'category_icon', 'category_image', 'category_slug');
+                    $query->select('id', 'category_title', 'category_level', 'parent_id', 'display_title', 'category_icon', 'category_image', 'category_slug','display_level','commission_fee','status');
                     break;
-                default:;
+                default:$query->select("*");
             }
         }
         return $query;

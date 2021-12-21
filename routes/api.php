@@ -60,6 +60,7 @@ Route::prefix('v1')->group(function(){
             Route::post('/category/image','CategoryController@updateCategoryImage')->middleware('super_admin_access_guard');
             Route::post('/category/icon','CategoryController@uploadCategoryIcon')->middleware('super_admin_access_guard');
             Route::delete('/category/{category_id}','CategoryController@delete')->middleware('super_admin_access_guard');
+            Route::patch('/category/status','CategoryController@updateCategoryStatus')->middleware('super_admin_access_guard');
             Route::post('/store','StoreController@create')->middleware('store_owner_access_guard');
             Route::put('/store','StoreController@update')->middleware('store_owner_access_guard');
             Route::post('/store/logo','StoreController@uploadStoreLogo')->middleware('store_owner_access_guard');
@@ -76,7 +77,7 @@ Route::prefix('v1')->group(function(){
             Route::delete('/store/staff/{staff_id}','StoreStaffController@removeStoreStaff')->middleware('sasom_access_guard');
             Route::get('/user','UserController@show');
             Route::delete('/user/logout','AuthController@logout');
-
+            Route::put('/user/password','AuthController@resetPassword');
             Route::post('/locations/populate','LocationController@populateLocations');
 
             Route::get('/cities/{route_param?}','CityController@index');

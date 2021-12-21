@@ -11,6 +11,7 @@ use App\Traits\HasResourceStatus;
 use App\Traits\HasRoles;
 use App\Traits\StringFormatter;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
 class CreateCategory extends Action
@@ -65,6 +66,7 @@ class CreateCategory extends Action
       $user = Auth::user();
       $user_type = isset($user)? $user->user_type:null;
       if($this->isStoreStaff($user_type) || $this->isStoreOwner($user_type)){
+         Log::alert('user type is '.$user_type);
          return $this->getResourceInReviewId();
       } else if($this->isSuperAdmin($user_type)){
          return $this->getResourceActiveId();
@@ -91,6 +93,7 @@ class CreateCategory extends Action
          $data['commission_fee'] = $this->request->commission_fee;
       }
       $data['status'] = $this->getNewCategoryStatus();
+      Log::alert('returned status is '.$data['status']);
       Category::create($data);
    }
    

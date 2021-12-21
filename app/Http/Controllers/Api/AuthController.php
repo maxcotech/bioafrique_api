@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Actions\Auth\GetUserIPAddress;
 use App\Actions\Auth\LoginUser;
 use App\Actions\Auth\RegisterUser;
+use App\Actions\Auth\ResetPassword;
 use App\Http\Controllers\Controller;
 use App\Traits\HasHttpResponse;
 use Illuminate\Http\Request;
@@ -26,5 +27,9 @@ class AuthController extends Controller
     }
     public function getUserIpAddress(Request $request){
         return (new GetUserIPAddress($request))->execute();
+    }
+
+    public function resetPassword(Request $request){
+        return (new ResetPassword($request))->execute();
     }
 }

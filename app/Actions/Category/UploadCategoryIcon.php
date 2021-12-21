@@ -4,10 +4,11 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use App\Actions\Action;
 use App\Models\Category;
+use App\Traits\FilePath;
 use App\Traits\HasFile;
 
 class UploadCategoryIcon extends Action{
-    use HasFile;
+    use HasFile,FilePath;
     protected $request;
     public function __construct(Request $request){
        $this->request=$request;
@@ -29,7 +30,9 @@ class UploadCategoryIcon extends Action{
          $file_url = $this->uploadImage($this->request->category_icon,'categories');
          Category::where('id',$this->request->category_id)
          ->update(['category_icon' => $file_url]);
-         return $this->successMessage('Category icon successfully loaded.');
+         return $this->successWithData(
+            $this->getRealPath($file_url),
+            'Category icon successfully loaded.');
        }
        catch(\Exception $e){
           return $this->internalError($e->getMessage());
