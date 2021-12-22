@@ -76,6 +76,9 @@ Route::prefix('v1')->group(function(){
             Route::patch('/store/staff/{staff_id}/toggle_status','StoreStaffController@toggleStaffStatus')->middleware('store_staff_guard');
             Route::delete('/store/staff/{staff_id}','StoreStaffController@removeStoreStaff')->middleware('sasom_access_guard');
             Route::get('/user','UserController@show');
+            Route::get('/users','UserController@index');
+            Route::delete('/user/{user_id}','UserController@delete')->middleware('super_admin_access_guard');
+            Route::patch('/users/status','UserController@updateUserStatus')->middleware('super_admin_access_guard');
             Route::delete('/user/logout','AuthController@logout');
             Route::put('/user/password','AuthController@resetPassword');
             Route::post('/locations/populate','LocationController@populateLocations');
