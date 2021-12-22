@@ -84,7 +84,7 @@ class CreateOrder
             'user_id' => $this->user->id,
             'order_number' => $this->createNumberToken(12),
             'total_amount' => $transaction->amount,
-            'status' => Order::STATUS_AWAITING_SHIPPING,
+            'status' => Order::STATUS_AWAITING_FULFILLMENT,
             'transaction_id' => $transaction->id
         ]);
         return $order;
@@ -152,7 +152,7 @@ class CreateOrder
             'user_id' => $this->user->id,
             'store_id' => $attribute->store_id,
             'delivery_date' => now()->addDays($attribute->delivery_duration),
-            'status' => Order::STATUS_AWAITING_SHIPPING,
+            'status' => Order::STATUS_AWAITING_FULFILLMENT,
             'amount' => $attribute->cart_amount,
             'shipping_fee' => $attribute->shipping_fee,
             'payment_status' => ($transaction->status == OrderTransaction::STATUS_VERIFIED) ?

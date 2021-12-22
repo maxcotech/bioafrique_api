@@ -49,7 +49,10 @@ class UpdateCategoryImage extends Action{
             'category_image' => $file_url,
             'image_thumbnail' => $thumb_url
           ]);
-          return $this->successMessage('Successfully uploaded category image');
+          return $this->successWithData(
+            $this->getRealPath($file_url),
+            'Successfully uploaded category image'
+         );
        }
        catch(\Exception $e){
           return $this->internalError($e->getMessage());

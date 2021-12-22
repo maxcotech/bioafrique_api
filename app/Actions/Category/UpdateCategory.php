@@ -4,16 +4,18 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use App\Actions\Action;
 use App\Models\Category;
+use App\Traits\HasRoles;
 use App\Traits\StringFormatter;
 use Illuminate\Validation\Rule;
 
 class UpdateCategory extends Action{
-   use StringFormatter;
+   use StringFormatter,HasRoles;
 
-   protected $request;
+   protected $request,$user;
 
    public function __construct(Request $request){
       $this->request=$request;
+      $this->user = $request->user();
    }
 
    protected function validate(){
@@ -23,13 +25,19 @@ class UpdateCategory extends Action{
          ->where(function($query){
             $query->where('id','!=',$this->request->id);
          })],
-         'category_slug' => ['required','string',Rule::unique('categories','category_slug')
-         ->where(function($query){
-            $query->where('id','!=',$this->request->id);
-         })],
-         'display_level' => 'nullable|integer'
+         'display_level' => 'nullable|integer',
+         'display_title' => 'nullable|string',
+         'commission_fee' => $this->getCommissionFeeRules()
       ]);
       return $this->valResult($val);
+   }
+
+   protected function getCommissionFeeRules(){
+      if($this->isSuperAdmin($this->user->user_type)){
+         return 'required|numeric';
+      } else {
+         return "nullable|numeric";
+      }
    }
 
    protected function generateCategorySlug(){
@@ -49,6 +57,9 @@ class UpdateCategory extends Action{
       ];
       if($this->request->filled('display_level')){
          $update_data['display_level'] = $this->request->display_level;
+      }
+      if($this->isSuperAdmin($this->user->user_type)){
+         $update_data['commission_fee'] = $this->request->commission_fee;
       }
       Category::where('id',$this->request->id)->update($update_data);
 

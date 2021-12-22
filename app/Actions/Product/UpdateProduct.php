@@ -11,6 +11,7 @@ use App\Traits\HasProduct;
 use App\Traits\HasRateConversion;
 use App\Traits\HasStore;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rule;
 
 class UpdateProduct extends Action{
@@ -48,14 +49,12 @@ class UpdateProduct extends Action{
       return $this->valResult($val);
    }
 
-   protected function updateProduct($variations){
-      Product::where('store_id',$this->request->store_id)
-      ->where('id',$this->request->product_id)
-      ->update([
+   protected function getUpdateData($variations){
+      return [
          'product_name' => $this->request->product_name,
          'product_sku' => $this->request->product_sku,
-         'regular_price' => $this->userToBaseCurrency($this->request->regular_price,$this->user),
-         'sales_price' => $this->userToBaseCurrency($this->request->sales_price,$this->user),
+         'regular_price' => $this->request->regular_price,
+         'sales_price' => $this->request->sales_price,
          'simple_description' => htmlspecialchars($this->request->simple_description),
          'description' => htmlspecialchars($this->request->description),
          'key_features' => htmlspecialchars($this->request->key_features),
@@ -69,14 +68,29 @@ class UpdateProduct extends Action{
          'dimension_width' => $this->request->dimension_width,
          'dimension_length' => $this->request->dimension_length,
          'product_slug' => $this->generateProductSlug(true,$this->request->product_id),
-      ]);
+      ];
+   }
+
+   protected function updateProduct($variations){
+      $data = $this->getUpdateData($variations);
+      $product = Product::where('store_id',$this->request->store_id)
+      ->where('id',$this->request->product_id)->first();
+      if(isset($product)){
+         if($product->product_status == $this->getResourceInDraftId()){
+            $data['product_status'] = $this->getResourceInReviewId();
+         }
+         $product->update($data);
+      }
+
    }
 
    protected function deleteExcludedVariations($variations){
       $conserved = [];
       $count = 0;
       foreach($variations as $variation){
-         $count = array_push($conserved,$variation['id']);
+         if(isset($variation['id'])){
+            $count = array_push($conserved,$variation['id']);
+         }
       }
       if($count > 0){
          $excluded_variations = ProductVariation::where('store_id',$this->request->store_id)
@@ -100,6 +114,7 @@ class UpdateProduct extends Action{
                'product_id' => $this->request->product_id,
                'variation_image' => $init_val_img,
                'store_id' => $this->request->store_id,
+               'variation_status' => $this->getResourceInDraftId()
             ];
             if(isset($variation['variation_id'])) $filters['id'] = $variation['variation_id'];
             $parameters = [
@@ -108,6 +123,7 @@ class UpdateProduct extends Action{
                'regular_price' => $variation['regular_price'] ?? null,
                'sales_price' => $variation['sales_price'] ?? null,
                'amount_in_stock' => $variation['amount_in_stock'] ?? null,
+               'variation_status' => $this->getResourceInReviewId()
             ];
             $variation_record = ProductVariation::updateOrCreate($filters,$parameters);
             $this->updateVariationAttributes($variation,$variation_record);
@@ -142,7 +158,7 @@ class UpdateProduct extends Action{
          $val = $this->validate();
          if($val['status'] != "success") return $this->resp($val);
          $variations = ($this->request->variations != null)? json_decode($this->request->variations,true):[];
-         if(isset($variations) && $this->request->variations != null){
+         if(isset($variations) && count($variations) > 0 && $this->request->variations != null){
             $val2 = $this->validateVariations($variations,$this->request->product_id);
             if($val2['status'] != "success") return $this->resp($val2);
          }

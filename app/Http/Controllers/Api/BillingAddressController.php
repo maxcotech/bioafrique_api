@@ -6,6 +6,7 @@ use App\Actions\BillingAddress\ChangeCurrentAddress;
 use App\Actions\BillingAddress\CreateBillingAddress;
 use App\Actions\BillingAddress\DeleteBillingAddress;
 use App\Actions\BillingAddress\GetBillingAddresses;
+use App\Actions\BillingAddress\GetCurrentBillingAddress;
 use App\Actions\BillingAddress\UpdateBillingAddress;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -26,5 +27,9 @@ class BillingAddressController extends Controller
     }
     public function changeCurrentAddress(Request $request,$address_id){
         return (new ChangeCurrentAddress($request,$address_id))->execute();
+    }
+
+    public function getCurrentAddress(Request $request){
+        return (new GetCurrentBillingAddress($request))->execute();
     }
 }

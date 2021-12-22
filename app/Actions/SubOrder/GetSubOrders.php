@@ -21,14 +21,13 @@ class GetSubOrders extends Action{
 
    protected function validate(){
       $data = $this->request->all();
-      $data['authentication_type'] = $this->user->user_type;
       $data['sub_order_id'] = $this->sub_order_id;
       $val = Validator::make($data,[
          'order_id' => 'nullable|integer|exists:orders,id',
          'store_id' => $this->getStoreIdRules(),
          'status' => 'nullable|integer',
          'with_items' => 'nullable|integer',
-         'user_id' => 'required_if:authentication_type,'.$this->getCustomerRoleId().'|integer|exists:users,id',
+         'user_id' => 'nullable|integer|exists:users,id',
          'sub_order_id' => $this->getSubOrderIdRules(),
          'limit' => 'nullable|integer'
       ]);
@@ -100,12 +99,12 @@ class GetSubOrders extends Action{
       if(!$this->isCustomer($user_type)){
          array_push($data,'user:id,first_name,last_name,email,phone_number,telephone_code,account_status');
       }
-      if($this->isCustomer($user_type) && $this->request->query('user_id') != null){
+      if($this->isCustomer($user_type)){
          array_push($data,'fundLockPassword:id,lock_password,status,sub_order_id,user_id');
       }
       if($this->isStoreStaff($user_type) || $this->isStoreOwner($user_type) || $this->isCustomer($user_type)){
          array_push($data,'order:id,user_id,order_number,total_amount,status,billing_address_id');
-         array_push($data,'order.billingAddress:id,street_address,city_id,state_id,country_id,phone_number,telephone_code,additional_number,additional_telephone_code,postal_code');
+         array_push($data,'order.billingAddress:id,street_address,city_id,state_id,country_id,phone_number,telephone_code,additional_number,additional_telephone_code,postal_code,first_name,last_name');
          array_push($data,'order.billingAddress.state:id,state_name');
          array_push($data,'order.billingAddress.city:id,city_name');
          array_push($data,'order.billingAddress.country:id,country_name');

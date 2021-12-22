@@ -2,6 +2,10 @@
 
 namespace App\Models;
 
+use App\Traits\HasRoles;
+use App\Traits\HasUserStatus;
+use App\Traits\StringFormatter;
+use Carbon\Carbon;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -10,7 +14,7 @@ use Laravel\Passport\HasApiTokens;
 
 class User extends Authenticatable
 {
-    use HasFactory, Notifiable, HasApiTokens;
+    use HasFactory, Notifiable, HasApiTokens,HasUserStatus,HasRoles,StringFormatter;
 
     /**
      * The attributes that are mass assignable.
@@ -51,6 +55,17 @@ class User extends Authenticatable
     public function getFullNameAttribute($value){
         return $this->first_name." ".$this->last_name;
     }
+
+    public function getAccountStatusTextAttribute(){
+        return $this->getUserStatusText($this->account_status);
+    }
+
+    public function getUserTypeTextAttribute(){
+        return $this->capitalizeByDelimiter(
+            $this->getRoleTextById($this->user_type),
+            "_"
+        );
+    }
     public function userDevice(){
         return $this->hasOne(UserDevice::class,'user_id');
     }
@@ -74,5 +89,18 @@ class User extends Authenticatable
     }
     public function storeStaffAccounts(){
         return $this->hasMany(StoreStaff::class,'user_id');
+    }
+
+    public function billingAddresses(){
+        return $this->hasMany(BillingAddress::class,"user_id");
+    }
+
+    public function getCreatedAtAttribute($value){
+        $date = new Carbon($value);
+        return $date->toFormattedDateString();
+    }
+    public function getUpdatedAtAttribute($value){
+        $date = new Carbon($value);
+        return $date->toFormattedDateString();
     }
 }

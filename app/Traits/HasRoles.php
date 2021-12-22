@@ -39,7 +39,7 @@ trait HasRoles{
     }
 
     public function getUserRole(Request $request = null){
-        $req = isset($request) ? $request: $this->request;
+        $req = isset($request) ? $request: request();
         if(isset($req)){
             $user = $req->user();
             if(isset($user)){

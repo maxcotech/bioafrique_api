@@ -20,8 +20,10 @@ Route::prefix('v1')->group(function(){
             Route::get('/store/search','StoreController@search');
             Route::get('/catalog','ProductController@index');
             
+            Route::get('/category/products/{category_param}','ProductController@getCategoryProducts');
             Route::get('/product/{slug}','ProductController@show');
             Route::get('/countries','CountryController@index');
+            Route::get('/currencies','CountryController@getCurrencies');
             Route::get('/search/{search_type}','SearchController@index');
             Route::get('/variation_options','VariationOptionsController@index');
 
@@ -58,6 +60,7 @@ Route::prefix('v1')->group(function(){
             Route::post('/category/image','CategoryController@updateCategoryImage')->middleware('super_admin_access_guard');
             Route::post('/category/icon','CategoryController@uploadCategoryIcon')->middleware('super_admin_access_guard');
             Route::delete('/category/{category_id}','CategoryController@delete')->middleware('super_admin_access_guard');
+            Route::patch('/category/status','CategoryController@updateCategoryStatus')->middleware('super_admin_access_guard');
             Route::post('/store','StoreController@create')->middleware('store_owner_access_guard');
             Route::put('/store','StoreController@update')->middleware('store_owner_access_guard');
             Route::post('/store/logo','StoreController@uploadStoreLogo')->middleware('store_owner_access_guard');
@@ -73,8 +76,11 @@ Route::prefix('v1')->group(function(){
             Route::patch('/store/staff/{staff_id}/toggle_status','StoreStaffController@toggleStaffStatus')->middleware('store_staff_guard');
             Route::delete('/store/staff/{staff_id}','StoreStaffController@removeStoreStaff')->middleware('sasom_access_guard');
             Route::get('/user','UserController@show');
+            Route::get('/users','UserController@index');
+            Route::delete('/user/{user_id}','UserController@delete')->middleware('super_admin_access_guard');
+            Route::patch('/users/status','UserController@updateUserStatus')->middleware('super_admin_access_guard');
             Route::delete('/user/logout','AuthController@logout');
-
+            Route::put('/user/password','AuthController@resetPassword');
             Route::post('/locations/populate','LocationController@populateLocations');
 
             Route::get('/cities/{route_param?}','CityController@index');
@@ -94,6 +100,7 @@ Route::prefix('v1')->group(function(){
             Route::put('/billing/address','BillingAddressController@update');
             Route::delete('/billing/address/{address_id}','BillingAddressController@delete');
             Route::get('/billing/addresses','BillingAddressController@index');
+            Route::get('/billing/addresses/current','BillingAddressController@getCurrentAddress');
             Route::patch('/billing/current/{address_id}','BillingAddressController@changeCurrentAddress');
             Route::get('/checkout','CheckoutController@index');
 
@@ -102,8 +109,10 @@ Route::prefix('v1')->group(function(){
 
             Route::post('/review','ProductReviewController@create');
             Route::put('/review','ProductReviewController@update');
+            Route::get('/pending/reviews','ProductReviewController@getPendingReviews');
 
             Route::get('/sub_orders/{sub_order_id?}','SubOrderController@index');
+            Route::put('/sub_order/status','SubOrderController@updateStatus');
 
             Route::get('/order_items/{order_item_id?}','OrderItemController@index');
         });

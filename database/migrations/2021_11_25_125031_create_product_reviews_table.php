@@ -18,8 +18,8 @@ class CreateProductReviewsTable extends Migration
             $table->bigInteger('product_id');
             $table->bigInteger('variation_id')->nullable();
             $table->bigInteger('user_id');
-            $table->text('review_comment');
-            $table->tinyInteger('star_rating')->default(0);
+            $table->text('review_comment')->nullable();
+            $table->tinyInteger('star_rating')->nullable()->default(0);
             $table->timestamps();
         });
     }
