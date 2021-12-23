@@ -39,6 +39,9 @@ Route::prefix('v1')->group(function(){
 
             Route::get('/reviews/{review_id?}','ProductReviewController@index');
             Route::delete('/review/{review_id}','ProductReviewController@delete');
+
+            Route::get('/stores','StoreController@index');
+        
         });
 
         Route::middleware(['auth.apicookie','app_access_guard','ensure_currency_selected','cors'])->group(function(){
@@ -63,6 +66,8 @@ Route::prefix('v1')->group(function(){
             Route::patch('/category/status','CategoryController@updateCategoryStatus')->middleware('super_admin_access_guard');
             Route::post('/store','StoreController@create')->middleware('store_owner_access_guard');
             Route::put('/store','StoreController@update')->middleware('store_owner_access_guard');
+            Route::patch('/store/status','StoreController@updateStoreStatus')->middleware('super_admin_access_guard');
+            Route::delete('/store/{store_id}','StoreController@delete')->middleware('sasom_access_guard');
             Route::post('/store/logo','StoreController@uploadStoreLogo')->middleware('store_owner_access_guard');
             Route::get('/store/products','ProductController@getStoreProducts');
             Route::post('/store/add_user','StoreController@addUserToStore')->middleware('store_staff_guard');

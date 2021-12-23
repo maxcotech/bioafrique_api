@@ -4,8 +4,11 @@ namespace App\Http\Controllers\Api;
 
 use App\Actions\Store\AddUserToStore;
 use App\Actions\Store\CreateStore;
+use App\Actions\Store\DeleteStore;
+use App\Actions\Store\GetStores;
 use App\Actions\Store\SearchStore;
 use App\Actions\Store\UpdateStore;
+use App\Actions\Store\UpdateStoreStatus;
 use App\Actions\Store\UploadStoreLogo;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -26,5 +29,14 @@ class StoreController extends Controller
     }
     public function uploadStoreLogo(Request $request){
         return (new UploadStoreLogo($request))->execute();
+    }
+    public function index(Request $request){
+        return (new GetStores($request))->execute();
+    }
+    public function updateStoreStatus(Request $request){
+        return (new UpdateStoreStatus($request))->execute();
+    }
+    public function delete(Request $request,$store_id){
+        return (new DeleteStore($request,$store_id))->execute();
     }
 }
