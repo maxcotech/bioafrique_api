@@ -51,13 +51,13 @@ Route::prefix('v1')->group(function(){
             Route::delete('/brand/{brand_id}','BrandController@delete')->middleware('super_admin_access_guard');
 
             Route::post('/variation_option','VariationOptionsController@create')->middleware('super_admin_access_guard');
-
+            Route::patch('/product/status','ProductController@updateProductStatus')->middleware('super_admin_access_guard');
             Route::post('/product','ProductController@create')->middleware('store_staff_guard');
             Route::put('/product','ProductController@update')->middleware('store_staff_guard');
             Route::post('/product/gallery_image','ProductController@uploadGalleryImage')->middleware('store_staff_guard');
             Route::post('/product/image','ProductController@uploadProductImage')->middleware('store_staff_guard');
             Route::post('/product/variation_image','ProductController@uploadProductVariationImage')->middleware('store_staff_guard');
-            Route::delete('/product/{product_id}','ProductController@delete')->middleware('store_staff_guard');
+            Route::delete('/product/{product_id}','ProductController@delete')->middleware('sasom_access_guard');
             Route::post('/category','CategoryController@create')->middleware('sasom_access_guard');
             Route::put('/category','CategoryController@update')->middleware('super_admin_access_guard');
             Route::post('/category/image','CategoryController@updateCategoryImage')->middleware('super_admin_access_guard');
@@ -82,7 +82,7 @@ Route::prefix('v1')->group(function(){
             Route::delete('/store/staff/{staff_id}','StoreStaffController@removeStoreStaff')->middleware('sasom_access_guard');
             Route::get('/user','UserController@show');
             Route::get('/users','UserController@index');
-            Route::delete('/user/{user_id}','UserController@delete')->middleware('super_admin_access_guard');
+            Route::delete('/user/account/{user_id}','UserController@delete')->middleware('super_admin_access_guard');
             Route::patch('/users/status','UserController@updateUserStatus')->middleware('super_admin_access_guard');
             Route::delete('/user/logout','AuthController@logout');
             Route::put('/user/password','AuthController@resetPassword');

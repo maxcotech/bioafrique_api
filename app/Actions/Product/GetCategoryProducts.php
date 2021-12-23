@@ -47,7 +47,8 @@ class GetCategoryProducts extends Action{
 
    protected function getProductQuery($category){
       $query = Product::where('product_status',$this->getResourceActiveId());
-      $query = $query->select('id','product_name','product_image','regular_price','sales_price','product_slug','store_id','product_type');
+      $query = $query->select('id','product_name','product_image','regular_price','sales_price','product_slug','store_id','product_type',
+      'product_status','amount_in_stock');
       $query = $this->filterByRating($query);
       $query = $this->filterBySearchQuery($query);
       $query = $this->filterByBrandAndStore($query);

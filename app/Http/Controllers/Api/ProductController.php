@@ -9,6 +9,7 @@ use App\Actions\Product\GetCategoryProducts;
 use App\Actions\Product\GetProducts;
 use App\Actions\Product\GetStoreProducts;
 use App\Actions\Product\UpdateProduct;
+use App\Actions\Product\UpdateProductStatus;
 use App\Actions\Product\UploadGalleryImage;
 use App\Actions\Product\UploadProductImage;
 use App\Actions\Product\UploadProductVariationImage;
@@ -55,5 +56,9 @@ class ProductController extends Controller
 
     public function delete(Request $request,$product_id){
         return (new DeleteProduct($request,$product_id))->execute();
+    }
+
+    public function updateProductStatus(Request $request){
+        return (new UpdateProductStatus($request))->execute();
     }
 }
