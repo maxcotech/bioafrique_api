@@ -27,7 +27,9 @@ class GetAProduct extends Action{
    public function execute(){
       try{
          $data = $this->getProductBySlugOrId();
-         $data->append('review_summary');
+         if(isset($data)){
+            $data->append('review_summary');
+         }
          return $this->successWithData($data);
       }
       catch(\Exception $e){
