@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use App\Actions\Action;
 use App\Models\Product;
+use Illuminate\Support\Facades\DB;
 
 class UpdateProductStatus extends Action{
    protected $request;
@@ -20,8 +21,15 @@ class UpdateProductStatus extends Action{
    }
 
    protected function updateProductStatus(){
-      Product::where('id',$this->request->id)
-      ->update(['product_status' => $this->request->status]);
+      $product = Product::find($this->request->id);
+      if(isset($product)){
+         DB::transaction(function()use($product){
+            $product->variations()->update([
+               'variation_status' => $this->request->status
+            ]);
+            $product->update(['product_status' => $this->request->status]);
+         });
+      }
    }
 
    public function execute(){
