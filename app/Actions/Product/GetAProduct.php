@@ -14,7 +14,7 @@ class GetAProduct extends Action{
    }
 
    protected function getProductBySlugOrId(){
-      $query = Product::with(['images','variations','category','brand']);
+      $query = Product::with(['images','variations','category','brand','store:id,store_name']);
       if(is_numeric($this->param)){
          $query = $query->where('id',$this->param);
       } else {
