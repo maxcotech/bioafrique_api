@@ -6,10 +6,26 @@ use App\Models\Brand;
 use App\Models\Category;
 use App\Models\Product;
 use App\Models\Store;
+use App\Models\User;
 
 trait HasProductFilters
 {
     use HasResourceStatus, HasArrayOperations, HasRateConversion, HasCategory;
+    use HasRoles,HasStore;
+
+    protected function getStoreValidationRule($auth_type,$user){
+        $nullable_rule = "nullable|integer|exists:stores,id";
+        if($auth_type->type == User::auth_type && isset($user)){
+            $user_type = $user->user_type;
+            if($this->isStoreOwner($user_type) || $this->isStoreStaff($user_type)){
+                return $this->storeIdValidationRule();
+            } else {
+                return $nullable_rule;
+            }
+        }
+        return $nullable_rule;
+    }
+
 
     protected function filterByRating($query)
     {
@@ -36,6 +52,24 @@ trait HasProductFilters
         }
         return $query;
     }
+
+    protected function filterByProductStatus($query,$auth_type,$user){
+        if($auth_type->type == User::auth_type && isset($user)){
+           $user_type = $user->user_type;
+           if($this->isStoreOwner($user_type) || $this->isStoreStaff($user_type) || $this->isSuperAdmin($user_type)){
+              $status = $this->request->query('status',null);
+              if($status != null){
+                 $query = $query->where('product_status',$status);
+              }
+           } else {
+              $query = $query->where('product_status',$this->getResourceActiveId());
+           }
+        } else {
+           $query = $query->where('product_status',$this->getResourceActiveId());
+        }
+        return $query;
+  
+     }
 
     protected function filterBySearchQuery($query)
     {

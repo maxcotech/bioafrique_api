@@ -4,7 +4,6 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use App\Actions\Action;
 use App\Models\Product;
-use App\Models\User;
 use App\Traits\HasAuthStatus;
 use App\Traits\HasCategory;
 use App\Traits\HasProductFilters;
@@ -15,8 +14,11 @@ class GetProducts extends Action{
 
    protected $request;
    protected $default_page_count = 30;
+   protected $user,$access_type;
    public function __construct(Request $request){
       $this->request=$request;
+      $this->user = $request->user();
+      $this->access_type = $this->getUserAuthTypeObject($this->user);
    }
 
    protected function validate(){
@@ -24,7 +26,7 @@ class GetProducts extends Action{
          'max_price' => 'nullable|numeric|min:0',
          'min_price' => 'nullable|numeric|min:0',
          'brand' => 'nullable|integer|exists:brands,id',
-         'store' => 'nullable|integer|exists:stores,id',
+         'store' => $this->getStoreValidationRule($this->access_type,$this->user),
          'limit' => 'nullable|integer',
          'country' => 'nullable|integer|exists:countries,id',
          'state' => 'nullable|integer|exists:states,id',
@@ -36,32 +38,12 @@ class GetProducts extends Action{
       return $this->valResult($val);
    }
 
-   protected function filterByProductStatus($query){
-      $user = $this->request->user();
-      $auth_type = $this->getUserAuthTypeObject($user);
-      if($auth_type->type == User::auth_type && isset($user)){
-         $user_type = $user->user_type;
-         if($this->isStoreOwner($user_type) || $this->isStoreStaff($user_type) || $this->isSuperAdmin($user_type)){
-            $status = $this->request->query('status',null);
-            if($status != null){
-               $query = $query->where('product_status',$status);
-            }
-         } else {
-            $query = $query->where('product_status',$this->getResourceActiveId());
-         }
-      } else {
-         $query = $query->where('product_status',$this->getResourceActiveId());
-      }
-      return $query;
-
-   }
-
-   
    protected function getProductsQuery(){
       $query = Product::select(
          'id','product_name','product_image','regular_price','sales_price','product_slug','store_id','product_type',
          'product_status','amount_in_stock');
-      $query = $this->filterByProductStatus($query);
+      $query = $query->orderBy('id','desc');
+      $query = $this->filterByProductStatus($query,$this->access_type,$this->user);
       $query = $this->filterByRating($query);
       $query = $this->filterBySearchQuery($query);
       $query = $this->filterByBrandAndStore($query);
