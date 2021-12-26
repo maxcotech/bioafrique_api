@@ -4,9 +4,11 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use App\Actions\Action;
 use App\Models\Brand;
+use App\Traits\HasBrand;
 use Illuminate\Validation\Rule;
 
 class UpdateBrand extends Action{
+   use HasBrand;
    protected $request;
    public function __construct(Request $request){
       $this->request=$request;
@@ -14,31 +16,36 @@ class UpdateBrand extends Action{
 
    protected function validate(){
       $val = Validator::make($this->request->all(),[
-         'brand_id' => 'required|integer|exists:brands,id',
+         'id' => 'required|integer|exists:brands,id',
          'brand_name' => ['required','string', 
-         'status' => 'nullable|integer|max:5',
           Rule::unique('brands','brand_name')->where(function($query){
-             return $query->where('id','!=',$this->request->brand_id);
-          })]
+             return $query->where('id','!=',$this->request->id);
+          })],
+         'website_url' => 'nullable|string',
       ]);
       return $this->valResult($val);
    }
 
    protected function updateBrand(){
-      $data = ['brand_name' => $this->request->brand_name];
-      if($this->request->has('status') && $this->request->filled('status')){
-         $data['status'] = $this->request->status;
-      }
-      Brand::where('id',$this->request->brand_id)->update($data);
-      
+      $data = [
+         'brand_name' => $this->request->brand_name,
+         'website_url' => $this->request->website_url,
+         'status' => $this->getBrandDefaultStatus()
+      ];
+      Brand::where('id',$this->request->id)->update($data);
    }
 
    public function execute(){
       try{
          $val = $this->validate();
          if($val['status'] != 'success') return $this->resp($val);
-         $this->updateBrand();
-         return $this->successMessage('Brand Successfully updated');
+         if($this->isSuperAdmin()){
+            $this->updateBrand();
+            return $this->successMessage('Brand Successfully updated');         
+         } else {
+            return $this->notAuthorized('You are not authorized to carry out this operation');
+         }
+         
       }
       catch(\Exception $e){
          return $this->internalError($e->getMessage());

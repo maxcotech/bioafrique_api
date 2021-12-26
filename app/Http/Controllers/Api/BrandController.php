@@ -6,6 +6,7 @@ use App\Actions\Brands\CreateBrand;
 use App\Actions\Brands\DeleteBrand;
 use App\Actions\Brands\GetBrands;
 use App\Actions\Brands\UpdateBrand;
+use App\Actions\Brands\UpdateBrandStatus;
 use App\Actions\Brands\UploadBrandImage;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -30,5 +31,8 @@ class BrandController extends Controller
 
     public function delete(Request $request,$brand_id){
         return (new DeleteBrand($request,$brand_id))->execute();
+    }
+    public function updateBrandStatus(Request $request){
+        return (new UpdateBrandStatus($request))->execute();
     }
 }
