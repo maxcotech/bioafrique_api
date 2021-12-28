@@ -8,11 +8,61 @@ use App\Services\WalletServices\Utilities\LockDetails;
 use App\Services\WalletServices\Utilities\TransactionDetails;
 use Illuminate\Support\Facades\Hash;
 use App\Interfaces\Wallet;
+use App\Models\WalletModel;
 
 class SuperAdminWallet implements Wallet{
 
     public function __construct(){
        //
+    }
+
+    public function getTotalUnLockedCredits(){
+        $locked_fund_ids = OrderCommissionLock::where('status',OrderCommissionLock::STATUS_LOCKED)
+        ->pluck('wallet_fund_id');
+        $total = 0;
+        $funds = SuperAdminWalletModel::whereNotIn('id',$locked_fund_ids)
+        ->where('ledger_type',WalletModel::LEDGER_CREDIT)->get();
+        if(count($funds) > 0){
+            foreach($funds as $fund){
+                $total += $fund->amount;
+            }
+        }
+        return $total;
+    }
+
+    public function getTotalDebits(){
+        $funds = SuperAdminWalletModel::where('ledger_type',WalletModel::LEDGER_DEBIT)->get();
+        $total = 0;
+        if(count($funds) > 0){
+            foreach($funds as $fund){
+                $total += $fund->amount;
+            }
+        }
+        return $total;
+    }
+
+    public function getTotalLockedCredits(){
+       $locked_fund_ids = OrderCommissionLock::where('status',OrderCommissionLock::STATUS_LOCKED)->pluck('wallet_fund_id');
+       $total = 0;
+       if(count($locked_fund_ids) > 0){
+            $funds = SuperAdminWalletModel::whereIn('id',$locked_fund_ids)->where('ledger_type',WalletModel::LEDGER_CREDIT)
+            ->select('id','amount')->get();
+            if(count($funds) > 0){
+                foreach($funds as $fund){
+                    $total += $fund->amount;
+                }
+            }
+       }
+       return $total;
+    }
+
+    public function getTotalPendingWithdrawal(){
+       //
+    }
+
+    public function getTotalAccountBalance(){
+        $balance = $this->getTotalUnLockedCredits() - $this->getTotalDebits();
+        return $balance;
     }
 
     protected function getPreviousRowHash(){

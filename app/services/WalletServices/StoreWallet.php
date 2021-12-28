@@ -18,6 +18,27 @@ class StoreWallet implements Wallet {
        $this->store_id = $store_id;
     }
 
+    public function getTotalUnLockedCredits(){
+
+    }
+
+    public function getTotalDebits(){
+        
+    }
+
+    public function getTotalLockedCredits(){
+       //
+    }
+
+    public function getTotalPendingWithdrawal(){
+       //
+    }
+
+    public function getTotalAccountBalance(){
+        /*$balance = $this->getTotalUnLockedCredits() - $this->getTotalDebits();
+        return $balance;*/
+    }
+
     protected function getHashOfPreviousRow(){
         $row = StoreWalletModel::where('store_id',$this->store_id)
         ->orderBy('id','desc')->first();

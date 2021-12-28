@@ -120,6 +120,7 @@ Route::prefix('v1')->group(function(){
             Route::put('/sub_order/status','SubOrderController@updateStatus');
 
             Route::get('/order_items/{order_item_id?}','OrderItemController@index');
+            Route::get('/admin/wallet','AdminController@getWallet')->middleware('super_admin_access_guard');
         });
     });
 });

@@ -10,4 +10,14 @@ interface Wallet{
         TransactionDetails $trx_details = null
     );
 
+    public function getTotalUnLockedCredits();
+
+    public function getTotalDebits();
+
+    public function getTotalLockedCredits();
+
+    public function getTotalPendingWithdrawal();
+
+    public function getTotalAccountBalance();
+
 }

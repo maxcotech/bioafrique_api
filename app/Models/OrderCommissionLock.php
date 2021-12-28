@@ -12,4 +12,6 @@ class OrderCommissionLock extends LockModel
         'user_id','store_id','order_id','sub_order_id',
         'wallet_fund_id','status'
     ];
+    
+
 }
