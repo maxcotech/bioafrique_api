@@ -16,6 +16,25 @@ class SuperAdminWallet implements Wallet{
        //
     }
 
+    public function historyIsValid(){
+        $transactions = SuperAdminWalletModel::all();
+        $trx_count = count($transactions);
+        $is_valid = true;
+        if($trx_count > 0){
+            for($i = 0; $i < $trx_count; $i++){
+                if($i > 0){
+                    $curr_trx = $transactions[$i];
+                    $previous_trx = $transactions[$i - 1];
+                    $previous_hash = $curr_trx->previous_row_hash;
+                    if(!Hash::check($previous_trx,$previous_hash)){
+                        $is_valid = false;
+                    }
+                }
+            }
+        }
+        return $is_valid;
+    }
+
     public function getTotalUnLockedCredits(){
         $locked_fund_ids = OrderCommissionLock::where('status',OrderCommissionLock::STATUS_LOCKED)
         ->pluck('wallet_fund_id');

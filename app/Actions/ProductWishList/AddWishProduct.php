@@ -65,7 +65,7 @@ class AddWishProduct extends Action{
          $product = Product::find($this->request->product_id);
          if(!isset($auth_type)) return $this->validationError('An Error Occurred, please ensure your browser allows cookies on this app.');
          if($this->productIsAlreadyInList($auth_type)) return $this->validationError('Product already added to wish list.');
-         if($this->variationIsRequired($product->product_type)) return $this->validationError('Please select a variation.');
+         //if($this->variationIsRequired($product->product_type)) return $this->validationError('Please select a variation.');
          $this->onAddToWishList($auth_type,$product->product_type);
          return $this->successMessage('Product added to wish list.');
       }

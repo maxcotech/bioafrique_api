@@ -121,6 +121,7 @@ Route::prefix('v1')->group(function(){
 
             Route::get('/order_items/{order_item_id?}','OrderItemController@index');
             Route::get('/admin/wallet','AdminController@getWallet')->middleware('super_admin_access_guard');
+            Route::post('/admin/wallet/debit','AdminController@debitWallet')->middleware('super_admin_access_guard');
         });
     });
 });

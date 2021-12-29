@@ -12,6 +12,10 @@ class WalletModel extends Model
     public const LEDGER_CREDIT = 1;
     public const LEDGER_DEBIT = 0;
 
+    public const SUPER_ADMIN_WALLET = 1;
+    public const STORE_WALLET = 2;
+    public const USER_WALLET = 3;
+
     public function getAmountAttribute($value){
         return $this->baseToUserCurrency($value);
     }

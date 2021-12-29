@@ -8,12 +8,13 @@ use App\Models\Product;
 use App\Traits\HasArrayOperations;
 use App\Traits\HasAuthStatus;
 use App\Traits\HasCategory;
+use App\Traits\HasProduct;
 use App\Traits\HasProductFilters;
 use App\Traits\HasResourceStatus;
 
 class GetCategoryProducts extends Action{
    use HasResourceStatus,HasProductFilters,HasCategory,HasArrayOperations;
-   use HasAuthStatus;
+   use HasAuthStatus,HasProduct;
    protected $request;
    protected $category_param;
    protected $user;
@@ -92,6 +93,7 @@ class GetCategoryProducts extends Action{
          $category = $this->getInputCategory();
          $query = $this->getProductQuery($category);
          $data = $query->paginate($this->request->query('limit',15));
+         $data = $this->appendWishListStatus($data,$this->access_type);
          $data = collect(['filters'=>$this->getProductFilterArray(
             $category->id,$this->request->query('query',null)
          )])->merge($data);

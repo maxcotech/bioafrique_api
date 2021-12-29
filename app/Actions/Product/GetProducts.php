@@ -6,11 +6,12 @@ use App\Actions\Action;
 use App\Models\Product;
 use App\Traits\HasAuthStatus;
 use App\Traits\HasCategory;
+use App\Traits\HasProduct;
 use App\Traits\HasProductFilters;
 use App\Traits\HasRoles;
 
 class GetProducts extends Action{
-   use HasProductFilters,HasCategory,HasAuthStatus,HasRoles;
+   use HasProductFilters,HasCategory,HasAuthStatus,HasRoles,HasProduct;
 
    protected $request;
    protected $default_page_count = 30;
@@ -53,12 +54,14 @@ class GetProducts extends Action{
       return $query;
    }
 
+
    public function execute(){
       try{
          $val = $this->validate();
          if($val['status'] != "success") return $this->resp($val);
          $query = $this->getProductsQuery();
          $data = $query->paginate($this->request->query('limit',$this->default_page_count));
+         $data = $this->appendWishListStatus($data,$this->access_type);
          $data = collect(['filters'=>$this->getProductFilterArray(null,$this->request->query('query',null))])->merge($data);
          return $this->successWithData($data);
       }
