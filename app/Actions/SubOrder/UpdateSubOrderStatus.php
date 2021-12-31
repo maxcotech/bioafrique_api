@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use App\Actions\Action;
 use App\Models\Order;
+use App\Models\OrderCommissionLock;
 use App\Models\OrderFundLock;
 use App\Models\ProductReview;
 use App\Models\SubOrder;
@@ -96,6 +97,11 @@ class UpdateSubOrderStatus extends Action{
          if($fund->status == OrderFundLock::STATUS_LOCKED){
             $fund->update(['status'=>OrderFundLock::STATUS_OPENED]);
          }
+         //Unlock Suborder Commission
+         OrderCommissionLock::where('sub_order_id',$sub_order->id)
+         ->where('order_id',$sub_order->order_id)->update([
+            'status' => OrderCommissionLock::STATUS_OPENED
+         ]);
       }
    }
 
@@ -108,7 +114,7 @@ class UpdateSubOrderStatus extends Action{
    }
 
    protected function sendNotificationsAndEmails($sub_order){
-      //send necessary emails and notifications 
+      //TODO: send necessary emails and notifications 
    }
 
    protected function getSubOrderByInputs(){

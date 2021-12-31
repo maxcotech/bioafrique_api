@@ -8,13 +8,13 @@ use App\Services\WalletServices\Utilities\SenderObject;
 use App\Services\WalletServices\Utilities\TransactionDetails;
 use App\Traits\HasEncryption;
 use App\Traits\TokenGenerator;
-use Illuminate\Support\Facades\Hash;
-use App\Interfaces\Wallet;
+use Illuminate\Support\Facades\DB;
 
-class StoreWallet implements Wallet {
+class StoreWallet extends WalletService {
     use HasEncryption,TokenGenerator;
     protected $store_id;
     public function __construct($store_id){
+       parent::__construct();
        $this->store_id = $store_id;
     }
 
@@ -25,6 +25,8 @@ class StoreWallet implements Wallet {
     public function getTotalDebits(){
         
     }
+
+    
 
     public function getTotalLockedCredits(){
        //
@@ -39,15 +41,6 @@ class StoreWallet implements Wallet {
         return $balance;*/
     }
 
-    protected function getHashOfPreviousRow(){
-        $row = StoreWalletModel::where('store_id',$this->store_id)
-        ->orderBy('id','desc')->first();
-        if(isset($row)){
-            return Hash::make($row);
-        }
-        return null;
-    }
-
     protected function createOrderFundLock( $fund,LockDetails $lock_details,string $lock_pass){
         return OrderFundLock::create([
             'user_id' => $fund->sender_id,
@@ -60,12 +53,36 @@ class StoreWallet implements Wallet {
         ]);
     }
 
+    protected function getPreviousRow(){
+        return StoreWalletModel::where('store_id',$this->store_id)
+        ->orderBy('id','desc')->first();
+    }
+
+    protected function createLedgerRecord($data,$previous_row){
+        $fund = null;
+        DB::transaction(function()use($data,&$fund,$previous_row){
+            $fund = StoreWalletModel::create($data);
+            $hashable_fund = $this->convertRowAmount($fund);
+            if(isset($previous_row)){
+                DB::table('store_wallets')
+                ->where('id',$previous_row->id)
+                ->update([
+                    'next_row_hash' => $this->generateHashFromRow($hashable_fund)
+                ]);
+
+            }
+        });
+        return $fund;
+    }
+
     public function depositLockedOrderFund(
         $amount, SenderObject $sender, 
         LockDetails $lock_details,TransactionDetails $trx_details = null){
+        $previous_row = $this->getPreviousRow();
+        $hashable_row = $this->convertRowAmount($previous_row);
         $data = [
             'store_id' => $this->store_id,
-            'previous_row_hash' => $this->getHashOfPreviousRow(),
+            'previous_row_hash' => $this->generateHashFromRow($hashable_row),
             'amount' => $amount, 'sender_id' => $sender->sender_id,
             'sender_type' => $sender->sender_type, 'ledger_type' => StoreWalletModel::LEDGER_CREDIT
         ];
@@ -73,7 +90,7 @@ class StoreWallet implements Wallet {
             $data['transaction_id'] = $trx_details->transaction->id;
             $data['transaction_type'] = $trx_details->transaction_type;
         }
-        $fund = StoreWalletModel::create($data);
+        $fund = $this->createLedgerRecord($data,$previous_row);
         $fund_pass = $this->generatePassword();
         $lock = $this->createOrderFundLock($fund,$lock_details,$fund_pass);
         return json_decode(json_encode(['fund_password' => $fund_pass,'lock_model'=>$lock]));

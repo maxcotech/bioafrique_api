@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Actions\Admin\CreditWallet;
 use App\Actions\Admin\DebitWallet;
 use App\Actions\Admin\GetWallet;
 use App\Http\Controllers\Controller;
@@ -14,5 +15,8 @@ class AdminController extends Controller
     }
     public function debitWallet(Request $request){
         return (new DebitWallet($request))->execute();
+    }
+    public function creditWallet(Request $request){
+        return (new CreditWallet($request))->execute();
     }
 }

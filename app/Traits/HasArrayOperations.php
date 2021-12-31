@@ -1,6 +1,8 @@
 <?php
 namespace App\Traits;
 
+use Illuminate\Support\Facades\Hash;
+
 trait HasArrayOperations{
     public function extractUniqueValueList($list,$in_key){
         if(!is_object($list) && !is_array($list)) return [];
@@ -60,6 +62,40 @@ trait HasArrayOperations{
         }
         return null;
     }
-        
+
+    public function serializeObject($obj,$fields = [],$fallback_value = null){
+        $data = [];
+        $input_array = json_decode(json_encode($obj),true);
+        if(count($fields) > 0){
+            foreach($fields as $field){
+                array_push($data,$input_array[$field] ?? $fallback_value);
+            }
+        } else {
+            foreach($input_array as $key => $value){
+                array_push($data,$value);
+            }
+        }
+        return $data;
+    }
+
+    public function concatenateArrayItems($array){
+        $str_val = "";
+        foreach($array as $item){
+            $str_val .= $item;
+        }
+        return $str_val;
+    }
+
+
+    public function hashArrayItems(array $array){
+        $str_val = $this->concatenateArrayItems($array);
+        return Hash::make($str_val);
+    }
+
+    public function checkArrayHash($array,$hash){
+        $str_val = $this->concatenateArrayItems($array);
+        return Hash::check($str_val,$hash);
+    }
+
 }
 

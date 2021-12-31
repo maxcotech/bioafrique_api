@@ -88,4 +88,23 @@ class HasArrayOperationsTest extends TestCase
         $this->assertEquals(50,$this->getValueFromArrayByCondition($data,"key","mis_key",1));
 
     }
+
+    public function testSerializeObject(){
+        $data = [ 'key' => 50,'other_key' => 60, 'mis_key' => 1];
+        $data2 = json_decode(json_encode($data));
+        $data3 = [ 'key' => 50,'other_key' => 60, 'mis_key' => 1, 'men_key' => null];
+
+        $this->assertEquals([50,60,1],$this->serializeObject($data));
+        $this->assertEquals([50,60,1],$this->serializeObject($data2));
+        $this->assertEquals([50,60],$this->serializeObject($data,['key','other_key']));
+        $this->assertEquals([50,60],$this->serializeObject($data2,['key','other_key']));
+        $this->assertEquals([50,60],$this->serializeObject($data2,['key','other_key']));
+        $this->assertEquals([50,60,"N/A"],$this->serializeObject($data2,['key','other_key','can_key'],"N/A"));
+        $this->assertEquals([50,60,"N/A"],$this->serializeObject($data3,['key','other_key','men_key'],"N/A"));
+    }
+
+    public function testConcatenateArrayItems(){
+        $data = ['chisom','maxwell','franklin'];
+        $this->assertEquals('chisommaxwellfranklin',$this->concatenateArrayItems($data));
+    }
 }

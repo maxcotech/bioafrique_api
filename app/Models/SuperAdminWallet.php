@@ -12,6 +12,7 @@ class SuperAdminWallet extends WalletModel
     protected $fillable = [
         'amount','previous_row_hash','sender_id','sender_type',
         'ledger_type','transaction_type','transaction_id',
+        'next_row_hash'
     ];
 
 

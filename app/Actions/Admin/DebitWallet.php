@@ -16,8 +16,8 @@ class DebitWallet extends Action{
    protected function validate(){
       $val = Validator::make($this->request->all(),[
          'amount' => 'required|numeric',
-         'recipient' => 'nullable|integer',
-         'recipient_id' => $this->getRecipientIdRule()
+         //'recipient' => 'nullable|integer',
+         //'recipient_id' => $this->getRecipientIdRule()
       ]);
       return $this->valResult($val);
    }
@@ -40,15 +40,14 @@ class DebitWallet extends Action{
       }
    }
 
-   protected function onDebitAccount(){
-      
-   }
 
    public function execute(){
       try{
-         //$val = $this->validate();
-         //if($val['status'] !== "success") return $this->resp($val);
-         return $this->successWithData((new SuperAdminWalletService())->historyIsValid());
+         $val = $this->validate();
+         if($val['status'] !== "success") return $this->resp($val);
+         $wallet = new SuperAdminWalletService();
+         
+         return $this->successWithData($wallet->withdrawFund($this->request->amount));
       }
       catch(\Exception $e){
          return $this->internalError($e->getMessage());
