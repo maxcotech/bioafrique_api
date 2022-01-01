@@ -123,6 +123,9 @@ Route::prefix('v1')->group(function(){
             Route::get('/admin/wallet','AdminController@getWallet')->middleware('super_admin_access_guard');
             Route::post('/admin/wallet/debit','AdminController@debitWallet')->middleware('super_admin_access_guard');
             Route::post('/admin/wallet/credit','AdminController@creditWallet')->middleware('super_admin_access_guard');
+
+            Route::post('/widget','WidgetController@upload')->middleware('super_admin_access_guard');
+            Route::post('/widget/items','WidgetController@uploadItems')->middleware('super_admin_access_guard');
         });
     });
 });

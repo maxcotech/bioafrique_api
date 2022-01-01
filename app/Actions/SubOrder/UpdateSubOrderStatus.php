@@ -78,7 +78,7 @@ class UpdateSubOrderStatus extends Action{
             $lock_model = $sub_order->fundLockPassword;
             $encrypted = $lock_model->lock_password;
             $decrypted = null;
-            if($this->user->id == $sub_order->id){
+            if($this->user->id == $sub_order->user_id){
                $decrypted = $encrypted;
             } else {
                $decrypted = $this->decryptData($encrypted,$sub_order->user_id);
