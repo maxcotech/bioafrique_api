@@ -6,17 +6,24 @@ use App\Actions\Action;
 use App\Models\Category;
 use App\Models\Product;
 use App\Traits\HasArrayOperations;
+use App\Traits\HasAuthStatus;
 use App\Traits\HasCategory;
+use App\Traits\HasProduct;
 use App\Traits\HasProductFilters;
 use App\Traits\HasResourceStatus;
 
 class GetCategoryProducts extends Action{
    use HasResourceStatus,HasProductFilters,HasCategory,HasArrayOperations;
+   use HasAuthStatus,HasProduct;
    protected $request;
    protected $category_param;
+   protected $user;
+   protected $access_type;
    public function __construct(Request $request,$category_param){
       $this->request=$request;
       $this->category_param = $category_param;
+      $this->user = $request->user();
+      $this->access_type = $this->getUserAuthTypeObject($this->user);
    }
 
    protected function validate(){
@@ -27,13 +34,14 @@ class GetCategoryProducts extends Action{
          'max_price' => 'nullable|numeric|min:0',
          'min_price' => 'nullable|numeric|min:0',
          'brand' => 'nullable|integer|exists:brands,id',
-         'store' => 'nullable|integer|exists:stores,id',
+         'store' => $this->getStoreValidationRule($this->access_type,$this->user),
          'limit' => 'nullable|integer',
          'country' => 'nullable|integer|exists:countries,id',
          'state' => 'nullable|integer|exists:states,id',
          'city' => 'nullable|integer|exists:cities,id',
          'query' => 'nullable|string',
          'rating' => 'nullable|integer',
+         'status' => 'nullable|integer'
       ]);
       return $this->valResult($val);
    }
@@ -46,9 +54,10 @@ class GetCategoryProducts extends Action{
    }
 
    protected function getProductQuery($category){
-      $query = Product::where('product_status',$this->getResourceActiveId());
+      $query = Product::orderBy('id','desc');
       $query = $query->select('id','product_name','product_image','regular_price','sales_price','product_slug','store_id','product_type',
       'product_status','amount_in_stock');
+      $query = $this->filterByProductStatus($query,$this->access_type,$this->user);
       $query = $this->filterByRating($query);
       $query = $this->filterBySearchQuery($query);
       $query = $this->filterByBrandAndStore($query);
@@ -84,6 +93,7 @@ class GetCategoryProducts extends Action{
          $category = $this->getInputCategory();
          $query = $this->getProductQuery($category);
          $data = $query->paginate($this->request->query('limit',15));
+         $data = $this->appendWishListStatus($data,$this->access_type);
          $data = collect(['filters'=>$this->getProductFilterArray(
             $category->id,$this->request->query('query',null)
          )])->merge($data);

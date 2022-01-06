@@ -4,6 +4,7 @@ namespace App\Traits;
 
 use App\Models\Category;
 use App\Models\Product;
+use App\Models\ProductWish;
 use App\Models\SuperAdminPreference;
 use Illuminate\Contracts\Validation\Validator as ValidationObj;
 use Illuminate\Support\Facades\Log;
@@ -159,6 +160,19 @@ trait HasProduct
             array_push($output,$item);
         }
         return $output;
+    }
+
+    protected function appendWishListStatus($data,$access_type){
+        $user_id = $access_type->id;
+        $user_type = $access_type->type;
+        $product_ids = json_decode(json_encode(ProductWish::where('user_type',$user_type)->where('user_id',$user_id)->pluck('product_id')),true);
+        if(count($data) > 0){
+           $data->each(function($item) use($product_ids){
+               $item->in_wishlist = in_array($item->id,$product_ids);
+               return $item;
+           });
+        }
+        return $data;
     }
      
 }

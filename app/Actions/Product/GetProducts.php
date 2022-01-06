@@ -4,19 +4,22 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use App\Actions\Action;
 use App\Models\Product;
-use App\Models\User;
 use App\Traits\HasAuthStatus;
 use App\Traits\HasCategory;
+use App\Traits\HasProduct;
 use App\Traits\HasProductFilters;
 use App\Traits\HasRoles;
 
 class GetProducts extends Action{
-   use HasProductFilters,HasCategory,HasAuthStatus,HasRoles;
+   use HasProductFilters,HasCategory,HasAuthStatus,HasRoles,HasProduct;
 
    protected $request;
    protected $default_page_count = 30;
+   protected $user,$access_type;
    public function __construct(Request $request){
       $this->request=$request;
+      $this->user = $request->user();
+      $this->access_type = $this->getUserAuthTypeObject($this->user);
    }
 
    protected function validate(){
@@ -24,7 +27,7 @@ class GetProducts extends Action{
          'max_price' => 'nullable|numeric|min:0',
          'min_price' => 'nullable|numeric|min:0',
          'brand' => 'nullable|integer|exists:brands,id',
-         'store' => 'nullable|integer|exists:stores,id',
+         'store' => $this->getStoreValidationRule($this->access_type,$this->user),
          'limit' => 'nullable|integer',
          'country' => 'nullable|integer|exists:countries,id',
          'state' => 'nullable|integer|exists:states,id',
@@ -36,6 +39,7 @@ class GetProducts extends Action{
       return $this->valResult($val);
    }
 
+<<<<<<< HEAD
    protected function filterByProductStatus($query){
       $user = $this->request->user();
       $auth_type = $this->getUserAuthTypeObject($user);
@@ -59,11 +63,14 @@ class GetProducts extends Action{
    }
 
    
+=======
+>>>>>>> ee4e7e5bd87855241499548cd0211c4e3b8645b5
    protected function getProductsQuery(){
       $query = Product::select(
          'id','product_name','product_image','regular_price','sales_price','product_slug','store_id','product_type',
          'product_status','amount_in_stock');
-      $query = $this->filterByProductStatus($query);
+      $query = $query->orderBy('id','desc');
+      $query = $this->filterByProductStatus($query,$this->access_type,$this->user);
       $query = $this->filterByRating($query);
       $query = $this->filterBySearchQuery($query);
       $query = $this->filterByBrandAndStore($query);
@@ -73,12 +80,14 @@ class GetProducts extends Action{
       return $query;
    }
 
+
    public function execute(){
       try{
          $val = $this->validate();
          if($val['status'] != "success") return $this->resp($val);
          $query = $this->getProductsQuery();
          $data = $query->paginate($this->request->query('limit',$this->default_page_count));
+         $data = $this->appendWishListStatus($data,$this->access_type);
          $data = collect(['filters'=>$this->getProductFilterArray(null,$this->request->query('query',null))])->merge($data);
          return $this->successWithData($data);
       }

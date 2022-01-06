@@ -4,12 +4,12 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use App\Actions\Action;
 use App\Models\Brand;
+use App\Traits\HasBrand;
 use App\Traits\HasFile;
-use App\Traits\HasResourceStatus;
-use App\Traits\HasRoles;
+
 
 class CreateBrand extends Action{
-   use HasFile,HasRoles,HasResourceStatus;
+   use HasFile,HasBrand;
    protected $request;
    public function __construct(Request $request){
       $this->request=$request;
@@ -24,15 +24,6 @@ class CreateBrand extends Action{
       return $this->valResult($val);
    }
 
-   protected function getBrandDefaultStatus(){
-      if($this->isStoreOwner() || $this->isStoreStaff()){
-         return $this->getResourceInactiveId();
-      } else if($this->isSuperAdmin()){
-         return $this->getResourceActiveId();
-      } else {
-         throw new \Exception('Could not determine the category of your profile.');
-      }
-   }
 
    public function execute(){
       try{

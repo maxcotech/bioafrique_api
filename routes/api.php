@@ -49,7 +49,7 @@ Route::prefix('v1')->group(function(){
             Route::post('/brand/logo','BrandController@uploadLogo')->middleware('super_admin_access_guard');
             Route::put('/brand','BrandController@update')->middleware('super_admin_access_guard');
             Route::delete('/brand/{brand_id}','BrandController@delete')->middleware('super_admin_access_guard');
-
+            Route::patch('/brand/status','BrandController@updateBrandStatus')->middleware('super_admin_access_guard');
             Route::post('/variation_option','VariationOptionsController@create')->middleware('super_admin_access_guard');
             Route::patch('/product/status','ProductController@updateProductStatus')->middleware('super_admin_access_guard');
             Route::post('/product','ProductController@create')->middleware('store_staff_guard');
@@ -120,6 +120,12 @@ Route::prefix('v1')->group(function(){
             Route::put('/sub_order/status','SubOrderController@updateStatus');
 
             Route::get('/order_items/{order_item_id?}','OrderItemController@index');
+            Route::get('/admin/wallet','AdminController@getWallet')->middleware('super_admin_access_guard');
+            Route::post('/admin/wallet/debit','AdminController@debitWallet')->middleware('super_admin_access_guard');
+            Route::post('/admin/wallet/credit','AdminController@creditWallet')->middleware('super_admin_access_guard');
+
+            Route::post('/widget','WidgetController@upload')->middleware('super_admin_access_guard');
+            Route::post('/widget/items','WidgetController@uploadItems')->middleware('super_admin_access_guard');
         });
     });
 });

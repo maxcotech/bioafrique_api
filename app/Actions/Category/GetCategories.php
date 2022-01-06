@@ -6,13 +6,14 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use App\Actions\Action;
 use App\Models\Category;
+use App\Traits\HasAuthStatus;
 use App\Traits\HasCategory;
 use App\Traits\HasResourceStatus;
 use App\Traits\HasRoles;
 
 class GetCategories extends Action
 {
-   use HasCategory,HasRoles,HasResourceStatus;
+   use HasCategory,HasRoles,HasResourceStatus,HasAuthStatus;
    protected $request;
    protected $max_cat_level;
    protected $min_cat_level;
@@ -39,6 +40,21 @@ class GetCategories extends Action
       return $this->valResult($val);
    }
 
+   protected function selectByCategoryStatus($query){
+      if($this->user != null){
+         if(!$this->isSuperAdmin($this->user->user_type)){
+            $query = $query->where('status',$this->getResourceActiveId());
+         } else {
+            if($this->request->query('status',null) != null){
+               $query = $query->where('status',$this->request->query('status'));
+            }
+         }
+      } else {
+         $query = $query->where('status',$this->getResourceActiveId());
+      }
+      return $query;
+   }
+
    protected function getCategories()
    {
       $query = null;
@@ -50,13 +66,7 @@ class GetCategories extends Action
       } else {
          $query = Category::where('category_level',Category::MAIN_CATEGORY_LEVEL);
       }
-      if(!$this->isSuperAdmin($this->user->user_type)){
-         $query = $query->where('status',$this->getResourceActiveId());
-      } else {
-         if($this->request->query('status',null) != null){
-            $query = $query->where('status',$this->request->query('status'));
-         }
-      }
+      $query = $this->selectByCategoryStatus($query);
       $query = $this->selectByVerboseLevel($query,$this->request->query('verbose',1));
       return $query->paginate($this->request->query('limit',15));
    }
@@ -69,6 +79,7 @@ class GetCategories extends Action
       $child_verbose = $this->request->query('child_verbose',$this->request->query('verbose',1));
       foreach($data as $category){
          $query = Category::where('parent_id',$category['id']);
+         $query = $this->selectByCategoryStatus($query);
          $query = $this->selectByVerboseLevel($query,$child_verbose);
          $sub_cats = $query->get();
          $sub_cats = json_decode(json_encode($sub_cats),true);
