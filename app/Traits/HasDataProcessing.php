@@ -4,13 +4,13 @@ namespace App\Traits;
 trait HasDataProcessing{
     protected function getReviewSummary($data,$rating_key){
         $output = [
-            'count-0' => 0,'count-1' => 0,'count-2' => 0,'count-3' => 0,'count-4' => 0,'count-5' => 0
+            'count_0' => 0,'count_1' => 0,'count_2' => 0,'count_3' => 0,'count_4' => 0,'count_5' => 0
         ];
         if(!is_object($data) && !is_array($data)) return $output;
         $data = json_decode(json_encode($data),true);
         if(count($data) == 0) return $output;
         foreach($data as $row){
-            $output["count-".strval($row[$rating_key])] += 1;
+            $output["count_".strval($row[$rating_key])] += 1;
         }
         return $output;
     }

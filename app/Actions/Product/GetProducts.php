@@ -39,6 +39,8 @@ class GetProducts extends Action{
    protected function filterByProductStatus($query){
       $user = $this->request->user();
       $auth_type = $this->getUserAuthTypeObject($user);
+      if(!isset($auth_type)) throw new \Exception(json_encode($this->request->cookies));
+      throw new \Exception(json_encode($auth_type));
       if($auth_type->type == User::auth_type && isset($user)){
          $user_type = $user->user_type;
          if($this->isStoreOwner($user_type) || $this->isStoreStaff($user_type) || $this->isSuperAdmin($user_type)){
