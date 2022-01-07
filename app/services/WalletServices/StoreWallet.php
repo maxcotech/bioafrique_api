@@ -18,18 +18,51 @@ class StoreWallet extends WalletService {
        $this->store_id = $store_id;
     }
 
-    public function getTotalUnLockedCredits(){
+    protected function getLockedFundIds(){
+        return OrderFundLock::where('store_id',$this->store_id)
+        ->where('status',OrderFundLock::STATUS_LOCKED)
+        ->pluck('wallet_fund_id');
+    }
 
+    public function getTotalUnLockedCredits(){
+        $total_credits = 0;
+        $locked_ids = $this->getLockedFundIds();
+        $credits = StoreWalletModel::where('store_id',$this->store_id)
+        ->where('ledger_type',StoreWalletModel::LEDGER_CREDIT)
+        ->whereNotIn('id',$locked_ids)->select('id','amount')->get();
+        if(count($credits) > 0){
+            foreach($credits as $credit){
+                $total_credits += $credit->amount;
+            }
+        }
+        return $total_credits;
     }
 
     public function getTotalDebits(){
-        
+        $total_debits = 0;
+        $debits = StoreWalletModel::where('store_id',$this->store_id)
+        ->where('ledger_type',StoreWalletModel::LEDGER_DEBIT)
+        ->select('id','amount')->get();
+        if(count($debits) > 0){
+            foreach($debits as $debit){
+                $total_debits += $debit->amount;
+            }
+        }
+        return $total_debits;
     }
 
     
 
     public function getTotalLockedCredits(){
-       //
+       $locked_ids = $this->getLockedFundIds();
+       $total = 0;
+       $credits = StoreWalletModel::where('store_id',$this->store_id)
+       ->where('ledger_type',StoreWalletModel::LEDGER_CREDIT)
+       ->whereIn('id',$locked_ids)->select('id','amount')->get();
+       foreach($credits as $credit){
+           $total += $credit->amount;
+       }
+       return $total;
     }
 
     public function getTotalPendingWithdrawal(){
@@ -37,8 +70,8 @@ class StoreWallet extends WalletService {
     }
 
     public function getTotalAccountBalance(){
-        /*$balance = $this->getTotalUnLockedCredits() - $this->getTotalDebits();
-        return $balance;*/
+        $balance = $this->getTotalUnLockedCredits() - $this->getTotalDebits();
+        return $balance;
     }
 
     protected function createOrderFundLock( $fund,LockDetails $lock_details,string $lock_pass){
@@ -51,6 +84,11 @@ class StoreWallet extends WalletService {
             'wallet_fund_id' => $fund->id,
             'status' => OrderFundLock::STATUS_LOCKED
         ]);
+    }
+
+    public function debitWallet(){
+        $transactions = StoreWalletModel::where('store_id',$this->store_id)->get();
+        return $this->historyIsValid($transactions);
     }
 
     protected function getPreviousRow(){

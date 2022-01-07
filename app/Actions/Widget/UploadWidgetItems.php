@@ -3,14 +3,23 @@ namespace App\Actions\Widget;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use App\Actions\Action;
+use App\Models\Widget;
 use App\Models\WidgetItem;
+use App\Traits\FilePath;
+use App\Traits\HasArrayOperations;
+use App\Traits\HasFile;
+use App\Traits\HasResourceStatus;
+use App\Traits\HasRoles;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 
 class UploadWidgetItems extends Action{
+   use HasFile,HasArrayOperations,HasRoles,HasResourceStatus,FilePath;
    protected $request;
+   protected $user;
    public function __construct(Request $request){
       $this->request=$request;
+      $this->user = $request->user();
    }
 
    protected function validate(){
@@ -70,8 +79,25 @@ class UploadWidgetItems extends Action{
             }
          }
       }
-      WidgetItem::where('widget_id',$this->request->id)
-      ->whereNotIn('id',$item_ids)->delete();
+      $excluded_items = WidgetItem::where('widget_id',$this->request->id)
+      ->whereNotIn('id',$item_ids)->get();
+      if(count($excluded_items) > 0){
+         foreach($excluded_items as $item){
+            $this->deleteFile($this->getInitialPath($item->item_image_url,UploadWidgetImage::upload_path));
+         }
+         WidgetItem::where('widget_id',$this->request->id)
+         ->whereNotIn('id',$item_ids)->delete();
+      }
+   }
+
+   protected function updateWidgetStatus(){
+      $widget = Widget::find($this->request->id);
+      if($this->isSuperAdmin($this->user->user_type)){
+         if($widget->status == $this->getResourceInDraftId()){
+            $widget->status = $this->getResourceActiveId();
+            $widget->save();
+         }
+      }
    }
 
 
@@ -84,9 +110,10 @@ class UploadWidgetItems extends Action{
          if($val2['status'] != "success") return $this->resp($val2);
          DB::transaction(function()use($items){
             $this->deleteExcludedItems($items);
-            $this->saveItems($items);         
+            $this->saveItems($items);
+            $this->updateWidgetStatus();         
          });
-         return $this->successMessage('Widget items uploaded successfully');
+         return $this->successMessage('Widget items uploaded successfully.');
       }
       catch(\Exception $e){
          return $this->internalError($e->getMessage());
