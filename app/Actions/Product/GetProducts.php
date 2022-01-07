@@ -39,32 +39,6 @@ class GetProducts extends Action{
       return $this->valResult($val);
    }
 
-<<<<<<< HEAD
-   protected function filterByProductStatus($query){
-      $user = $this->request->user();
-      $auth_type = $this->getUserAuthTypeObject($user);
-      if(!isset($auth_type)) throw new \Exception(json_encode($this->request->cookies));
-      throw new \Exception(json_encode($auth_type));
-      if($auth_type->type == User::auth_type && isset($user)){
-         $user_type = $user->user_type;
-         if($this->isStoreOwner($user_type) || $this->isStoreStaff($user_type) || $this->isSuperAdmin($user_type)){
-            $status = $this->request->query('status',null);
-            if($status != null){
-               $query = $query->where('product_status',$status);
-            }
-         } else {
-            $query = $query->where('product_status',$this->getResourceActiveId());
-         }
-      } else {
-         $query = $query->where('product_status',$this->getResourceActiveId());
-      }
-      return $query;
-
-   }
-
-   
-=======
->>>>>>> ee4e7e5bd87855241499548cd0211c4e3b8645b5
    protected function getProductsQuery(){
       $query = Product::select(
          'id','product_name','product_image','regular_price','sales_price','product_slug','store_id','product_type',
