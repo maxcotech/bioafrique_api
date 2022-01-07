@@ -162,13 +162,14 @@ trait HasProduct
         return $output;
     }
 
-    protected function appendWishListStatus($data,$access_type){
+    protected function appendWishListStatus($data,$access_type,$product_key = "id"){
         $user_id = $access_type->id;
         $user_type = $access_type->type;
         $product_ids = json_decode(json_encode(ProductWish::where('user_type',$user_type)->where('user_id',$user_id)->pluck('product_id')),true);
         if(count($data) > 0){
-           $data->each(function($item) use($product_ids){
-               $item->in_wishlist = in_array($item->id,$product_ids);
+           $data->each(function($item) use($product_ids,$product_key){
+               $item_array = json_decode(json_encode($item),true);
+               $item->in_wishlist = in_array($item_array[$product_key],$product_ids);
                return $item;
            });
         }

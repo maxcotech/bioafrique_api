@@ -9,9 +9,10 @@ use App\Traits\HasCategory;
 use App\Traits\HasProduct;
 use App\Traits\HasProductFilters;
 use App\Traits\HasRoles;
+use App\Traits\HasShoppingCartItem;
 
 class GetProducts extends Action{
-   use HasProductFilters,HasCategory,HasAuthStatus,HasRoles,HasProduct;
+   use HasProductFilters,HasCategory,HasAuthStatus,HasRoles,HasProduct,HasShoppingCartItem;
 
    protected $request;
    protected $default_page_count = 30;
@@ -62,6 +63,7 @@ class GetProducts extends Action{
          $query = $this->getProductsQuery();
          $data = $query->paginate($this->request->query('limit',$this->default_page_count));
          $data = $this->appendWishListStatus($data,$this->access_type);
+         $data = $this->appendCartQuantityToEachItem($data,$this->access_type);
          $data = collect(['filters'=>$this->getProductFilterArray(null,$this->request->query('query',null))])->merge($data);
          return $this->successWithData($data);
       }

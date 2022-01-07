@@ -11,10 +11,11 @@ use App\Traits\HasCategory;
 use App\Traits\HasProduct;
 use App\Traits\HasProductFilters;
 use App\Traits\HasResourceStatus;
+use App\Traits\HasShoppingCartItem;
 
 class GetCategoryProducts extends Action{
    use HasResourceStatus,HasProductFilters,HasCategory,HasArrayOperations;
-   use HasAuthStatus,HasProduct;
+   use HasAuthStatus,HasProduct,HasShoppingCartItem;
    protected $request;
    protected $category_param;
    protected $user;
@@ -94,6 +95,7 @@ class GetCategoryProducts extends Action{
          $query = $this->getProductQuery($category);
          $data = $query->paginate($this->request->query('limit',15));
          $data = $this->appendWishListStatus($data,$this->access_type);
+         $data = $this->appendCartQuantityToEachItem($data,$this->access_type);
          $data = collect(['filters'=>$this->getProductFilterArray(
             $category->id,$this->request->query('query',null)
          )])->merge($data);
