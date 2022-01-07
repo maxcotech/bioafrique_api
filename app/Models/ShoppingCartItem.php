@@ -11,7 +11,7 @@ class ShoppingCartItem extends Model
 
     protected $table = "shopping_cart_items";
     protected $fillable = [
-        'user_id','user_type','item_id','item_type','quantity','store_id'
+        'user_id','user_type','item_id','item_type','quantity','store_id','variant_id'
     ];
 
     public function itemable(){

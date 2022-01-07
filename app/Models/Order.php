@@ -2,13 +2,14 @@
 
 namespace App\Models;
 
+use App\Traits\HasRateConversion;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Order extends Model
 {
-    use HasFactory;
+    use HasFactory,HasRateConversion;
     public const STATUS_PENDING = 1;
     public const STATUS_AWAITING_FULFILLMENT = 2;
     public const STATUS_AWAITING_SHIPPING = 3;
@@ -36,6 +37,12 @@ class Order extends Model
     }
     public function billingAddress(){
         return $this->belongsTo(BillingAddress::class,'billing_address_id');
+    }
+    public function user(){
+        return $this->belongsTo(User::class,"user_id");
+    }
+    public function getConvertedAmountAttribute(){
+        return $this->baseToUserCurrency($this->total_amount);
     }
     
 }

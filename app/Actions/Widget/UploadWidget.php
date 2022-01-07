@@ -19,13 +19,14 @@ class UploadWidget extends Action{
          'widget_title' => 'required|string|max:1000',
          'widget_link_text' => 'nullable|string|max:1000',
          'widget_link_address' => $this->getWidgetLinkAddressRule(),
-         'widget_type' => 'required|integer'
+         'widget_type' => 'required|integer',
+         'is_block' => 'required|integer'
       ]);
       return $this->valResult($val);
    }
 
    protected function getWidgetLinkAddressRule(){
-      $common_rule = "|string|max:1000";
+      $common_rule = "|string|max:1000|url";
       if($this->request->input('widget_link_text',null) == null){
          return "nullable".$common_rule;
       } else {
@@ -49,7 +50,8 @@ class UploadWidget extends Action{
          'widget_title' => $this->request->widget_title,
          'widget_link_text' => $this->request->widget_link_text,
          'widget_link_address' => $this->request->widget_link_address,
-         'widget_type' => $this->request->widget_type
+         'widget_type' => $this->request->widget_type,
+         'is_block' => $this->request->is_block
       ];
       if(isset($widget_id)){
          WidgetModel::where('id',$widget_id)
@@ -67,7 +69,7 @@ class UploadWidget extends Action{
          $val = $this->validate();
          if($val['status'] !== "success") return $this->resp($val);
          $data = $this->onUploadWidget();
-         return $this->successWithData($data);
+         return $this->successWithData($data,'Widget successfully uploaded, proceed to edit items.');
       }
       catch(\Exception $e){
          return $this->internalError($e->getMessage());

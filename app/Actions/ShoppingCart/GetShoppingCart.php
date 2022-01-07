@@ -4,10 +4,11 @@ use Illuminate\Http\Request;
 use App\Actions\Action;
 use App\Models\ShoppingCartItem;
 use App\Traits\HasAuthStatus;
+use App\Traits\HasProduct;
 use App\Traits\HasShoppingCartItem;
 
 class GetShoppingCart extends Action{
-   use HasAuthStatus,HasShoppingCartItem;
+   use HasAuthStatus,HasShoppingCartItem,HasProduct;
    protected $request;
    public function __construct(Request $request){
       $this->request=$request;
@@ -30,6 +31,7 @@ class GetShoppingCart extends Action{
          $auth_type_obj = $this->getUserAuthTypeObject();
          if(!isset($auth_type_obj)) throw new \Exception('An Error occurred, please ensure your browser enables usage of cookies.');
          $data = $this->onGetShoppingCart($auth_type_obj);
+         $data = $this->appendWishListStatus($data,$auth_type_obj,"item_id");
          $collect = collect(['cart_count'=>$this->getTotalCartCount($auth_type_obj)]);
          $data = $collect->merge($data);
          return $this->successWithData($data);

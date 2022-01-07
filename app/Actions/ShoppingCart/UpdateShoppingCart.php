@@ -24,20 +24,27 @@ class UpdateShoppingCart extends Action{
          ->where(function($query){
             return $query->where('product_id',$this->request->item_id);
          })],
-         'quantity' => 'required|integer|min:1,max:20'
+         'quantity' => 'required|integer|min:0,max:20'
       ]);
       return $this->valResult($val);
    }
 
    protected function onUpdateCart($auth_type){
-      ShoppingCartItem::updateOrCreate([
-         'item_id' => $this->request->item_id,
-         'variant_id' => $this->request->input('variant_id',null),
-         'user_id' => $auth_type->id,
-         'user_type' => $auth_type->type
-      ],[
-         'quantity' => $this->request->quantity
-      ]);
+      if($this->request->quantity == 0){
+         ShoppingCartItem::where('user_id',$auth_type->id)
+         ->where('user_type',$auth_type->type)
+         ->where('item_id',$this->request->item_id)
+         ->where('variant_id',$this->request->variant_id)->delete();
+      } else {
+         ShoppingCartItem::updateOrCreate([
+            'item_id' => $this->request->item_id,
+            'variant_id' => $this->request->input('variant_id',null),
+            'user_id' => $auth_type->id,
+            'user_type' => $auth_type->type
+         ],[
+            'quantity' => $this->request->quantity
+         ]);
+      }
    }
 
    

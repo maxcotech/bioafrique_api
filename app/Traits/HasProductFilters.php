@@ -163,7 +163,7 @@ trait HasProductFilters
     protected function selectFields($query)
     {
         $withFields = [
-            'variations:id,regular_price,sales_price,variation_name'
+            'variations:id,regular_price,sales_price,variation_name,product_id'
         ];
         $query = $query->with($withFields);
         return $query;
@@ -179,6 +179,7 @@ trait HasProductFilters
         }
         return $query;
     }
+
 
     protected function filterByPrice($query)
     {

@@ -21,6 +21,7 @@ class CreateWidgetsTable extends Migration
             $table->tinyInteger('widget_type');
             $table->integer('index_no')->unique();
             $table->tinyInteger('status');
+            $table->tinyInteger('is_block');
             $table->timestamps();
         });
     }

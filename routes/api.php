@@ -41,6 +41,8 @@ Route::prefix('v1')->group(function(){
             Route::delete('/review/{review_id}','ProductReviewController@delete');
 
             Route::get('/stores','StoreController@index');
+
+            Route::get('/widgets','WidgetController@index');
         
         });
 
@@ -123,9 +125,17 @@ Route::prefix('v1')->group(function(){
             Route::get('/admin/wallet','AdminController@getWallet')->middleware('super_admin_access_guard');
             Route::post('/admin/wallet/debit','AdminController@debitWallet')->middleware('super_admin_access_guard');
             Route::post('/admin/wallet/credit','AdminController@creditWallet')->middleware('super_admin_access_guard');
-
+            Route::get('/admin/dashboard','AdminController@getDashboardData')->middleware('super_admin_access_guard');
+            
+            Route::delete('/widget/{widget_id}','WidgetController@deleteWidget')->middleware('super_admin_access_guard');
             Route::post('/widget','WidgetController@upload')->middleware('super_admin_access_guard');
             Route::post('/widget/items','WidgetController@uploadItems')->middleware('super_admin_access_guard');
+            Route::get('/widget/items','WidgetController@getWidgetItems')->middleware('super_admin_access_guard');
+            Route::post('/widget/image','WidgetController@uploadImage')->middleware('super_admin_access_guard');
+            Route::patch('/widget/status','WidgetController@updateWidgetStatus')->middleware('super_admin_access_guard');
+            Route::patch('/widget/index','WidgetController@swapWidgetIndex')->middleware('super_admin_access_guard');
+           
+            Route::post('/store/fund/withdraw','StoreFundController@withdrawFund')->middleware('sasom_access_guard');
         });
     });
 });

@@ -3,9 +3,11 @@ namespace App\Traits;
 
 use App\Models\Product;
 use App\Models\ShoppingCartItem;
+use Illuminate\Support\Facades\Log;
 
 trait HasShoppingCartItem{
 
+   use HasArrayOperations;
    protected function quantityIsBeyondAvailable(Product $product,int $variant_id = null,int $input_quantity){
       $amount_in_stock = 0;
       if(isset($variant_id)){
@@ -51,7 +53,25 @@ trait HasShoppingCartItem{
       }
       return 0;
    }
-   
 
+   protected function appendCartQuantityToEachItem($items,$auth_type){
+      $cart_items = ShoppingCartItem::where('user_id',$auth_type->id)
+      ->where('user_type',$auth_type->type)->select('id','item_id','variant_id','quantity')->get();
+      if(count($items) > 0){
+         $items->each(function($item)use($cart_items){
+            $item->cart_quantity = $this->sumArrayValuesByKey($cart_items,"quantity","item_id",$item->id);
+            if($item->product_type == Product::variation_product_type){
+               if(count($item->variations) > 0){
+                  $item->variations->each(function($variation)use($cart_items){
+                     Log::alert('each variation '.json_encode($variation));
+                     $variation->cart_quantity = $this->sumArrayValuesByKey($cart_items,'quantity','variant_id',$variation->id);
+                  });
+               }
+            }
+         });
+         return $items;
+      }
+   }
+   
 }
    
