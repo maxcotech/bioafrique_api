@@ -69,8 +69,8 @@ trait HasShoppingCartItem{
                }
             }
          });
-         return $items;
       }
+      return $items;
    }
    
 }
