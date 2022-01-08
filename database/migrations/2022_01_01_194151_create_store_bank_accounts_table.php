@@ -15,7 +15,8 @@ class CreateStoreBankAccountsTable extends Migration
     {
         Schema::create('store_bank_accounts', function (Blueprint $table) {
             $table->id();
-            $table->string('bank_code');
+            $table->string('bank_code')->nullable();
+            $table->string('bank_name',1000);
             $table->string('account_number');
             $table->bigInteger('bank_currency_id');
             $table->bigInteger('store_id');
