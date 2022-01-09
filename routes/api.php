@@ -143,6 +143,10 @@ Route::prefix('v1')->group(function(){
             Route::put('/store/bank_account','StoreBankAccountController@update')->middleware('store_owner_access_guard');
             Route::get('/store/bank_accounts','StoreBankAccountController@index');
             Route::delete('/store/bank_account/{account_id}','StoreBankAccountController@delete');
+
+            Route::post('/country','CountryController@create')->middleware('super_admin_access_guard');
+            Route::put('/country','CountryController@update')->middleware('super_admin_access_guard');
+            Route::delete('/country/{country_id}','CountryController@delete')->middleware('super_admin_access_guard');
         });
     });
 });
