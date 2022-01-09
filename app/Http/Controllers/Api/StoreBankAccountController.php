@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Actions\StoreBankAccount\CreateAccount;
 use App\Actions\StoreBankAccount\DeleteAccount;
 use App\Actions\StoreBankAccount\GetAccounts;
+use App\Actions\StoreBankAccount\GetBankCodes;
 use App\Actions\StoreBankAccount\UpdateAccount;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -22,5 +23,8 @@ class StoreBankAccountController extends Controller
     }
     public function delete(Request $request,$account_id){
         return (new DeleteAccount($request,$account_id))->execute();
+    }
+    public function getBankCodes(Request $request,$currency_id){
+        return (new GetBankCodes($request,$currency_id))->execute();
     }
 }

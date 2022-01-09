@@ -43,6 +43,8 @@ Route::prefix('v1')->group(function(){
             Route::get('/stores','StoreController@index');
 
             Route::get('/widgets','WidgetController@index');
+
+            Route::get('/banks/codes/{currency_id}','StoreBankAccountController@getBankCodes');
         
         });
 
