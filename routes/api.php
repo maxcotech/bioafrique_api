@@ -43,6 +43,8 @@ Route::prefix('v1')->group(function(){
             Route::get('/stores','StoreController@index');
 
             Route::get('/widgets','WidgetController@index');
+
+            Route::get('/banks/codes/{currency_id}','StoreBankAccountController@getBankCodes');
         
         });
 
@@ -136,6 +138,15 @@ Route::prefix('v1')->group(function(){
             Route::patch('/widget/index','WidgetController@swapWidgetIndex')->middleware('super_admin_access_guard');
            
             Route::post('/store/fund/withdraw','StoreFundController@withdrawFund')->middleware('sasom_access_guard');
+
+            Route::post('/store/bank_account','StoreBankAccountController@create')->middleware('store_owner_access_guard');
+            Route::put('/store/bank_account','StoreBankAccountController@update')->middleware('store_owner_access_guard');
+            Route::get('/store/bank_accounts','StoreBankAccountController@index');
+            Route::delete('/store/bank_account/{account_id}','StoreBankAccountController@delete');
+
+            Route::post('/country','CountryController@create')->middleware('super_admin_access_guard');
+            Route::put('/country','CountryController@update')->middleware('super_admin_access_guard');
+            Route::delete('/country/{country_id}','CountryController@delete')->middleware('super_admin_access_guard');
         });
     });
 });
