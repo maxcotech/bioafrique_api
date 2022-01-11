@@ -30,7 +30,7 @@ class UpdateCountry extends Action{
 
    protected function onUpdateCountry(){
       Country::where('id',$this->request->id)
-      ->update($this->request->all());
+      ->update($this->request->all(['country_code','country_name','country_tel_code']));
    }
 
 

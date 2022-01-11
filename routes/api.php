@@ -147,6 +147,17 @@ Route::prefix('v1')->group(function(){
             Route::post('/country','CountryController@create')->middleware('super_admin_access_guard');
             Route::put('/country','CountryController@update')->middleware('super_admin_access_guard');
             Route::delete('/country/{country_id}','CountryController@delete')->middleware('super_admin_access_guard');
+            Route::post('/country/upload_logo','CountryController@uploadLogo')->middleware('super_admin_access_guard');
+
+            Route::post('/state','StateController@create')->middleware('super_admin_access_guard');
+            Route::put('/state','StateController@update')->middleware('super_admin_access_guard');
+            Route::patch('/state/status','StateController@updateStatus')->middleware('super_admin_access_guard');
+            Route::delete('/state/{state_id}','StateController@delete')->middleware('super_admin_access_guard');
+
+            Route::post('/city','CityController@create');
+            Route::patch('/city/status','CityController@updateStatus')->middleware('super_admin_access_guard');
+            Route::put('/city','CityController@update')->middleware('super_admin_access_guard');
+            Route::delete('/city/{city_id}','CityController@delete')->middleware('super_admin_access_guard');
         });
     });
 });

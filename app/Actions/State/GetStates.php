@@ -4,11 +4,14 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use App\Actions\Action;
 use App\Models\State;
+use App\Models\User;
+use App\Traits\HasAuthStatus;
 use App\Traits\HasResourceStatus;
 use App\Traits\HasRoles;
+use Illuminate\Support\Facades\Log;
 
 class GetStates extends Action{
-   use HasRoles,HasResourceStatus;
+   use HasRoles,HasResourceStatus,HasAuthStatus;
 
    protected $request;
    protected $route_param;
@@ -25,11 +28,18 @@ class GetStates extends Action{
       return $this->valResult($val);
    }
 
-   protected function getStates(){
+   protected function getStates($access_type){
       $query = State::where('country_id',$this->request->query('country_id'));
-      $select_fields = ['id','state_name','state_code','country_id'];
-      if($this->request->query('status',null) != null && $this->isSuperAdmin()){
-         $query = $query->where('status',$this->request->query('status',null));
+      $select_fields = ['id','state_name','state_code','country_id','status'];
+      if($access_type->type == User::auth_type){
+         if($this->isSuperAdmin()){
+            if($this->request->query('status',null) != null){
+               Log::alert("status is ".$this->request->query('status'));
+               $query = $query->where('status',$this->request->query('status',null));
+            }
+         } else {
+            $query = $query->where('status',$this->getResourceActiveId());
+         }
       } else {
          $query = $query->where('status',$this->getResourceActiveId());
       }
@@ -43,7 +53,8 @@ class GetStates extends Action{
       try{
          $val = $this->validate();
          if($val['status'] != "success") return $this->resp($val);
-         $states = $this->getStates();
+         $access_type = $this->getUserAuthTypeObject();
+         $states = $this->getStates($access_type);
          return $this->successWithData($states);
       }
       catch(\Exception $e){

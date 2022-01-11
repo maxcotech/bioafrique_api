@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Actions\Country\CreateCountry;
 use App\Actions\Country\DeleteCountry;
 use App\Actions\Country\UpdateCountry;
+use App\Actions\Country\UploadLogo;
 use App\Http\Controllers\Controller;
 use App\Models\Country;
 use App\Models\Currency;
@@ -41,5 +42,8 @@ class CountryController extends Controller
     }
     public function delete(Request $request,$country_id){
         return (new DeleteCountry($request,$country_id))->execute();
+    }
+    public function uploadLogo(Request $request){
+        return (new UploadLogo($request))->execute();
     }
 }
