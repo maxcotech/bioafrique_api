@@ -23,7 +23,7 @@ Route::prefix('v1')->group(function(){
             Route::get('/category/products/{category_param}','ProductController@getCategoryProducts');
             Route::get('/product/{slug}','ProductController@show');
             Route::get('/countries','CountryController@index');
-            Route::get('/currencies','CountryController@getCurrencies');
+            Route::get('/currencies','CurrencyController@index');
             Route::get('/search/{search_type}','SearchController@index');
             Route::get('/variation_options','VariationOptionsController@index');
 
@@ -158,6 +158,11 @@ Route::prefix('v1')->group(function(){
             Route::patch('/city/status','CityController@updateStatus')->middleware('super_admin_access_guard');
             Route::put('/city','CityController@update')->middleware('super_admin_access_guard');
             Route::delete('/city/{city_id}','CityController@delete')->middleware('super_admin_access_guard');
+
+            Route::post('/currency','CurrencyController@create')->middleware('super_admin_access_guard');
+            Route::put('/currency','CurrencyController@update')->middleware('super_admin_access_guard');
+            Route::delete('/currency/{currency_id}','CurrencyController@delete')->middleware('super_admin_access_guard');
+            
         });
     });
 });

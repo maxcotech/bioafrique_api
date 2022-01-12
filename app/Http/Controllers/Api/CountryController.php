@@ -8,7 +8,6 @@ use App\Actions\Country\UpdateCountry;
 use App\Actions\Country\UploadLogo;
 use App\Http\Controllers\Controller;
 use App\Models\Country;
-use App\Models\Currency;
 use App\Traits\HasHttpResponse;
 use Illuminate\Http\Request;
 
@@ -25,14 +24,6 @@ class CountryController extends Controller
         }
     }
 
-    public function getCurrencies(Request $request){
-        $paginate = $request->query('paginate',0);
-        if($paginate == 0){
-            return $this->successWithData(Currency::all());
-        } else {
-            return $this->successWithData(Currency::paginate(15));
-        }
-    }
 
     public function create(Request $request){
         return (new CreateCountry($request))->execute();
