@@ -3,9 +3,11 @@ namespace App\Traits;
 
 use App\Models\Cookie;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Cookie as FacadesCookie;
 
 trait HasAccessCookie{
 
+    protected $standard_cookie_time = 12 * 31 * 24 * 60;
     protected function generateCookie(){
         while(true){
            $val = mt_rand(10000000,90000000000000);
@@ -28,9 +30,19 @@ trait HasAccessCookie{
         $t = cookie(
            'basic_access',
            $cookie->cookie_value,
-           12 * 31 * 24 * 60, null,null,null,true,false,null
+           $this->standard_cookie_time, null,null,null,true,false,null
         );
         return $t;
+     }
+
+     protected function queueCookie($cookie){
+         /*FacadesCookie::queue(
+            'basic_access',
+            $cookie->cookie_value,
+            $this->standard_cookie_time
+         );*/
+         setcookie('basic_access',$cookie->cookie_value,$this->standard_cookie_time,"/");
+         return $cookie;
      }
 
     protected function isEligibleForNewCookie(){

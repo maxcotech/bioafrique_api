@@ -23,7 +23,7 @@ Route::prefix('v1')->group(function(){
             Route::get('/category/products/{category_param}','ProductController@getCategoryProducts');
             Route::get('/product/{slug}','ProductController@show');
             Route::get('/countries','CountryController@index');
-            Route::get('/currencies','CountryController@getCurrencies');
+            Route::get('/currencies','CurrencyController@index');
             Route::get('/search/{search_type}','SearchController@index');
             Route::get('/variation_options','VariationOptionsController@index');
 
@@ -122,12 +122,14 @@ Route::prefix('v1')->group(function(){
 
             Route::get('/sub_orders/{sub_order_id?}','SubOrderController@index');
             Route::put('/sub_order/status','SubOrderController@updateStatus');
-
             Route::get('/order_items/{order_item_id?}','OrderItemController@index');
+
             Route::get('/admin/wallet','AdminController@getWallet')->middleware('super_admin_access_guard');
             Route::post('/admin/wallet/debit','AdminController@debitWallet')->middleware('super_admin_access_guard');
             Route::post('/admin/wallet/credit','AdminController@creditWallet')->middleware('super_admin_access_guard');
             Route::get('/admin/dashboard','AdminController@getDashboardData')->middleware('super_admin_access_guard');
+            Route::get('/admin/preferences','AdminController@getAdminPreferences')->middleware('super_admin_access_guard');
+            Route::put('/admin/preferences','AdminController@updateAdminPreferences')->middleware('super_admin_access_guard');
             
             Route::delete('/widget/{widget_id}','WidgetController@deleteWidget')->middleware('super_admin_access_guard');
             Route::post('/widget','WidgetController@upload')->middleware('super_admin_access_guard');
@@ -147,6 +149,23 @@ Route::prefix('v1')->group(function(){
             Route::post('/country','CountryController@create')->middleware('super_admin_access_guard');
             Route::put('/country','CountryController@update')->middleware('super_admin_access_guard');
             Route::delete('/country/{country_id}','CountryController@delete')->middleware('super_admin_access_guard');
+            Route::post('/country/upload_logo','CountryController@uploadLogo')->middleware('super_admin_access_guard');
+
+            Route::post('/state','StateController@create')->middleware('super_admin_access_guard');
+            Route::put('/state','StateController@update')->middleware('super_admin_access_guard');
+            Route::patch('/state/status','StateController@updateStatus')->middleware('super_admin_access_guard');
+            Route::delete('/state/{state_id}','StateController@delete')->middleware('super_admin_access_guard');
+
+            Route::post('/city','CityController@create');
+            Route::patch('/city/status','CityController@updateStatus')->middleware('super_admin_access_guard');
+            Route::put('/city','CityController@update')->middleware('super_admin_access_guard');
+            Route::delete('/city/{city_id}','CityController@delete')->middleware('super_admin_access_guard');
+
+            Route::post('/currency','CurrencyController@create')->middleware('super_admin_access_guard');
+            Route::put('/currency','CurrencyController@update')->middleware('super_admin_access_guard');
+            Route::delete('/currency/{currency_id}','CurrencyController@delete')->middleware('super_admin_access_guard');
+
+
         });
     });
 });

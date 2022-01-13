@@ -12,7 +12,7 @@ use App\Traits\HasStore;
 class UploadProductVariationImage extends Action{
    use HasStore,HasResourceStatus,HasFile,FilePath;
    protected $request;
-   protected $upload_folder = 'product_variation_images';
+   public const upload_folder = 'product_variation_images';
    public function __construct(Request $request){
       $this->request=$request;
    }
@@ -66,7 +66,7 @@ class UploadProductVariationImage extends Action{
          if($val['status'] != "success") return $this->resp($val);
          $new_file_url = $this->uploadImage(
             $this->request->image_file,
-            $this->upload_folder
+            self::upload_folder
          );
          if($this->request->has('old_image_url') && $this->request->old_image_url != null){
             $initial_old_path = $this->getInitialPath($this->request->old_image_path,$this->upload_folder);

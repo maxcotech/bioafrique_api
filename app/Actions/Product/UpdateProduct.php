@@ -7,15 +7,15 @@ use App\Models\Product;
 use App\Models\ProductVariation;
 use App\Models\VariationAttribute;
 use App\Traits\FilePath;
+use App\Traits\HasFile;
 use App\Traits\HasProduct;
 use App\Traits\HasRateConversion;
 use App\Traits\HasStore;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rule;
 
 class UpdateProduct extends Action{
-   use HasStore,HasProduct,FilePath,HasRateConversion;
+   use HasStore,HasProduct,FilePath,HasRateConversion,HasFile;
 
    protected $request,$user;
    public function __construct(Request $request){
@@ -86,35 +86,39 @@ class UpdateProduct extends Action{
 
    protected function deleteExcludedVariations($variations){
       $conserved = [];
-      $count = 0;
-      foreach($variations as $variation){
-         if(isset($variation['id'])){
-            $count = array_push($conserved,$variation['id']);
+      if(count($variations) > 0){
+         foreach($variations as $variation){
+            if(isset($variation['id'])){
+               array_push($conserved,$variation['id']);
+            }
          }
       }
-      if($count > 0){
-         $excluded_variations = ProductVariation::where('store_id',$this->request->store_id)
-         ->where('product_id',$this->request->product_id)
-         ->whereNotIn('id',$conserved)->get();
-         if(isset($excluded_variations) && count($excluded_variations) > 0){
-            foreach($excluded_variations as $ex_variation){
-               VariationAttribute::where('variation_id',$ex_variation->id)->delete();
-               $ex_variation->delete();
-            }
+      $excluded = ProductVariation::where('store_id',$this->request->store_id)
+      ->where('product_id',$this->request->product_id)
+      ->whereNotIn('id',$conserved)->get();
+      if(count($excluded) > 0){
+         foreach($excluded as $excluded_item){
+            $this->deleteFile(
+               $this->getInitialPath(
+                  $excluded_item->variation_image,
+                  UploadProductVariationImage::upload_folder
+               )
+            );
+            $excluded_item->delete();
          }
       }
    }
 
    protected function updateProductVariations($variations){
+      $this->deleteExcludedVariations($variations);
+      $product = Product::find($this->request->product_id);
       if(isset($variations) && count($variations) > 0){
-         $this->deleteExcludedVariations($variations);
          foreach($variations as $variation){
-            $init_val_img = $this->getInitialPath($variation['variation_image_url'],'product_variation_images');
+            $init_val_img = $this->getInitialPath($variation['variation_image_url'],UploadProductVariationImage::upload_folder);
             $filters = [
                'product_id' => $this->request->product_id,
                'variation_image' => $init_val_img,
                'store_id' => $this->request->store_id,
-               'variation_status' => $this->getResourceInDraftId()
             ];
             if(isset($variation['variation_id'])) $filters['id'] = $variation['variation_id'];
             $parameters = [
@@ -123,7 +127,7 @@ class UpdateProduct extends Action{
                'regular_price' => $variation['regular_price'] ?? null,
                'sales_price' => $variation['sales_price'] ?? null,
                'amount_in_stock' => $variation['amount_in_stock'] ?? null,
-               'variation_status' => $this->getResourceInReviewId()
+               'variation_status' => $product->product_status
             ];
             $variation_record = ProductVariation::updateOrCreate($filters,$parameters);
             $this->updateVariationAttributes($variation,$variation_record);

@@ -5,11 +5,13 @@ use Illuminate\Http\Request;
 use App\Actions\Action;
 use App\Models\City;
 use App\Models\State;
+use App\Models\User;
+use App\Traits\HasAuthStatus;
 use App\Traits\HasResourceStatus;
 use App\Traits\HasRoles;
 
 class GetCities extends Action{
-   use HasResourceStatus,HasRoles;
+   use HasResourceStatus,HasRoles,HasAuthStatus;
 
    protected $request;
    protected $route_param;
@@ -38,17 +40,24 @@ class GetCities extends Action{
       }
    }
 
-   protected function getCities($state){
+   protected function getCities($state,$access_type){
       $query = City::where('state_id',$state->id);
-      if($this->request->query('status',null) != null && $this->isSuperAdmin()){
-         $query = $query->where('status',$this->request->query('status',null));
+      if($access_type->type == User::auth_type){
+         if($this->isSuperAdmin()){
+            if($this->request->query('status',null) != null){
+               $query = $query->where('status',$this->request->query('status',null));
+            }
+         } else {
+            $query = $query->where('status',$this->getResourceActiveId());
+         }
       } else {
          $query = $query->where('status',$this->getResourceActiveId());
       }
+      $query = $query->orderBy('city_name','asc');
       if($this->route_param === "paginate"){
-         return $query->paginate(15,['id','city_name','city_code','state_id']);
+         return $query->paginate(15,['id','city_name','city_code','state_id','status']);
       }
-      return $query->select(['id','city_name','city_code','state_id'])->get();
+      return $query->select(['id','city_name','city_code','state_id','status'])->get();
 
    }
 
@@ -58,7 +67,8 @@ class GetCities extends Action{
          $val = $this->validate();
          if($val['status'] !== "success") return $this->resp($val);
          $state = $this->getState();
-         $cities = $this->getCities($state);
+         $access_type = $this->getUserAuthTypeObject();
+         $cities = $this->getCities($state,$access_type);
          return $this->successWithData($cities);
       }
       catch(\Exception $e){
