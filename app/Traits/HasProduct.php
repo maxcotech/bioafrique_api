@@ -175,5 +175,11 @@ trait HasProduct
         }
         return $data;
     }
+
+    protected function addToRecentlyViewed($product,$access_type){
+        $user_type = $access_type->type;
+        $user_id = $access_type->id;
+        
+    }
      
 }
