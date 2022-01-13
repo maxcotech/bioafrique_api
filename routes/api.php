@@ -122,12 +122,14 @@ Route::prefix('v1')->group(function(){
 
             Route::get('/sub_orders/{sub_order_id?}','SubOrderController@index');
             Route::put('/sub_order/status','SubOrderController@updateStatus');
-
             Route::get('/order_items/{order_item_id?}','OrderItemController@index');
+
             Route::get('/admin/wallet','AdminController@getWallet')->middleware('super_admin_access_guard');
             Route::post('/admin/wallet/debit','AdminController@debitWallet')->middleware('super_admin_access_guard');
             Route::post('/admin/wallet/credit','AdminController@creditWallet')->middleware('super_admin_access_guard');
             Route::get('/admin/dashboard','AdminController@getDashboardData')->middleware('super_admin_access_guard');
+            Route::get('/admin/preferences','AdminController@getAdminPreferences')->middleware('super_admin_access_guard');
+            Route::put('/admin/preferences','AdminController@updateAdminPreferences')->middleware('super_admin_access_guard');
             
             Route::delete('/widget/{widget_id}','WidgetController@deleteWidget')->middleware('super_admin_access_guard');
             Route::post('/widget','WidgetController@upload')->middleware('super_admin_access_guard');
@@ -162,7 +164,8 @@ Route::prefix('v1')->group(function(){
             Route::post('/currency','CurrencyController@create')->middleware('super_admin_access_guard');
             Route::put('/currency','CurrencyController@update')->middleware('super_admin_access_guard');
             Route::delete('/currency/{currency_id}','CurrencyController@delete')->middleware('super_admin_access_guard');
-            
+
+
         });
     });
 });

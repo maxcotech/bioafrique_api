@@ -11,6 +11,7 @@ use App\Traits\HasHttpResponse;
 use App\Traits\IPAddress;
 use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cookie as FacadesCookie;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
@@ -35,7 +36,11 @@ class EnsureCurrencySelected
         if(!isset($user)){
             if($this->request->hasCookie('basic_access')){
                 $cuser = $this->getCookieUserByValue($this->request->cookie('basic_access'));
-            } else {
+            } 
+            else if(FacadesCookie::has('basic_access')){
+                $cuser = $this->getCookieUserByValue(FacadesCookie::get('basic_access'));
+            }
+            else {
                 $access_header = $this->request->header('X-basic_access');
                 if(isset($access_header)){
                     $cuser = $this->getCookieUserByValue($access_header);
