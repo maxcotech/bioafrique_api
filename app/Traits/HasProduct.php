@@ -184,13 +184,13 @@ trait HasProduct
         $record_exists = RecentlyViewed::where('user_type',$user_type)->where('user_id',$user_id)->where('product_id',$product_id)->exists();
         if($record_exists){
             RecentlyViewed::where('user_type',$user_type)->where('user_id',$user_id)->where('product_id',$product_id)
-            ->update(['updated_at' => now()->format('Y-m-d H:i:s')]);
-            //$record->update(['updated_at' => now()->format('Y-m-d H:i:s')]);
+            ->update(['last_viewed' => now()->format('Y-m-d H:i:s')]);
         } else {
             RecentlyViewed::create([
                 'product_id' => $product_id,
                 'user_type' => $user_type,
-                'user_id' => $user_id
+                'user_id' => $user_id,
+                'last_viewed' => now()->format('Y-m-d H:i:s')
             ]);
         }
     }

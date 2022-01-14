@@ -2,6 +2,8 @@
 namespace App\Traits;
 
 use App\Models\Cookie;
+use App\Models\ProductWish;
+use App\Models\RecentlyViewed;
 use App\Models\ShoppingCartItem;
 use App\Models\User;
 use App\Models\UserCountry;
@@ -41,11 +43,19 @@ trait SyncUserPreferences{
     }
 
     protected function syncUserRecentlyViewed($cookie_id,$user_id){
-        //to be implemented 
+        RecentlyViewed::where('user_type',$this->old_type)
+        ->where('user_id',$cookie_id)->update([
+            'user_id' => $user_id,
+            'user_type' => $this->new_type
+        ]);
     }
 
-    protected function syncUserWishList($cookie,$user_id){
-        //to be implemented
+    protected function syncUserWishList($cookie_id,$user_id){
+        ProductWish::where('user_type',$this->old_type)
+        ->where('user_id',$cookie_id)->update([
+            'user_id' => $user_id,
+            'user_type' => $this->new_type
+        ]);
     }
 
 }

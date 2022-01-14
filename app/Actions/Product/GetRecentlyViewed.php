@@ -9,7 +9,6 @@ use App\Traits\HasArrayOperations;
 use App\Traits\HasAuthStatus;
 use App\Traits\HasProduct;
 use App\Traits\HasShoppingCartItem;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Validator;
 
 class GetRecentlyViewed extends Action{
@@ -37,8 +36,8 @@ class GetRecentlyViewed extends Action{
         if(isset($excluded_id)){
             $query = $query->where('product_id',"!=",$excluded_id);
         }
-        $query = $query->select('id','product_id','updated_at');
-        $query = $query->orderBy('updated_at','desc');
+        $query = $query->select('id','product_id','last_viewed');
+        $query = $query->orderBy('last_viewed','desc');
         return $query->paginate($limit);
     }
 

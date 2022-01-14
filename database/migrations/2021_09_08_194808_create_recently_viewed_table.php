@@ -18,6 +18,7 @@ class CreateRecentlyViewedTable extends Migration
             $table->bigInteger("product_id");
             $table->bigInteger("user_id");
             $table->string('user_type',255);
+            $table->timestamp('last_viewed');
             $table->timestamps();
         });
     }
