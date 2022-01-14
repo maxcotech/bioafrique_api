@@ -8,11 +8,12 @@ use App\Models\RecentlyViewed;
 use App\Traits\HasArrayOperations;
 use App\Traits\HasAuthStatus;
 use App\Traits\HasProduct;
+use App\Traits\HasProductReview;
 use App\Traits\HasShoppingCartItem;
 use Illuminate\Support\Facades\Validator;
 
 class GetRecentlyViewed extends Action{
-    use HasAuthStatus,HasShoppingCartItem,HasProduct,HasArrayOperations;
+    use HasAuthStatus,HasShoppingCartItem,HasProduct,HasArrayOperations,HasProductReview;
 
     protected $request;
     protected $access_type;
@@ -58,6 +59,7 @@ class GetRecentlyViewed extends Action{
         ->with([
             'variations:id,regular_price,sales_price,variation_name,product_id,variation_image'
         ])->get();
+        $data = $this->appendReviewAverage($data);
         $data = $this->appendCartQuantityToEachItem($data,$this->access_type);
         $data = $this->appendWishListStatus($data,$this->access_type);
         return $data;

@@ -6,20 +6,30 @@ use Illuminate\Support\Facades\Auth;
 
 trait HasRateConversion{
     use HasCookie;
-
+    protected $user_currency;
+    protected $base_currency;
     protected function getBaseCurrency(){
-        return Currency::where('is_base_currency',1)->first();
+        if($this->base_currency == null){
+            $this->base_currency = Currency::where('is_base_currency',1)->first();
+        }
+        return $this->base_currency;
     }
 
     protected function getUserCurrency($user_acct = null,$cookie_acct = null){
-        $user = isset($user_acct)? $user_acct : Auth::user();
-        $currency = isset($user)? $user->currency()->first():null;
-        if(isset($currency)){
-            return $currency;
+        if($this->user_currency !== null){
+            //Log::alert('retrieving user currencies from memory');
+            return $this->user_currency;
         } else {
-            $cuser = isset($cookie_acct)? $cookie_acct : $this->getUserByCookie();
-            $currency = isset($cuser)? $cuser->currency()->first():null;
-            return isset($currency)? $currency: $this->getBaseCurrency();
+            //Log::alert('retrieving user currencies from db');
+            $user = isset($user_acct)? $user_acct : Auth::user();
+            $this->user_currency = isset($user)? $user->currency()->first():null;
+            if($this->user_currency !== null){
+                return $this->user_currency;
+            } else {
+                $cuser = isset($cookie_acct)? $cookie_acct : $this->getUserByCookie();
+                $this->user_currency = isset($cuser)? $cuser->currency()->first():null;
+                return ($this->user_currency)? $this->user_currency: $this->getBaseCurrency();
+            }
         }
     }
 

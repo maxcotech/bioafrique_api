@@ -3,15 +3,16 @@
 namespace App\Models;
 
 use App\Traits\FilePath;
-use App\Traits\HasDataProcessing;
+use App\Traits\HasProductReview;
 use App\Traits\HasRateConversion;
 use App\Traits\HasResourceStatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Log;
 
 class Product extends Model
 {
-    use HasFactory,FilePath,HasRateConversion,HasDataProcessing,HasResourceStatus;
+    use HasFactory,FilePath,HasRateConversion,HasProductReview,HasResourceStatus;
 
     public const simple_product_type = "simple_product";
     public const variation_product_type = "variation_product";
@@ -28,13 +29,14 @@ class Product extends Model
     ];
 
     
-    protected $appends = ['current_price','review_average'];
+    protected $appends = ['current_price'/*'review_average'*/];
 
     public function getCurrentPriceAttribute(){
         if($this->sales_price == 0 || $this->sales_price == null){
             return $this->regular_price;
         }
         return $this->sales_price;
+        return 0;
     }
 
     public function variations(){
@@ -75,14 +77,6 @@ class Product extends Model
         return $this->hasMany(ProductReview::class,'product_id');
     }
 
-    public function getReviewAverageAttribute(){
-        $reviews = ProductReview::where('product_id',$this->id)
-        ->where('status',$this->getResourceActiveId())->get();
-        if(count($reviews) > 0){
-            return $this->getReviewAverage($reviews,'star_rating');
-        }
-        return 0;
-    }
     public function getReviewSummaryAttribute(){
         $reviews = ProductReview::where('product_id',$this->id)
         ->where('status',$this->getResourceActiveId())->get();

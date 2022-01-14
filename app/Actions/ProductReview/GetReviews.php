@@ -4,11 +4,11 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use App\Actions\Action;
 use App\Models\ProductReview;
-use App\Traits\HasDataProcessing;
+use App\Traits\HasProductReview;
 use App\Traits\HasResourceStatus;
 
 class GetReviews extends Action{
-   use HasDataProcessing,HasResourceStatus;
+   use HasProductReview,HasResourceStatus;
    protected $request;
    protected $review_id;
 

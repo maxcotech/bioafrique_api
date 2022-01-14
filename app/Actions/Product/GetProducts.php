@@ -8,11 +8,12 @@ use App\Traits\HasAuthStatus;
 use App\Traits\HasCategory;
 use App\Traits\HasProduct;
 use App\Traits\HasProductFilters;
+use App\Traits\HasProductReview;
 use App\Traits\HasRoles;
 use App\Traits\HasShoppingCartItem;
 
 class GetProducts extends Action{
-   use HasProductFilters,HasCategory,HasAuthStatus,HasRoles,HasProduct,HasShoppingCartItem;
+   use HasProductFilters,HasCategory,HasAuthStatus,HasRoles,HasProduct,HasShoppingCartItem,HasProductReview;
 
    protected $request;
    protected $default_page_count = 30;
@@ -62,6 +63,7 @@ class GetProducts extends Action{
          if($val['status'] != "success") return $this->resp($val);
          $query = $this->getProductsQuery();
          $data = $query->paginate($this->request->query('limit',$this->default_page_count));
+         $data = $this->appendReviewAverage($data);
          $data = $this->appendWishListStatus($data,$this->access_type);
          $data = $this->appendCartQuantityToEachItem($data,$this->access_type);
          $data = collect(['filters'=>$this->getProductFilterArray(null,$this->request->query('query',null))])->merge($data);

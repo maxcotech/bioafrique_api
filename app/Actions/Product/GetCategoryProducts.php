@@ -10,12 +10,13 @@ use App\Traits\HasAuthStatus;
 use App\Traits\HasCategory;
 use App\Traits\HasProduct;
 use App\Traits\HasProductFilters;
+use App\Traits\HasProductReview;
 use App\Traits\HasResourceStatus;
 use App\Traits\HasShoppingCartItem;
 
 class GetCategoryProducts extends Action{
    use HasResourceStatus,HasProductFilters,HasCategory,HasArrayOperations;
-   use HasAuthStatus,HasProduct,HasShoppingCartItem;
+   use HasAuthStatus,HasProduct,HasShoppingCartItem,HasProductReview;
    protected $request;
    protected $category_param;
    protected $user;
@@ -94,6 +95,7 @@ class GetCategoryProducts extends Action{
          $category = $this->getInputCategory();
          $query = $this->getProductQuery($category);
          $data = $query->paginate($this->request->query('limit',15));
+         $data = $this->appendReviewAverage($data);
          $data = $this->appendWishListStatus($data,$this->access_type);
          $data = $this->appendCartQuantityToEachItem($data,$this->access_type);
          $data = collect(['filters'=>$this->getProductFilterArray(

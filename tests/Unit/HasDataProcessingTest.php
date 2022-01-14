@@ -3,12 +3,12 @@
 namespace Tests\Unit;
 
 use App\MockData\MockProductRating;
-use App\Traits\HasDataProcessing;
+use App\Traits\HasProductReview;
 use PHPUnit\Framework\TestCase;
 
 class HasDataProcessingTest extends TestCase
 {
-    use HasDataProcessing;
+    use HasProductReview;
     /**
      * A basic unit test example.
      *
