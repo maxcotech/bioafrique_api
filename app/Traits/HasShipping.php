@@ -56,8 +56,9 @@ trait HasShipping{
                $total_dimensions += $this->getShippingDimension($product,$cart_item->quantity);
                array_push($items,[
                   'item_id' => $cart_item->item_id, 'variant_id' => $cart_item->variant_id,
-                  'item_type' => $cart_item->item_type,'item_name' => $product->product_name
-               ]);
+                  'item_type' => $cart_item->item_type,'item_name' => $product->product_name,
+                  'quantity' => $cart_item->quantity
+               ]); 
             }
          }
          $total_shipping_fee = $this->getNonDimensionalShippingFees($group);
@@ -66,10 +67,11 @@ trait HasShipping{
             'shipping_label' => "Shipping ".$count." of ".$total_shipping,'store_id' => $group->store_id,
             'total_shipping_fee' => ($convert_to_base_rates == true)? $this->userToBaseCurrency($total_shipping_fee):$total_shipping_fee,
             'delivery_duration' => $group->delivery_duration,
-            "delivery_note" => "Item(s) will be delivered between "
-            .now()->addDays($group->delivery_duration)->toFormattedDateString()
-            ." and ".now()->addDays($group->delivery_duration + 3)->toFormattedDateString()
-            .".\n(PLEASE NOTE: Items(s) may arrive before these dates).",'items' => $items
+            "delivery_note" => [
+               'minimum_delivery_date' => now()->addDays($group->delivery_duration)->toFormattedDateString(),
+               'maximum_delivery_date' => now()->addDays($group->delivery_duration + 3)->toFormattedDateString()
+            ],
+            'items' => $items
          ]);
          $count++;
       }
