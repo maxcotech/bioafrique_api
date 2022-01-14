@@ -24,7 +24,7 @@ class Order extends Model
     
     protected $table = "orders";
     protected $fillable = ['user_id','billing_address_id','order_number','total_amount','status','transaction_id'];
-    
+    protected $appends = ['converted_amount'];
     public function getCreatedAtAttribute($value){
         $carbon = new Carbon($value);
         return $carbon->toFormattedDateString();
