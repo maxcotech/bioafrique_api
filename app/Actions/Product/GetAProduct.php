@@ -5,9 +5,10 @@ use App\Actions\Action;
 use App\Models\Product;
 use App\Models\ProductWish;
 use App\Traits\HasAuthStatus;
+use App\Traits\HasProduct;
 
 class GetAProduct extends Action{
-   use HasAuthStatus;
+   use HasAuthStatus,HasProduct;
    protected $request;
    protected $param;
    protected $access_type;
@@ -43,6 +44,7 @@ class GetAProduct extends Action{
          if(isset($data)){
             $data->in_wishlist = $this->inWishList($data->id);
             $data->append('review_summary');
+            $this->addToRecentlyViewed($data->id,$this->access_type);
          }
          return $this->successWithData($data);
       }

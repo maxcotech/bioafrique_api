@@ -22,6 +22,7 @@ Route::prefix('v1')->group(function(){
             
             Route::get('/category/products/{category_param}','ProductController@getCategoryProducts');
             Route::get('/product/{slug}','ProductController@show');
+            Route::get('/products/recently_viewed','ProductController@getRecentlyViewed');
             Route::get('/countries','CountryController@index');
             Route::get('/currencies','CurrencyController@index');
             Route::get('/search/{search_type}','SearchController@index');

@@ -5,8 +5,10 @@ namespace App\Traits;
 use App\Models\Category;
 use App\Models\Product;
 use App\Models\ProductWish;
+use App\Models\RecentlyViewed;
 use App\Models\SuperAdminPreference;
 use Illuminate\Contracts\Validation\Validator as ValidationObj;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
@@ -176,10 +178,21 @@ trait HasProduct
         return $data;
     }
 
-    protected function addToRecentlyViewed($product,$access_type){
+    protected function addToRecentlyViewed($product_id,$access_type){
         $user_type = $access_type->type;
         $user_id = $access_type->id;
-        
+        $record_exists = RecentlyViewed::where('user_type',$user_type)->where('user_id',$user_id)->where('product_id',$product_id)->exists();
+        if($record_exists){
+            RecentlyViewed::where('user_type',$user_type)->where('user_id',$user_id)->where('product_id',$product_id)
+            ->update(['updated_at' => now()->format('Y-m-d H:i:s')]);
+            //$record->update(['updated_at' => now()->format('Y-m-d H:i:s')]);
+        } else {
+            RecentlyViewed::create([
+                'product_id' => $product_id,
+                'user_type' => $user_type,
+                'user_id' => $user_id
+            ]);
+        }
     }
      
 }

@@ -7,6 +7,7 @@ use App\Actions\Product\DeleteProduct;
 use App\Actions\Product\GetAProduct;
 use App\Actions\Product\GetCategoryProducts;
 use App\Actions\Product\GetProducts;
+use App\Actions\Product\GetRecentlyViewed;
 use App\Actions\Product\GetStoreProducts;
 use App\Actions\Product\UpdateProduct;
 use App\Actions\Product\UpdateProductStatus;
@@ -60,5 +61,9 @@ class ProductController extends Controller
 
     public function updateProductStatus(Request $request){
         return (new UpdateProductStatus($request))->execute();
+    }
+
+    public function getRecentlyViewed(Request $request){
+        return (new GetRecentlyViewed($request))->execute();
     }
 }

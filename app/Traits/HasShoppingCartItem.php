@@ -59,8 +59,9 @@ trait HasShoppingCartItem{
       ->where('user_type',$auth_type->type)->select('id','item_id','variant_id','quantity')->get();
       if(count($items) > 0){
          $items->each(function($item)use($cart_items){
+            Log::alert('each item'.json_encode($item));
             $item->cart_quantity = $this->sumArrayValuesByKey($cart_items,"quantity","item_id",$item->id);
-            if($item->product_type == Product::variation_product_type){
+            if($item->product_type == Product::variation_product_type || count($item->variations) > 0){
                if(count($item->variations) > 0){
                   $item->variations->each(function($variation)use($cart_items){
                      Log::alert('each variation '.json_encode($variation));
