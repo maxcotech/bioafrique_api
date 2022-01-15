@@ -3,6 +3,7 @@ namespace App\Services\WalletServices;
 
 use App\Models\OrderFundLock;
 use App\Models\StoreWallet as StoreWalletModel;
+use App\Models\WithdrawalRequest;
 use App\Services\WalletServices\Utilities\LockDetails;
 use App\Services\WalletServices\Utilities\SenderObject;
 use App\Services\WalletServices\Utilities\TransactionDetails;
@@ -66,11 +67,20 @@ class StoreWallet extends WalletService {
     }
 
     public function getTotalPendingWithdrawal(){
-       //
+        $requests = WithdrawalRequest::where('store_id',$this->store_id)
+            ->where('status',WithdrawalRequest::STATUS_PENDING)->select('id','amount')->get();
+        $total = 0;
+        if(count($requests) > 0){
+            foreach($requests as $request){
+                $total += $request->amount;
+            }
+        }
+        return $total;
     }
 
     public function getTotalAccountBalance(){
-        $balance = $this->getTotalUnLockedCredits() - $this->getTotalDebits();
+        $ledger_balance = $this->getTotalUnLockedCredits() - $this->getTotalDebits();
+        $balance = $ledger_balance - $this->getTotalPendingWithdrawal();
         return $balance;
     }
 

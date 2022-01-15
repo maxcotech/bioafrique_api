@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Traits\HasRateConversion;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -53,6 +54,23 @@ class WalletModel extends Model
             case User::class: return "User Account";
             case Store::class: return "Store Account";
             default: return "N/A";
+        }
+    }
+
+    public function getCreatedAtAttribute($value){
+        $cdate = new Carbon($value);
+        if(isset($cdate)){
+            return $cdate->toFormattedDateString();
+        } else {
+            return "N/A";
+        }
+    }
+    public function getUpdatedAtAttribute($value){
+        $cdate = new Carbon($value);
+        if(isset($cdate)){
+            return $cdate->toFormattedDateString();
+        } else {
+            return "N/A";
         }
     }
 }

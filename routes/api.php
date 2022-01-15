@@ -140,7 +140,8 @@ Route::prefix('v1')->group(function(){
             Route::patch('/widget/status','WidgetController@updateWidgetStatus')->middleware('super_admin_access_guard');
             Route::patch('/widget/index','WidgetController@swapWidgetIndex')->middleware('super_admin_access_guard');
            
-            Route::post('/store/fund/withdraw','StoreFundController@withdrawFund')->middleware('sasom_access_guard');
+            Route::post('/store/fund/withdraw','StoreFundController@withdrawFund')->middleware('store_owner_access_guard');
+            Route::get('/store/fund/wallet','StoreFundController@getWallet')->middleware('sasom_access_guard');
 
             Route::post('/store/bank_account','StoreBankAccountController@create')->middleware('store_owner_access_guard');
             Route::put('/store/bank_account','StoreBankAccountController@update')->middleware('store_owner_access_guard');

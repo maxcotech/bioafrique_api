@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class SuperAdminWallet extends WalletModel
@@ -14,24 +13,6 @@ class SuperAdminWallet extends WalletModel
         'ledger_type','transaction_type','transaction_id',
         'next_row_hash'
     ];
-
-
-    public function getCreatedAtAttribute($value){
-        $cdate = new Carbon($value);
-        if(isset($cdate)){
-            return $cdate->toFormattedDateString();
-        } else {
-            return "N/A";
-        }
-    }
-    public function getUpdatedAtAttribute($value){
-        $cdate = new Carbon($value);
-        if(isset($cdate)){
-            return $cdate->toFormattedDateString();
-        } else {
-            return "N/A";
-        }
-    }
 
     public function orderCommissionLock(){
         return $this->hasOne(OrderCommissionLock::class,'wallet_fund_id');

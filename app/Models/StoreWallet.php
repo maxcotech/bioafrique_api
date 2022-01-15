@@ -15,5 +15,9 @@ class StoreWallet extends WalletModel
         'transaction_id','next_row_hash'
     ];
 
+    public function lock(){
+        return $this->hasOne(OrderFundLock::class,'wallet_fund_id');
+    }
+
    
 }
