@@ -65,6 +65,7 @@ class GetSubOrders extends Action{
          return SubOrder::with($data)->where("id",$this->sub_order_id)->first();
       } else {
          $query = SubOrder::with($data);
+         $query = $query->orderBy('id','desc');
          if($this->request->query('order_id',null) != null){
             $query = $query->where('order_id',$this->request->query('order_id'));
          } 
@@ -109,6 +110,7 @@ class GetSubOrders extends Action{
          array_push($data,'order.billingAddress.city:id,city_name');
          array_push($data,'order.billingAddress.country:id,country_name');
       }
+      array_push($data,'store:id,store_name');
       return $data;
    }
 

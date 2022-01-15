@@ -45,6 +45,10 @@ class SubOrder extends Model
         return $this->belongsTo(Order::class,"order_id");
     }
 
+    public function store(){
+        return $this->belongsTo(Store::class,"store_id");
+    }
+
     public function items(){
         return $this->hasMany(OrderItem::class,"sub_order_id");
     }
