@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Actions\StoreFund;
+namespace App\Actions\Store;
 
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;

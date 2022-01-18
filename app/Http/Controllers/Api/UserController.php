@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Actions\User\DeleteUser;
 use App\Actions\User\GetUserProfile;
 use App\Actions\User\GetUsers;
+use App\Actions\User\StoreUsers;
 use App\Actions\User\UpdateCurrency;
 use App\Actions\User\UpdateUserStatus;
 use App\Http\Controllers\Controller;
@@ -37,5 +38,9 @@ class UserController extends Controller
 
     public function delete(Request $request,$user_id){
         return (new DeleteUser($request,$user_id))->execute();
+    }
+
+    public function getStoreUsers(Request $request){
+        return (new StoreUsers($request))->execute();
     }
 }

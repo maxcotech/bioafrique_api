@@ -20,7 +20,7 @@ class SuperAdminWallet extends WalletService{
     }
 
     public function canDebitAccount($amount){
-        $transactions = SuperAdminWalletModel::all();
+        $transactions = DB::table('super_admin_wallet')->get();
         if(!$this->historyIsValid($transactions)){
             throw new \Exception('Sorry, your transaction history is not valid.');
         } else {
@@ -39,10 +39,10 @@ class SuperAdminWallet extends WalletService{
         $fund = null;
         if($this->canDebitAccount($amount)){
             $previous_row = $this->getPreviousRow();
-            $hashable_prev_row = $this->convertRowAmount($previous_row);
+            //$hashable_prev_row = $this->convertRowAmount($previous_row);
             $data = [
                 'amount' => $amount,
-                'previous_row_hash' => $this->generateHashFromRow($hashable_prev_row),
+                'previous_row_hash' => $this->generateHashFromRow($previous_row),
                 'ledger_type' => SuperAdminWalletModel::LEDGER_DEBIT,
             ];
             $fund = $this->createLedgerRecord($data,$previous_row);
@@ -126,17 +126,16 @@ class SuperAdminWallet extends WalletService{
     }
 
     protected function getPreviousRow(){
-        return SuperAdminWalletModel::orderBy('id','desc')->first();
+        return DB::table('super_admin_wallet')->orderBy('id','desc')->first();
     }
 
 
 
     public function depositFund($amount,SenderObject $sender = null, TransactionDetails $trx_details = null){
         $previous_row = $this->getPreviousRow();
-        $hashable_row = $this->convertRowAmount($previous_row);
         $data = [
             'amount' => $amount,
-            'previous_row_hash' => $this->generateHashFromRow($hashable_row),
+            'previous_row_hash' => $this->generateHashFromRow($previous_row),
             'ledger_type' => SuperAdminWalletModel::LEDGER_CREDIT
         ];
         if(isset($sender)){
@@ -153,13 +152,14 @@ class SuperAdminWallet extends WalletService{
     protected function createLedgerRecord($data,$previous_row){
         $fund = null;
         DB::transaction(function()use(&$fund,$previous_row,$data){
-            $fund = SuperAdminWalletModel::create($data);
-            $hashable_row = $this->convertRowAmount($fund);
+            SuperAdminWalletModel::create($data);
+            $fund = $this->getPreviousRow();
+            //$hashable_row = $this->convertRowAmount($fund);
             if(isset($previous_row)){
                 DB::table('super_admin_wallet')
                 ->where('id',$previous_row->id)
                 ->update([
-                    'next_row_hash' => $this->generateHashFromRow($hashable_row)
+                    'next_row_hash' => $this->generateHashFromRow($fund)
                 ]);
             }
         });
@@ -169,10 +169,10 @@ class SuperAdminWallet extends WalletService{
     public function depositLockedOrderFund( $amount, SenderObject $sender, LockDetails $lock_details, ?TransactionDetails $trx_details = null)
     {
         $previous_row = $this->getPreviousRow();
-        $hashable_row = $this->convertRowAmount($previous_row);
+        //$hashable_row = $this->convertRowAmount($previous_row);
         $data = [
             'amount' => $amount,
-            'previous_row_hash' => $this->generateHashFromRow($hashable_row),
+            'previous_row_hash' => $this->generateHashFromRow($previous_row),
             'sender_id' => $sender->sender_id,
             'sender_type' => $sender->sender_type,
             'ledger_type' => SuperAdminWalletModel::LEDGER_CREDIT

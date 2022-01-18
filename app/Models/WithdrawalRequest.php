@@ -21,5 +21,13 @@ class WithdrawalRequest extends Model
     public function setAmountAttribute($value){
         $this->attributes['amount'] = $this->userToBaseCurrency($value);
     }
+
+    public function store(){
+        return $this->belongsTo(Store::class,"store_id");
+    }
+
+    public function bank(){
+        return $this->belongsTo(StoreBankAccount::class,"bank_account_id");
+    }
     
 }

@@ -107,4 +107,10 @@ class HasArrayOperationsTest extends TestCase
         $data = ['chisom','maxwell','franklin'];
         $this->assertEquals('chisommaxwellfranklin',$this->concatenateArrayItems($data));
     }
+
+
+    public function testRemoveArrayDuplicates(){
+        $data = [1,1,3,2,4,4,5];
+        $this->assertEqualsCanonicalizing([1,3,2,4,5],$this->removeArrayDuplicates($data));
+    }
 }

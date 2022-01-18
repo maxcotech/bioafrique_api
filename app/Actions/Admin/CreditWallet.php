@@ -23,7 +23,7 @@ class CreditWallet extends Action{
          $val = $this->validate();
          if($val['status'] !== "success") return $this->resp($val);
          $wallet = new SuperAdminWallet();
-         return $this->successWithData($wallet->depositFund($this->request->amount));
+         return $this->successWithData($wallet->depositFund($this->request->amount),'Your wallet was successfully credited.');
       }
       catch(\Exception $e){
          return $this->internalError($e->getMessage());

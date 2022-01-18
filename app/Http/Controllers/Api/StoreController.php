@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Actions\Store\GetDashboardData;
 use App\Actions\Store\AddUserToStore;
 use App\Actions\Store\CreateStore;
 use App\Actions\Store\DeleteStore;
 use App\Actions\Store\GetStores;
+use App\Actions\Store\GetWallet;
 use App\Actions\Store\SearchStore;
 use App\Actions\Store\UpdateStore;
 use App\Actions\Store\UpdateStoreStatus;
@@ -38,5 +40,11 @@ class StoreController extends Controller
     }
     public function delete(Request $request,$store_id){
         return (new DeleteStore($request,$store_id))->execute();
+    }
+    public function getWallet(Request $request){
+        return (new GetWallet($request))->execute();
+    }
+    public function getDashboardData(Request $request){
+        return (new GetDashboardData($request))->execute();
     }
 }

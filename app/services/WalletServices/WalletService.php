@@ -8,6 +8,7 @@ use App\Services\WalletServices\Utilities\TransactionDetails;
 use App\Services\WalletServices\Utilities\TransferRecipient;
 use App\Traits\HasArrayOperations;
 use App\Traits\HasRateConversion;
+use Illuminate\Support\Facades\Log;
 
 abstract class WalletService implements Wallet{
     use HasArrayOperations,HasRateConversion;
@@ -56,16 +57,18 @@ abstract class WalletService implements Wallet{
         if($trx_count > 0){
             for($i = 0; $i < $trx_count; $i++){
                 if($i > 0){
-                    $curr_row = $this->convertRowAmount($transactions[$i]);
-                    $previous_row = $this->convertRowAmount($transactions[$i - 1]);
+                    $curr_row = $transactions[$i];
+                    $previous_row = $transactions[$i - 1];
                     $previous_hash = $curr_row->previous_row_hash;
                     $current_hash = $previous_row->next_row_hash;
                     $curr_row_array = $this->serializeObject($curr_row,$selected,"NA");
                     $previous_row_array = $this->serializeObject($previous_row,$selected,"NA");
                     if(!$this->checkArrayHash($previous_row_array,$previous_hash)){
-                        $is_valid = false;
+                        Log::alert('previous row is not valid '.json_encode($previous_row_array));
+                        $is_valid = false; 
                     }
                     if(!$this->checkArrayHash($curr_row_array,$current_hash)){
+                        Log::alert('current row is not valid '.json_encode($curr_row_array));
                         $is_valid = false;
 
                     }

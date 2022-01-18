@@ -71,6 +71,8 @@ Route::prefix('v1')->group(function(){
             Route::patch('/category/status','CategoryController@updateCategoryStatus')->middleware('super_admin_access_guard');
             Route::post('/store','StoreController@create')->middleware('store_owner_access_guard');
             Route::put('/store','StoreController@update')->middleware('store_owner_access_guard');
+            Route::get('/store/wallet','StoreController@getWallet')->middleware('sasom_access_guard');
+            Route::get('/store/dashboard','StoreController@getDashboardData');
             Route::patch('/store/status','StoreController@updateStoreStatus')->middleware('super_admin_access_guard');
             Route::delete('/store/{store_id}','StoreController@delete')->middleware('sasom_access_guard');
             Route::post('/store/logo','StoreController@uploadStoreLogo')->middleware('store_owner_access_guard');
@@ -85,6 +87,7 @@ Route::prefix('v1')->group(function(){
             Route::put('/store/staff/position','StoreStaffController@changeStaffPosition')->middleware('store_owner_access_guard');
             Route::patch('/store/staff/{staff_id}/toggle_status','StoreStaffController@toggleStaffStatus')->middleware('store_staff_guard');
             Route::delete('/store/staff/{staff_id}','StoreStaffController@removeStoreStaff')->middleware('sasom_access_guard');
+            Route::get('/store/users','UserController@getStoreUsers')->middleware('store_staff_guard');
             Route::get('/user','UserController@show');
             Route::get('/users','UserController@index');
             Route::delete('/user/account/{user_id}','UserController@delete')->middleware('super_admin_access_guard');
@@ -116,6 +119,7 @@ Route::prefix('v1')->group(function(){
 
             Route::post('/payment/init','PaymentController@create');
             Route::put('/payment/verify','PaymentController@verifyPayment');
+            Route::get('/payment/methods','PaymentController@getPaymentMethods');
 
             Route::post('/review','ProductReviewController@create');
             Route::put('/review','ProductReviewController@update');
@@ -140,9 +144,6 @@ Route::prefix('v1')->group(function(){
             Route::patch('/widget/status','WidgetController@updateWidgetStatus')->middleware('super_admin_access_guard');
             Route::patch('/widget/index','WidgetController@swapWidgetIndex')->middleware('super_admin_access_guard');
            
-            Route::post('/store/fund/withdraw','StoreFundController@withdrawFund')->middleware('store_owner_access_guard');
-            Route::get('/store/fund/wallet','StoreFundController@getWallet')->middleware('sasom_access_guard');
-
             Route::post('/store/bank_account','StoreBankAccountController@create')->middleware('store_owner_access_guard');
             Route::put('/store/bank_account','StoreBankAccountController@update')->middleware('store_owner_access_guard');
             Route::get('/store/bank_accounts','StoreBankAccountController@index');
@@ -166,8 +167,12 @@ Route::prefix('v1')->group(function(){
             Route::post('/currency','CurrencyController@create')->middleware('super_admin_access_guard');
             Route::put('/currency','CurrencyController@update')->middleware('super_admin_access_guard');
             Route::delete('/currency/{currency_id}','CurrencyController@delete')->middleware('super_admin_access_guard');
-
-
+            
+            Route::post('/withdrawal_request','WithdrawalRequestController@create')->middleware('store_owner_access_guard');
+            Route::get('/withdrawal_requests','WithdrawalRequestController@index')->middleware('super_admin_access_guard');
+            Route::post('/withdrawal_request/settle','WithdrawalRequestController@settle')->middleware('super_admin_access_guard');
+            Route::post('/withdrawal_requests/settle','WithdrawalRequestController@massSettle')->middleware('super_admin_access_guard');
+            Route::patch('/withdrawal_request/status','WithdrawalRequestController@updateStatus')->middleware('super_admin_access_guard');
         });
     });
 });

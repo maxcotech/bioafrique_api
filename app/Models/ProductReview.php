@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -20,6 +21,14 @@ class ProductReview extends Model
     }
     public function variation(){
         return $this->belongsTo(ProductVariation::class,"variation_id");
+    }
+    public function getCreatedAtAttribute($value){
+        $carbon = new Carbon($value);
+        return $carbon->toFormattedDateString();
+    }
+    public function getUpdatedAtAttribute($value){
+        $carbon = new Carbon($value);
+        return $carbon->toFormattedDateString();
     }
 
 }

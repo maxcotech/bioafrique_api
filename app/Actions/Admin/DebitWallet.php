@@ -47,7 +47,7 @@ class DebitWallet extends Action{
          if($val['status'] !== "success") return $this->resp($val);
          $wallet = new SuperAdminWalletService();
          
-         return $this->successWithData($wallet->withdrawFund($this->request->amount));
+         return $this->successWithData($wallet->withdrawFund($this->request->amount),'Wallet Successfully debited.');
       }
       catch(\Exception $e){
          return $this->internalError($e->getMessage());

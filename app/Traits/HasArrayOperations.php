@@ -97,5 +97,15 @@ trait HasArrayOperations{
         return Hash::check($str_val,$hash);
     }
 
+    public function removeArrayDuplicates($array){
+        $new_array = [];
+        foreach($array as $item){
+            if(!in_array($item,$new_array)){
+                array_push($new_array,$item);
+            }
+        }
+        return $new_array;
+    }
+
 }
 

@@ -23,12 +23,15 @@ class GetWidgets extends Action{
          'with_items' => 'nullable|integer|min:0,max:1',
          'with_indexes' => 'nullable|integer|min:0,max:1',
          'limit' => 'nullable|integer',
-         'status' => 'nullable|integer'
+         'status' => 'nullable|integer',
+         'paginate' => 'nullable|integer|min:0,max:1'
       ]);
       return $this->valResult($val);
    }
 
    protected function onGetWidgets(){
+      $paginate = $this->request->query('paginate',1);
+      $limit = $this->request->query('limit',30);
       $selected = ['id','widget_title','widget_link_text','widget_link_address','widget_type','index_no','status','is_block'];
       $with_items = $this->request->query('with_items',1);
       $query = Widget::orderBy('index_no','asc');
@@ -36,7 +39,11 @@ class GetWidgets extends Action{
          $query = $query->with(['items:id,widget_id,item_title,item_image_url,item_link']);
       }
       $query = $this->filterByStatus($query);
-      return $query->paginate($this->request->query('limit',30),$selected);
+      if($paginate == 1){
+         return $query->paginate($limit,$selected);
+      } else {
+         return $query->get($selected);
+      }
    }
 
    protected function filterByStatus($query){
