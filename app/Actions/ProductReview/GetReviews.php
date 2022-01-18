@@ -31,6 +31,7 @@ class GetReviews extends Action{
    protected function getProductReviewQuery(){
       $query = ProductReview::where('product_id',$this->request->query('product_id'))
       ->where('status',$this->getResourceActiveId());
+      $query = $query->with(['user:id,first_name,last_name,email']);
       return $query;
    }
 
