@@ -39,7 +39,7 @@ class GetWithdrawalRequests extends Action
         $status = $this->request->query('status',WithdrawalRequest::STATUS_PENDING);
         $currency_id = $this->request->query('currency_id',null);
         $limit = $this->request->query('limit',30);
-        $query = WithdrawalRequest::where('status',$status);
+        $query = new WithdrawalRequest();
         $query = $this->filterByCurrency($query,$currency_id);
         if(isset($status)){
             $query = $query->where('status',$status);
