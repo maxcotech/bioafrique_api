@@ -3,12 +3,15 @@ namespace App\Actions\Product;
 use Illuminate\Http\Request;
 use App\Actions\Action;
 use App\Models\Product;
+use App\Models\ProductReview;
 use App\Models\ProductWish;
 use App\Traits\HasAuthStatus;
 use App\Traits\HasProduct;
+use App\Traits\HasProductReview;
+use App\Traits\HasShoppingCartItem;
 
 class GetAProduct extends Action{
-   use HasAuthStatus,HasProduct;
+   use HasAuthStatus,HasProduct,HasProductReview,HasShoppingCartItem;
    protected $request;
    protected $param;
    protected $access_type;
@@ -38,12 +41,20 @@ class GetAProduct extends Action{
       return in_array($product_id,$product_ids);
    }
 
+   protected function appendExtras($data,$auth_type){
+      $reviews = ProductReview::where('product_id',$data->id)->where('status',$this->getResourceActiveId())->get();
+      $data->review_average = $this->getReviewAverage($reviews,"star_rating");
+      $data = $this->appendCartQuantityToProduct($data,$auth_type);
+      return $data;
+   }
+
    public function execute(){
       try{
          $data = $this->getProductBySlugOrId();
          if(isset($data)){
             $data->in_wishlist = $this->inWishList($data->id);
             $data->append('review_summary');
+            $data = $this->appendExtras($data,$this->access_type);
             $this->addToRecentlyViewed($data->id,$this->access_type);
          }
          return $this->successWithData($data);

@@ -50,11 +50,13 @@ class GetOrderItems extends Action{
    }
 
    protected function getOrderItems($user_type,$data){
-      $query = null;
+      $query = new OrderItem();
       if($this->request->query('sub_order_id',null) != null){
-         $query = OrderItem::with($data)->where('sub_order_id',$this->request->query('sub_order_id'));
+         $query = $query->with($data)->where('sub_order_id',$this->request->query('sub_order_id'));
+      } elseif($this->request->query('order_id',null) != null) {
+         $query = $query->with($data)->where('order_id',$this->request->query('order_id'));
       } else {
-         $query = OrderItem::with($data)->where('order_id',$this->request->query('order_id'));
+         $query = $query->with($data);
       }
       if($this->isCustomer($user_type)){
          $query = $query->where('user_id',$this->user->id);
