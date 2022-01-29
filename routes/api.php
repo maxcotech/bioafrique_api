@@ -47,6 +47,7 @@ Route::prefix('v1')->group(function(){
 
             Route::get('/banks/codes/{currency_id}','StoreBankAccountController@getBankCodes');
         
+            Route::post('/support/message','ContactMessageController@create');
         });
 
         Route::middleware(['auth.apicookie','app_access_guard','ensure_currency_selected','cors'])->group(function(){
@@ -173,6 +174,9 @@ Route::prefix('v1')->group(function(){
             Route::post('/withdrawal_request/settle','WithdrawalRequestController@settle')->middleware('super_admin_access_guard');
             Route::post('/withdrawal_requests/settle','WithdrawalRequestController@massSettle')->middleware('super_admin_access_guard');
             Route::patch('/withdrawal_request/status','WithdrawalRequestController@updateStatus')->middleware('super_admin_access_guard');
+
+            Route::get('/support/messages','ContactMessageController@index')->middleware('super_admin_access_guard');
+            Route::patch('/support/message/status','ContactMessageController@updateStatus')->middleware('super_admin_access_guard');
         });
     });
 });
