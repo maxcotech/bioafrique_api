@@ -41,6 +41,10 @@ Route::prefix('v1')->group(function(){
             Route::get('/reviews/{review_id?}','ProductReviewController@index');
             Route::delete('/review/{review_id}','ProductReviewController@delete');
 
+            Route::get('/cities/{route_param?}','CityController@index');
+
+            Route::get('/states/{route_params?}','StateController@index');
+
             Route::get('/stores','StoreController@index');
 
             Route::get('/widgets','WidgetController@index');
@@ -98,10 +102,6 @@ Route::prefix('v1')->group(function(){
             Route::delete('/user/logout','AuthController@logout');
             Route::put('/user/password','AuthController@resetPassword');
             Route::post('/locations/populate','LocationController@populateLocations');
-
-            Route::get('/cities/{route_param?}','CityController@index');
-
-            Route::get('/states/{route_params?}','StateController@index');
 
             Route::post('/shipping/group','ShippingGroupController@create')->middleware('sasom_access_guard');
             Route::get('/shipping/groups','ShippingGroupController@index')->middleware('store_staff_guard');
