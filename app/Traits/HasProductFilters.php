@@ -100,7 +100,7 @@ trait HasProductFilters
     protected function getProductFilterArray($category_id = null, $search_query = null)
     {
         $category_filters = [];
-        $cat_select = ['id','category_title','display_title','category_slug','category_image'];
+        $cat_select = ['id','category_title','display_title','category_slug','category_image','category_icon'];
         $query = Product::select('id','regular_price','sales_price','category_id','brand_id');
         if(isset($search_query)){
             $query = $query->where('product_name','LIKE',"%$search_query%");
