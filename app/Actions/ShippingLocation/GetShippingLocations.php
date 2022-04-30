@@ -31,7 +31,7 @@ class GetShippingLocations extends Action{
       ->where('shipping_group_id',$this->request->query('shipping_group_id'))
       ->where('store_id',$this->request->query('store_id'))
       ->paginate(
-         $this->request->query('limit',3),
+         $this->request->query('limit',30),
          ['shipping_group_id','id','store_id','state_id','city_id','country_id']);
    }
 
