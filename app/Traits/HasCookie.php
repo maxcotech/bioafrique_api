@@ -25,8 +25,5 @@ trait HasCookie{
         return null;
     }
 
-   
-
-
 }
     

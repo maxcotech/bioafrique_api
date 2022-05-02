@@ -5,12 +5,13 @@ use Illuminate\Http\Request;
 use App\Actions\Action;
 use App\Models\Cookie;
 use App\Models\User;
+use App\Traits\HasAccessCookie;
 use App\Traits\SyncUserPreferences;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
 class LoginUser extends Action{
-    use SyncUserPreferences;
+    use SyncUserPreferences,HasAccessCookie;
 
     protected $request;
     public function __construct(Request $request){
@@ -53,8 +54,8 @@ class LoginUser extends Action{
          '_token', //name
          $token, //value
          6 * 30 * 24 * 60, //minutes
-         null, //path,
-         null, //domain,
+         "/", //path,
+         $this->getClientOrigin(), //domain,
          null, //secure,
          false, //httponly
          false, //raw
