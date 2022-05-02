@@ -30,7 +30,7 @@ trait HasAccessCookie{
         $t = cookie(
            'basic_access',
            $cookie->cookie_value,
-           $this->standard_cookie_time, null,null,null,true,false,null
+           $this->standard_cookie_time, null,null,null,false,false,null
         );
         return $t;
      }

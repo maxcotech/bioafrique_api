@@ -56,7 +56,7 @@ class LoginUser extends Action{
          null, //path,
          null, //domain,
          null, //secure,
-         true, //httponly
+         false, //httponly
          false, //raw
          null, //same site
        );
