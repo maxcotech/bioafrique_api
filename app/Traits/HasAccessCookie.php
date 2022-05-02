@@ -16,20 +16,6 @@ trait HasAccessCookie{
            }
         }
      }
-
-     protected function getClientOrigin(){
-      $origin = null;
-      if (array_key_exists('HTTP_ORIGIN', $_SERVER)) {
-          $origin = $_SERVER['HTTP_ORIGIN'];
-      }
-      else if (array_key_exists('HTTP_REFERER', $_SERVER)) {
-          $origin = $_SERVER['HTTP_REFERER'];
-      } else {
-          $origin = $_SERVER['REMOTE_ADDR'];
-      }
-      return $origin;
-  }
-
      
      protected function saveCookie(){
        $data = Cookie::create([
@@ -44,7 +30,7 @@ trait HasAccessCookie{
         $t = cookie(
            'basic_access',
            $cookie->cookie_value,
-           $this->standard_cookie_time, "/",$this->getClientOrigin(),null,false,false,null
+           $this->standard_cookie_time, "/",null,null,true,false,null
         );
         return $t;
      }
@@ -55,7 +41,7 @@ trait HasAccessCookie{
             $cookie->cookie_value,
             $this->standard_cookie_time
          );*/
-         setcookie('basic_access',$cookie->cookie_value,$this->standard_cookie_time,"/",$this->getClientOrigin());
+         setcookie('basic_access',$cookie->cookie_value,$this->standard_cookie_time,"/");
          return $cookie;
      }
 
