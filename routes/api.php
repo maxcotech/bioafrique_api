@@ -54,6 +54,11 @@ Route::prefix('v1')->group(function(){
             Route::post('/support/message','ContactMessageController@create');
 
             Route::get('/home_banners','HomeBannerController@index');
+
+            Route::post('/email_verification/send','AuthController@sendEmailVerification');
+            Route::post('/email_verification/complete','AuthController@completeEmailVerification');
+            Route::post('/reset_password/email/init','AuthController@initEmailResetPassword');
+            Route::post('/reset_password/email/complete','AuthController@completeEmailPasswordReset');
         });
 
         Route::middleware(['auth.apicookie','app_access_guard','ensure_currency_selected','cors'])->group(function(){

@@ -6,6 +6,7 @@ use App\Actions\Action;
 use App\Models\StoreStaff;
 use App\Models\StoreStaffToken;
 use App\Models\User;
+use App\Traits\HasEmailNotifications;
 use App\Traits\HasRoles;
 use App\Traits\HasUserStatus;
 use Illuminate\Support\Facades\DB;
@@ -13,7 +14,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
 
 class RegisterUser extends Action{
-   use HasUserStatus,HasRoles;
+   use HasUserStatus,HasRoles,HasEmailNotifications;
    protected $request;
    public function __construct(Request $request){
       $this->request=$request;
@@ -88,20 +89,22 @@ class RegisterUser extends Action{
       try{
          $val = $this->validate();
          if($val['status'] != "success") return $this->resp($val);
+         $user = null;
          if($this->request->staff_token !== null){
             $token_model = StoreStaffToken::where('staff_token',$this->request->staff_token)->first();
             if(!$this->validateStaffToken($token_model)) return $this->validationError('The store staff token you entered does not match the type of account you wish to create.');
             if(isset($token_model)){
-               DB::transaction(function()use($token_model){
+               DB::transaction(function()use($token_model,&$user){
                   $user = $this->createUser($this->getStoreStaffRoleId());
                   $this->addStaffToStore($user->id,$token_model);
                   $token_model->update(['expired' => 1]); //expires token after use
                });
             } else {throw new \Exception("An error occurred, staff token not found.");}
          } else {
-            $this->createUser();
+            $user = $this->createUser();
          }
-         return $this->successMessage('Your account was successfully created.');
+         if(isset($user)) $this->sendVerificationEmail($user);
+         return $this->successMessage('Your account was successfully created and an email verification code has been sent to '.$user->email.'.');
       }
       catch(\Exception $e){
          return $this->internalError($e->getMessage());

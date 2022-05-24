@@ -48,6 +48,43 @@ trait StringFormatter{
         return null;
     }
 
+    public function obscureTextPart($text) {
+        $obscureChar = "*";
+        if($text !== null && $text !== null && $text !== ""){
+            $textArr = str_split($text);
+            $textLength = count($textArr);
+            $result = "";
+    
+            if($textLength === 1){
+                return $obscureChar;
+            } else if($textLength > 1 && $textLength <= 3){
+            $counter = 0;
+            foreach($textArr as $item){
+                if($counter === 1){
+                    $result .= $obscureChar;
+                } else {
+                    $result .= $item;
+                }
+                $counter++;
+            }
+                return $result;
+            } else {
+                $textLenQuater = floor($textLength / 3);
+                $i = 0;
+                foreach($textArr as $text_item){
+                    if($i >= $textLenQuater && $i < ($textLenQuater * 2)){
+                        $result .= $obscureChar;
+                    } else {
+                        $result .= $text_item;
+                    }
+                    $i++;
+                }
+                return $result;
+            }
+        }
+        return $text;
+    }
+
 }
 
 
