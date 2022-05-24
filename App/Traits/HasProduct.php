@@ -103,7 +103,7 @@ trait HasProduct
                     return true;
                 }
             } else if ($param_label == 'fourth_image' || $param_label == 'fifth_image' || $param_label == 'sixth_image') {
-                if ($cat->display_level >= 4) {
+                if ($cat->display_level >= 6) {
                     return true;
                 }
             }

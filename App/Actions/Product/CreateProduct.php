@@ -36,7 +36,7 @@ class CreateProduct extends Action{
          'amount_in_stock' => 'required|numeric',
          'category_id' => 'required|integer|exists:categories,id',
          'product_image'=>'required|string',
-         'brand_id'=>'required|integer|exists:brands,id',
+         'brand_id'=>'nullable|integer|exists:brands,id',
          'youtube_video_id'=>'nullable|string',
          'weight' => 'nullable|numeric',
          'key_features' => 'nullable|string',
