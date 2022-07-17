@@ -22,7 +22,12 @@ class GetAProduct extends Action{
    }
 
    protected function getProductBySlugOrId(){
-      $query = Product::with(['images','variations','category','brand','store:id,store_name']);
+      $query = Product::with(['images','variations','category','brand',
+         'store:id,city_id,country_id,state_id,store_name',
+         'store.city:id,city_name',
+         'store.state:id,state_name',
+         'store.country:id,country_name'
+      ]);
       if(is_numeric($this->param)){
          $query = $query->where('id',$this->param);
       } else {

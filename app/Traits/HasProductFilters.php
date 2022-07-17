@@ -163,7 +163,11 @@ trait HasProductFilters
     protected function selectFields($query)
     {
         $withFields = [
-            'variations:id,regular_price,sales_price,variation_name,product_id,variation_image'
+            'variations:id,regular_price,sales_price,variation_name,product_id,variation_image',
+            'store:id,city_id,country_id,state_id,store_name',
+            'store.city:id,city_name',
+            'store.state:id,state_name',
+            'store.country:id,country_name'
         ];
         $query = $query->with($withFields);
         return $query;
