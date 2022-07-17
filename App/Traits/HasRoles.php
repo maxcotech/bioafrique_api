@@ -9,6 +9,7 @@ trait HasRoles{
         'customer' => 1,
         'store_staff' => 10,
         'store_owner' => 12,
+        'admin' => 20,
         'super_admin' => 24
     ];
     public function getUserRoleByKey($keyParam){
@@ -52,10 +53,14 @@ trait HasRoles{
         }
     }
 
-    public function isSuperAdmin($user_type = null){
+    public function isSuperAdmin($user_type = null, $strict = false){
         $type = (isset($user_type)) ? $user_type: $this->getUserRole();
-        return $this->isRole('super_admin',$type);
+        if($strict == true){
+            return $this->isRole('super_admin',$type);
+        }
+        return ($this->isRole('super_admin',$type) || $this->isRole('admin',$type));
     }
+    
     public function isStoreOwner($user_type = null){
         $type = (isset($user_type)) ? $user_type: $this->getUserRole();
         return $this->isRole('store_owner',$type);
@@ -68,6 +73,11 @@ trait HasRoles{
     public function isCustomer($user_type = null){
         $type = (isset($user_type)) ? $user_type: $this->getUserRole();
         return $this->isRole('customer',$type);
+    }
+
+    public function isAdmin($user_type = null){
+        $type = (isset($user_type)) ? $user_type: $this->getUserRole();
+        return $this->isRole('admin',$type);
     }
     
 
@@ -89,6 +99,10 @@ trait HasRoles{
     }
     public function getSuperAdminRoleId(){
         return $this->roles['super_admin'];
+    }
+
+    public function getAdminRoleId(){
+        return $this->roles['admin'];
     }
 
 }

@@ -25,7 +25,8 @@ class UserResource extends JsonResource
             'email' => $this->email,
             'user_type' => $this->user_type,
             'user_type_text' => $this->getRoleTextById($this->user_type),
-            'account_status' => $this->account_status
+            'account_status' => $this->account_status,
+            'permissions' => ($this->isSuperAdmin())? $this->getAllPermissionNames() : $this->permissions()->pluck("name")
         ];
         return $data;
     }

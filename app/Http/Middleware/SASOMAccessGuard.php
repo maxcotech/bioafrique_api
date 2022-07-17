@@ -24,11 +24,11 @@ class SASOMAccessGuard
     /**
      * restricts access to super admin, store owner and store staffs
      */
-    public function handle(Request $request, Closure $next)
+    public function handle(Request $request, Closure $next, string $permission = null)
     {
         $user = $request->user();
         $user_type = isset($user)? $user->user_type : null;
-        if(($this->isSuperAdmin($user_type) || $this->isStoreOwner($user_type)) && $this->isUserActive($user)){
+        if(($this->isSuperAdmin($user_type, true) || ($this->isAdmin() && $user->hasPermissionTo($permission)) || $this->isStoreOwner($user_type)) && $this->isUserActive($user)){
             return $next($request);
         } else if($this->isStoreStaff($user_type) && $this->isUserActive($user)){
             $store_index = $this->getStoreIndexFromRequest($request);

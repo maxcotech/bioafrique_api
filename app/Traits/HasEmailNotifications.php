@@ -2,6 +2,7 @@
 namespace App\Traits;
 
 use App\Exceptions\ValidationError;
+use App\Mail\SendAdminCreated;
 use App\Mail\SendEmailVerificationCode;
 use App\Mail\SendResetPasswordToken;
 use App\Models\OneTimePassword;
@@ -34,6 +35,12 @@ trait HasEmailNotifications{
 
     public function sendEmailPasswordReset($user){
         $this->sendUserEmail($user,OneTimePassword::purposes[1]);
+    }
+
+    public function sendNewAdminEmail($user,$password){
+        Mail::to($user->email)->send(new SendAdminCreated(
+            $user->email,$user->first_name,$password
+        ));
     }
 
     protected function sendUserEmail($user,$purpose){

@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\User;
 use App\Traits\HasHttpResponse;
 use App\Traits\HasRoles;
 use Closure;
@@ -17,10 +18,11 @@ class SuperAdminAccessGuard
      * @param  \Closure  $next
      * @return mixed
      */
-    public function handle(Request $request, Closure $next)
+    public function handle(Request $request, Closure $next, string $permission = null)
     {
         $user_type = $this->getUserRole($request);
-        if($this->isSuperAdmin($user_type)){
+        $user = $request->user();
+        if($this->isSuperAdmin($user_type,true) || ($this->isAdmin() && $user->hasPermissionTo($permission))){
             return $next($request);
         } else {
             return $this->notAuthorized("You are not authorized to carry out this operation, please contact super admin.");

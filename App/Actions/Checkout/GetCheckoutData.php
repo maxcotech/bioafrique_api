@@ -2,6 +2,7 @@
 namespace App\Actions\Checkout;
 use Illuminate\Http\Request;
 use App\Actions\Action;
+use App\Exceptions\NotAuthorizedException;
 use App\Models\User;
 use App\Traits\HasPayment;
 use App\Traits\HasShipping;
@@ -29,6 +30,9 @@ class GetCheckoutData extends Action{
       try{
          $data = $this->getCheckoutDetails();
          return $this->successWithData($data);
+      }
+      catch(NotAuthorizedException $e){
+         return $this->notAuthorized($e->getMessage());
       }
       catch(\Exception $e){
          return $this->internalError($e->getMessage());

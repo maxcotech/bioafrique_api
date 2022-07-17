@@ -30,6 +30,7 @@ class GetUsers extends Action{
       }
       $result = $query->paginate($this->request->query('limit',15));
       $result->each(function($item){
+         $item->permissions = $item->permissions()->pluck('name');
          $item->append(['account_status_text','user_type_text']);
       });
       return $result;

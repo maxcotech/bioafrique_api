@@ -2,11 +2,11 @@
 
 namespace App\Models;
 
+use App\Traits\HasPermissions;
 use App\Traits\HasRoles;
 use App\Traits\HasUserStatus;
 use App\Traits\StringFormatter;
 use Carbon\Carbon;
-use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -14,7 +14,7 @@ use Laravel\Passport\HasApiTokens;
 
 class User extends Authenticatable
 {
-    use HasFactory, Notifiable, HasApiTokens,HasUserStatus,HasRoles,StringFormatter;
+    use HasFactory, Notifiable, HasApiTokens,HasUserStatus,HasRoles,StringFormatter,HasPermissions;
 
     /**
      * The attributes that are mass assignable.
@@ -102,5 +102,10 @@ class User extends Authenticatable
     public function getUpdatedAtAttribute($value){
         $date = new Carbon($value);
         return $date->toFormattedDateString();
+    }
+
+
+    public function permissions(){
+        return $this->belongsToMany(Permission::class,"user_permissions","user_id","permission_id");
     }
 }

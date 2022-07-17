@@ -1,6 +1,7 @@
 <?php
 namespace App\Traits;
 
+use App\Exceptions\NotAuthorizedException;
 use App\Models\BillingAddress;
 use App\Models\City;
 use App\Models\Product;
@@ -30,7 +31,7 @@ trait HasShipping{
    }
 
    protected function collateShippingDetailsByLocation($user,$convert_to_base_rates = true){
-      if(!isset($user)) throw new \Exception('You need to login inorder to continue.');
+      if(!isset($user)) throw new NotAuthorizedException('You need to login inorder to continue.');
       $cart_items = $this->getShoppingCartItems($user->id,User::auth_type);
       if(!isset($cart_items) || count($cart_items) == 0) throw new \Exception('Could not find any cart item.');
       $address = $this->getCurrentBillingAddress($user->id);
