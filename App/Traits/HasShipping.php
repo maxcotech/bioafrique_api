@@ -132,6 +132,19 @@ trait HasShipping{
       return $groups;
    }
 
+   protected function getDefaultShippingObject($store_id){
+      return json_decode(json_encode([
+         "store_id" => $store_id,
+         "shipping_rate" => 0,
+         "delivery_duration" => 5,
+         "door_delivery_rate" => 0,
+         "high_value_rate" => 0,
+         "mid_value_rate" => 0,
+         "low_value_rate" => 0,
+         "dimension_range_rates" => null
+      ]));
+   }
+
 
    protected function getShippingGroup($store_id,$user_addr){
       $store_location = ShippingLocation::where('store_id',$store_id)
@@ -155,7 +168,7 @@ trait HasShipping{
          return ShippingGroup::where('id',$store_location->shipping_group_id)
          ->where('store_id',$store_id)->first();
       }
-      return null;
+      return $this->getDefaultShippingObject($store_id);
    }
 
 
