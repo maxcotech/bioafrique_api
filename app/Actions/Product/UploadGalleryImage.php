@@ -14,9 +14,14 @@ class UploadGalleryImage extends Action{
    protected $request;
    protected $user;
    protected $upload_folder = "product_gallery";
+   
    public function __construct(Request $request){
       $this->request=$request;
       $this->user = $this->request->user();
+   }
+
+   public function getUploadFolder(){
+      return $this->upload_folder;
    }
 
    protected function validate(){

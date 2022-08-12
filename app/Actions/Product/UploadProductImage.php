@@ -27,6 +27,10 @@ class UploadProductImage extends Action{
       return $this->valResult($val);
    }
 
+   public function getUploadFolder(){
+      return $this->upload_folder;
+   }
+
    protected function createImageRecord($file_url){
       $data = [
          'product_image' => $file_url,
