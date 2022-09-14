@@ -29,7 +29,7 @@ trait IPAddress
         $location = null;
         if(isset($req_ip_info)){
             $raw_loc = json_decode($req_ip_info);
-            if($raw_loc->countryCode !== null && $raw_loc->countryName !== null){
+            if(isset($raw_loc) && $raw_loc->countryCode !== null && $raw_loc->countryName !== null){
                 $location = json_decode(json_encode([
                     "country_name" => $raw_loc->countryName,
                     "country_code" => $raw_loc->countryCode
