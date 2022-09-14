@@ -20,15 +20,16 @@ class IpAddressService{
             $resp = Http::get($url);
             $data = null;
             if($resp->ok()){
-                $response = Http::get($url);
-                $data = json_decode($response->body());
+                $data = json_decode($resp->body());
+                $data->url = $url;
             }
             return $data;
         } catch (\Exception $e){
             Log::error($e->getMessage());
             return (object) [
                 'country_code' => "USA",
-                'country_name' => "United States"
+                'country_name' => "United States",
+                'extra' => "Fallback Value"
             ];
         }
     }
