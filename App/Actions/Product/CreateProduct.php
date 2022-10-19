@@ -141,7 +141,7 @@ class CreateProduct extends Action{
       try{
          $val = $this->validate(); 
          if($val['status'] != "success") return $this->resp($val);
-         $variations = ($this->request->variations != null)? json_decode($this->request->variations):[];
+         $variations = ($this->request->variations != null)? json_decode($this->request->variations,true):[];
          $main_image_url = $this->getInitialPath($this->request->product_image,'product_images');
          if(isset($variations) && count($variations) > 0 && $this->request->variations != null){
             $val2 = $this->validateVariations($variations);
