@@ -28,7 +28,7 @@ trait HasHttpResponse{
     public function valResult($val){
         if($val->fails()){
             $errors = $this->buildError($val);
-            return ['status'=>'validation_failed','code'=>'403','message'=>$errors];
+            return ['status'=>'validation_failed','code'=>'403','message'=>$errors, "data" => $val->failed()];
         }
         else{
             return ['code' => 200, 'status'=>'success','message'=>""];
