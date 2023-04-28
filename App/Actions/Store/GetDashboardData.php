@@ -44,6 +44,18 @@ class GetDashboardData extends Action
         return $query;
     }
 
+    protected function getPendingSubOrdersQuery($store_id){
+        $query = SubOrder::where('store_id',$store_id)->where(function($query){
+            return $query->where('status',Order::STATUS_AWAITING_FULFILLMENT)
+            ->orWhere('status',Order::STATUS_AWAITING_SHIPPING);
+        });
+        $query = $this->filterSelectByDate($query);
+        $query = $query->with([
+            'user:id,first_name,last_name,email'
+        ])->orderBy('id','desc');
+        return $query;
+    }
+
     protected function getTotalActiveProducts($store_id){
         $query = Product::where('product_status',$this->getResourceActiveId())->where('store_id',$store_id);
         $query = $query->select('id','amount_in_stock','product_type','regular_price','sales_price');
@@ -101,12 +113,14 @@ class GetDashboardData extends Action
             $store_id = $this->request->query('store_id');
             $limit = $this->request->query('limit',30);
             $orders_query = $this->getCompletedSubOrdersQuery($store_id);
+            $pending_orders = $this->getPendingSubOrdersQuery($store_id);
             $products = $this->getTotalActiveProducts($store_id);
             $stock_data = $this->getTotalStockData($products);
             $data = $orders_query->paginate($limit);
             $data = collect([
                 'stock_data'=>$stock_data,
                 'total_completed_orders' => $orders_query->count(),
+                'total_pending_orders'=> $pending_orders->count(),
                 'revenues' => $this->generateRevenueData($store_id)
             ])->merge($data);
             return $this->successWithData($data);
