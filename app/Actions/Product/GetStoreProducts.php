@@ -59,7 +59,7 @@ class GetStoreProducts extends Action{
       try{
          $val = $this->validate();
          if($val['status'] != "success") return $this->resp($val);
-         $selects = ['id','product_sku','product_name','regular_price','sales_price','product_image','product_slug','amount_in_stock','stock_threshold','product_status'];
+         $selects = ['id','product_sku','product_name','regular_price','sales_price','product_image','product_slug','amount_in_stock','product_status'];
          $query = $this->getProductsQuery();
          $data = $query->orderBy('id','desc')->paginate(15,$selects);
          return $this->successWithData($data);
