@@ -29,6 +29,7 @@ class GetCategories extends Action
    protected function validate()
    {
       $val = Validator::make($this->request->all(), [
+         'search' => 'nullable|string',
          'parent' => 'nullable|integer|exists:categories,id',
          'parent_slug' => 'nullable|string|exists:categories,category_slug',
          'levels' => 'nullable|integer|min:0,max:100',
@@ -58,6 +59,7 @@ class GetCategories extends Action
    protected function getCategories()
    {
       $query = null;
+      $search = $this->request->query('search');
       if($this->request->query('parent',null) != null){
          $query = Category::where('parent_id',$this->request->query('parent'));
       } elseif ($this->request->query('parent_slug',null) != null){
@@ -66,8 +68,13 @@ class GetCategories extends Action
       } else {
          $query = Category::where('category_level',Category::MAIN_CATEGORY_LEVEL);
       }
+
+      if(isset($search)){
+         $query = $query->where('category_title','LIKE',"%$search%");
+      }
       $query = $this->selectByCategoryStatus($query);
       $query = $this->selectByVerboseLevel($query,$this->request->query('verbose',1));
+      
       return $query->paginate($this->request->query('limit',15));
    }
 
