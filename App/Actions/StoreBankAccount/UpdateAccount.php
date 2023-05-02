@@ -25,6 +25,7 @@ class UpdateAccount extends Action{
          'id' => ['required','integer',Rule::exists('store_bank_accounts','id')->where(function($query){
             $query->where('store_id',$this->request->store_id);
          })],
+         'account_name' => 'nullable|string',
          'bank_name' => 'required|string',
          'bank_code' => 'nullable|string',
          'account_number' => 'required|numeric',
@@ -41,7 +42,7 @@ class UpdateAccount extends Action{
          $user = User::find($store->user_id);
          if(Hash::check($this->request->password,$user->password)){
             StoreBankAccount::where('id',$this->request->id)->update($this->request->all([
-               'bank_name','bank_code','account_number','bank_currency_id','store_id'
+               'bank_name','bank_code','account_number','bank_currency_id','store_id','account_name'
             ]));
             return $this->successMessage('Bank Account was updated successfully.');
          } else {

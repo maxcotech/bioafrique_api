@@ -11,7 +11,7 @@ class StoreBankAccount extends Model
     use HasFactory;
     protected $table = "store_bank_accounts";
     protected $fillable = [
-        'store_id','bank_code','bank_name','account_number','bank_currency_id'
+        'store_id','bank_code','account_name','bank_name','account_number','bank_currency_id'
     ];
 
     public function currency(){
