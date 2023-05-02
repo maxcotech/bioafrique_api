@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -15,6 +16,15 @@ class StoreBankAccount extends Model
 
     public function currency(){
         return $this->belongsTo(Currency::class,"bank_currency_id");
+    }
+
+    public function getCreatedAtAttribute($value){
+        $cdate = new Carbon($value);
+        if(isset($cdate)){
+            return $cdate->toFormattedDateString();
+        } else {
+            return "N/A";
+        }
     }
 
    
