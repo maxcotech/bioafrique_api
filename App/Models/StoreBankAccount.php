@@ -16,4 +16,6 @@ class StoreBankAccount extends Model
     public function currency(){
         return $this->belongsTo(Currency::class,"bank_currency_id");
     }
+
+   
 }

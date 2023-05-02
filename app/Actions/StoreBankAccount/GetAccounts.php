@@ -49,6 +49,7 @@ class GetAccounts extends Action{
       if(isset($currency_id)){
          $query = $query->where('bank_currency_id',$currency_id);
       }
+      $query = $query->with(['currency']);
       return ($paginate == 1)? $query->paginate($limit): $query->get();
    }
 
