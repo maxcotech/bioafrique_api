@@ -5,7 +5,7 @@ use Illuminate\Http\Request;
 use App\Actions\Action;
 use App\Models\Store;
 
-class SearchStore extends Action{
+class UpdateStoreStatus extends Action{
    protected $request;
    public function __construct(Request $request){
       $this->request=$request;
@@ -13,19 +13,21 @@ class SearchStore extends Action{
 
    protected function validate(){
       $val = Validator::make($this->request->all(),[
-         'query' => 'required|string'
+         'status' => 'required|integer',
+         'id' => 'required|integer|exists:stores,id'
       ]);
       return $this->valResult($val);
    }
 
+
    public function execute(){
       try{
          $val = $this->validate();
-         if($val['status'] != 'success') return $this->successWithData([]);
-         $query = $this->request->query('query',null);
-         $stores =  Store::where('store_name','like',"%$query%")
-         ->limit(15)->select('store_name','store_slug','store_logo','id','store_email','store_address')->get();
-         return $this->successWithData($stores);
+         if($val['status'] != "success") return $this->resp($val);
+         Store::where('id',$this->request->id)->update([
+            'store_status' => $this->request->status
+         ]);
+         return $this->successMessage('Store status was updated successfully');
       }
       catch(\Exception $e){
          return $this->internalError($e->getMessage());

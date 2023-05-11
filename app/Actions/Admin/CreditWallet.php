@@ -1,11 +1,11 @@
 <?php
-namespace App\Actions\Store;
+namespace App\Actions\Admin;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use App\Actions\Action;
-use App\Models\Store;
+use App\Services\WalletServices\SuperAdminWallet;
 
-class SearchStore extends Action{
+class CreditWallet extends Action{
    protected $request;
    public function __construct(Request $request){
       $this->request=$request;
@@ -13,7 +13,7 @@ class SearchStore extends Action{
 
    protected function validate(){
       $val = Validator::make($this->request->all(),[
-         'query' => 'required|string'
+         'amount' => 'required|numeric'
       ]);
       return $this->valResult($val);
    }
@@ -21,11 +21,9 @@ class SearchStore extends Action{
    public function execute(){
       try{
          $val = $this->validate();
-         if($val['status'] != 'success') return $this->successWithData([]);
-         $query = $this->request->query('query',null);
-         $stores =  Store::where('store_name','like',"%$query%")
-         ->limit(15)->select('store_name','store_slug','store_logo','id','store_email','store_address')->get();
-         return $this->successWithData($stores);
+         if($val['status'] !== "success") return $this->resp($val);
+         $wallet = new SuperAdminWallet();
+         return $this->successWithData($wallet->depositFund($this->request->amount),'Your wallet was successfully credited.');
       }
       catch(\Exception $e){
          return $this->internalError($e->getMessage());
