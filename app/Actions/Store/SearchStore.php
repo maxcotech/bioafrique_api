@@ -20,7 +20,7 @@ class SearchStore extends Action{
 
    public function execute(){
       try{
-         $val = $this->validate();
+         $val = $this->validate(); 
          if($val['status'] != 'success') return $this->successWithData([]);
          $query = $this->request->query('query',null);
          $stores =  Store::where('store_name','like',"%$query%")
