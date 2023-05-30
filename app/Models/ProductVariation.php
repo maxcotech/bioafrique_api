@@ -65,6 +65,6 @@ class ProductVariation extends Model
     }
 
     public function options(){
-        return $this->hasMany(VariationAttributes::class,'variation_id');
+        return $this->hasMany(VariationAttribute::class,'variation_id');
     }
 }
