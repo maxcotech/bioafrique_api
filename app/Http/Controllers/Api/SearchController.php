@@ -54,8 +54,8 @@ class SearchController extends Controller
             $auth_type_obj = $this->getUserAuthTypeObject();
             if (isset($query) && isset($auth_type_obj)) {
                 SearchHistory::updateOrCreate(['query' => $query], [
-                    'auth_type' => $auth_type_obj['type'],
-                    'user_id' => $auth_type_obj['id']
+                    'auth_type' => $auth_type_obj->type,
+                    'user_id' => $auth_type_obj->id
                 ]);
             }
             return $this->successMessage('Search query saved.');
