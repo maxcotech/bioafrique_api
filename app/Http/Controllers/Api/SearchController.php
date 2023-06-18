@@ -72,9 +72,9 @@ class SearchController extends Controller
             $auth_type_obj = $this->getUserAuthTypeObject();
             $data = [];
             if (isset($auth_type_obj)) {
-                $data = SearchHistory::where('auth_type', $auth_type_obj['type'])
+                $data = SearchHistory::where('auth_type', $auth_type_obj->type)
                     ->select('query', 'id')
-                    ->where('user_id', $auth_type_obj['id'])
+                    ->where('user_id', $auth_type_obj->id)
                     ->orderBy('updated_at', 'desc')
                     ->skip($skip)->take($limit)->get();
             }
@@ -90,8 +90,8 @@ class SearchController extends Controller
             $auth_type_obj = $this->getUserAuthTypeObject();
             $id = $request->query('id');
             if (isset($auth_type_obj)) {
-                $builder = SearchHistory::where('auth_type', $auth_type_obj['type'])
-                    ->where('user_id', $auth_type_obj['type']);
+                $builder = SearchHistory::where('auth_type', $auth_type_obj->type)
+                    ->where('user_id', $auth_type_obj->id);
                 if (isset($id)) {
                     $builder = $builder->where('id', $id);
                 }
