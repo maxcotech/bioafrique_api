@@ -50,7 +50,7 @@ class SearchController extends Controller
     public function saveSearch(Request $request)
     {
         try {
-            $query = $request->query;
+            $query = $request->input('query');
             $auth_type_obj = $this->getUserAuthTypeObject();
             if (isset($query) && isset($auth_type_obj)) {
                 SearchHistory::updateOrCreate(['query' => $query], [
