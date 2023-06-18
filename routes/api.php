@@ -27,7 +27,7 @@ Route::prefix('v1')->group(function () {
             Route::get('/currencies', 'CurrencyController@index');
             Route::get('/search/{search_type}', 'SearchController@index');
             Route::get('/search_query', 'SearchController@generalSearch');
-            Route::get('/search_query/history', 'SearchController@getSearchHistory');
+            Route::get('/search_query/history', 'SearchController@fetchSearchHistory');
             Route::delete('/search_query/history', 'SearchController@deleteSearchHistory');
             Route::post('/search_query/history', 'SearchController@saveSearch');
             Route::get('/variation_options', 'VariationOptionsController@index');
