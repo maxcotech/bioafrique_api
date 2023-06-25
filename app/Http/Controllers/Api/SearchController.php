@@ -32,7 +32,7 @@ class SearchController extends Controller
             ];
             if (isset($query) && $query !== "") {
                 $data['products'] = Product::where('product_name', 'LIKE', "%$query%")
-                    ->select('product_name', 'id', 'product_slug')
+                    ->select('product_name', 'id', 'product_slug', 'product_image')
                     ->skip($skip)->take($limit)->get();
                 $data['categories'] = Category::where(function ($builder) use ($query) {
                     return $builder->where('category_title', 'LIKE', "%$query%")
