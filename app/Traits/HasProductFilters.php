@@ -172,7 +172,7 @@ trait HasProductFilters
     protected function selectFields($query)
     {
         $withFields = [
-            'variations:id,regular_price,sales_price,variation_name,product_id,variation_image', 'amount_in_stock',
+            'variations:id,regular_price,sales_price,variation_name,product_id,variation_image,amount_in_stock',
             'store:id,city_id,country_id,state_id,store_name',
             'store.city:id,city_name',
             'store.state:id,state_name',
