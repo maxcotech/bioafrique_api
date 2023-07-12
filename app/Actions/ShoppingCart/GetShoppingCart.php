@@ -4,14 +4,17 @@ namespace App\Actions\ShoppingCart;
 
 use Illuminate\Http\Request;
 use App\Actions\Action;
+use App\Http\Resources\CurrencyResource;
 use App\Models\ShoppingCartItem;
 use App\Traits\HasAuthStatus;
 use App\Traits\HasProduct;
+use App\Traits\HasRateConversion;
 use App\Traits\HasShoppingCartItem;
+use Illuminate\Support\Facades\Auth;
 
 class GetShoppingCart extends Action
 {
-   use HasAuthStatus, HasShoppingCartItem, HasProduct;
+   use HasAuthStatus, HasShoppingCartItem, HasProduct, HasRateConversion;
    protected $request;
    public function __construct(Request $request)
    {
@@ -38,7 +41,13 @@ class GetShoppingCart extends Action
          if (!isset($auth_type_obj)) throw new \Exception('An Error occurred, please ensure your browser enables usage of cookies.');
          $data = $this->onGetShoppingCart($auth_type_obj);
          $data = $this->appendWishListStatus($data, $auth_type_obj, "item_id");
-         $collect = collect(['cart_count' => $this->getTotalCartCount($auth_type_obj)]);
+         $cookie = $this->getUserByCookie();
+         $user = Auth::user();
+         $currency = $this->getUserCurrency($user, $cookie);
+         $collect = collect([
+            'currency' => isset($currency) ? new CurrencyResource($currency) : null,
+            'cart_count' => $this->getTotalCartCount($auth_type_obj)
+         ]);
          $data = $collect->merge($data);
          return $this->successWithData($data);
       } catch (\Exception $e) {
