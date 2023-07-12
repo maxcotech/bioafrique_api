@@ -21,8 +21,8 @@ class GetShoppingCart extends Action
    protected function onGetShoppingCart($auth_type)
    {
       return ShoppingCartItem::with([
-         'variation:id,variation_image,variation_name,regular_price,sales_price',
-         'product:id,product_name,product_image,regular_price,sales_price',
+         'variation:id,variation_image,variation_name,regular_price,sales_price,amount_in_stock',
+         'product:id,product_name,product_image,regular_price,sales_price,amount_in_stock',
          'store:id,store_name,store_slug'
       ])
          ->where('user_id', $auth_type->id)
