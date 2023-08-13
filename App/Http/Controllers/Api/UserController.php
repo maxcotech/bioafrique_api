@@ -18,39 +18,59 @@ use Illuminate\Support\Facades\Auth;
 class UserController extends Controller
 {
     use HasHttpResponse;
-    public function show(){
+    public function show()
+    {
         $user = Auth::user();
         return $this->successWithData($user);
     }
-    public function getUserProfile(Request $request){
+    public function getUserProfile(Request $request)
+    {
         return (new GetUserProfile($request))->execute();
     }
 
-    public function updateUserCurrency(Request $request){
+    public function updateUserCurrency(Request $request)
+    {
         return (new UpdateCurrency($request))->execute();
     }
 
-    public function index(Request $request){
+    public function index(Request $request)
+    {
         return (new GetUsers($request))->execute();
     }
 
-    public function updateUserStatus(Request $request){
+    public function updateUserStatus(Request $request)
+    {
         return (new UpdateUserStatus($request))->execute();
     }
 
-    public function delete(Request $request,$user_id){
-        return (new DeleteUser($request,$user_id))->execute();
+    public function delete(Request $request, $user_id)
+    {
+        return (new DeleteUser($request, $user_id))->execute();
     }
 
-    public function getStoreUsers(Request $request){
+    public function getStoreUsers(Request $request)
+    {
         return (new StoreUsers($request))->execute();
     }
 
-    public function createAdmin(Request $request){
+    public function createAdmin(Request $request)
+    {
         return (new CreateAdmin($request))->execute();
     }
 
-    public function managePermissions(Request $request){
+    public function managePermissions(Request $request)
+    {
         return (new ManagePermission($request))->execute();
+    }
+
+    public function deleteMyAccount(Request $request)
+    {
+        try {
+            $user = $request->user();
+            $user->delete();
+            return $this->successMessage("Your account was deleted successfully.");
+        } catch (\Exception $e) {
+            return $this->internalError($e->getMessage());
+        }
     }
 }

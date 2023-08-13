@@ -106,6 +106,7 @@ Route::prefix('v1')->group(function () {
             Route::get('/store/users', 'UserController@getStoreUsers')->middleware('store_staff_guard');
             Route::get('/user', 'UserController@show');
             Route::get('/users', 'UserController@index');
+            Route::delete('/user/profile', 'UserController@deleteMyAccount');
             Route::delete('/user/account/{user_id}', 'UserController@delete')->middleware('super_admin_access_guard:manage.users');
             Route::patch('/users/status', 'UserController@updateUserStatus')->middleware('super_admin_access_guard:manage.users');
             Route::post("/users/admin", 'UserController@createAdmin')->middleware('super_admin_access_guard:manage.admins');
