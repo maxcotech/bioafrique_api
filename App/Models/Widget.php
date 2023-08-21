@@ -14,30 +14,46 @@ class Widget extends Model
     public const TYPE_MULTI_ITEM = 10;
     public const MIN_MULTI_ITEM_COUNT = 6;
 
-    protected $table = "widgets";
-    protected $fillable = [
-        'widget_title','widget_link_address','widget_link_text',
-        'widget_type','index_no','status','is_block'
+    public const DEVICE_TYPES = [
+        "mobile" => 1,
+        "desktop" => 2,
+        "all" => 3
     ];
 
-    public function items(){
-        return $this->hasMany(WidgetItem::class,'widget_id');
+    protected $table = "widgets";
+    protected $fillable = [
+        'widget_title', 'widget_link_address', 'widget_link_text',
+        'widget_type', 'index_no', 'status', 'is_block', 'device_type'
+    ];
+
+    public function items()
+    {
+        return $this->hasMany(WidgetItem::class, 'widget_id');
     }
 
-    public function getWidgetTypeTextAttribute(){
-        switch($this->widget_type){
-            case self::TYPE_SINGLE_ITEM: return "Single Item";
-            case self::TYPE_FOUR_ITEM: return "Four Items";
-            case self::TYPE_MULTI_ITEM: return "Multiple Items";
-            default: return "Not Supported";
+    public function getWidgetTypeTextAttribute()
+    {
+        switch ($this->widget_type) {
+            case self::TYPE_SINGLE_ITEM:
+                return "Single Item";
+            case self::TYPE_FOUR_ITEM:
+                return "Four Items";
+            case self::TYPE_MULTI_ITEM:
+                return "Multiple Items";
+            default:
+                return "Not Supported";
         }
     }
 
-    public function getIsBlockTextAttribute(){
-        switch($this->is_block){
-            case 1: return "Block Type";
-            case 0: return "Inline Type";
-            default: return "Not Supported";
+    public function getIsBlockTextAttribute()
+    {
+        switch ($this->is_block) {
+            case 1:
+                return "Block Type";
+            case 0:
+                return "Inline Type";
+            default:
+                return "Not Supported";
         }
     }
 }
