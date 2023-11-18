@@ -17,10 +17,11 @@ class CreateSuperAdminWallet extends Migration
             $table->id();
             $table->double('amount');
             $table->string('previous_row_hash')->nullable();
+            $table->double("base_rate")->default(1)->nullable();
             $table->bigInteger('sender_id')->nullable();
-            $table->string('sender_type',50)->nullable(); // User , Store, 
+            $table->string('sender_type', 50)->nullable(); // User , Store, 
             $table->bigInteger('ledger_type'); // credit = 1, debit = 0
-            $table->string('transaction_type',50)->nullable(); //order, transfer , bonus, gift;
+            $table->string('transaction_type', 50)->nullable(); //order, transfer , bonus, gift;
             $table->bigInteger('transaction_id')->nullable(); //primary key of table containing the specified transaction type.
             $table->timestamps();
         });

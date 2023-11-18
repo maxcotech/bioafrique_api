@@ -16,12 +16,13 @@ class CreateStoreWalletsTable extends Migration
         Schema::create('store_wallets', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('store_id');
-            $table->string('previous_row_hash',1000)->nullable();
+            $table->string('previous_row_hash', 1000)->nullable();
             $table->double('amount');
+            $table->double('base_rate')->default(1)->nullable();
             $table->bigInteger('sender_id')->nullable();
-            $table->string('sender_type',50)->nullable();
+            $table->string('sender_type', 50)->nullable();
             $table->bigInteger('ledger_type'); // credit = 1, debit = 0
-            $table->string('transaction_type',50)->nullable(); //order, transfer, bonus, sub_order
+            $table->string('transaction_type', 50)->nullable(); //order, transfer, bonus, sub_order
             $table->bigInteger('transaction_id')->nullable(); //primary key of table containing the specified transaction type.
             $table->timestamps();
         });
