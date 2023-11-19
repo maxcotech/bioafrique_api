@@ -16,7 +16,7 @@ class SuperAdminWallet extends WalletModel
 
     public function getAmountAttribute($value)
     {
-        return $this->convertBaseAmountByRate($value, $this->attributes['base_rate']);
+        return $this->convertBaseAmountByRate($value, $this->base_rate);
     }
 
 

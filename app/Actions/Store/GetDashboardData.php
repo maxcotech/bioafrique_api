@@ -113,26 +113,25 @@ class GetDashboardData extends Action
 
     public function execute()
     {
-        // try {
-        $val = $this->validate();
-        if ($val['status'] !== "success") return $this->resp($val);
-        $store_id = $this->request->query('store_id');
-        $limit = $this->request->query('limit', 30);
-        $orders_query = $this->getCompletedSubOrdersQuery($store_id);
-        $pending_orders = $this->getPendingSubOrdersQuery($store_id);
-        $products = $this->getTotalActiveProducts($store_id);
-        $stock_data = $this->getTotalStockData($products);
-        $data = $orders_query->paginate($limit);
-        $data = collect([
-            'stock_data' => $stock_data,
-            'total_completed_orders' => $orders_query->count(),
-            'total_pending_orders' => $pending_orders->count(),
-            'revenues' => $this->generateRevenueData($store_id)
-        ])->merge($data);
-        return $this->successWithData($data);
-
-        // } catch (\Exception $e) {
-        //     return $this->internalError($e->getMessage());
-        // }
+        try {
+            $val = $this->validate();
+            if ($val['status'] !== "success") return $this->resp($val);
+            $store_id = $this->request->query('store_id');
+            $limit = $this->request->query('limit', 30);
+            $orders_query = $this->getCompletedSubOrdersQuery($store_id);
+            $pending_orders = $this->getPendingSubOrdersQuery($store_id);
+            $products = $this->getTotalActiveProducts($store_id);
+            $stock_data = $this->getTotalStockData($products);
+            $data = $orders_query->paginate($limit);
+            $data = collect([
+                'stock_data' => $stock_data,
+                'total_completed_orders' => $orders_query->count(),
+                'total_pending_orders' => $pending_orders->count(),
+                'revenues' => $this->generateRevenueData($store_id)
+            ])->merge($data);
+            return $this->successWithData($data);
+        } catch (\Exception $e) {
+            return $this->internalError($e->getMessage());
+        }
     }
 }
