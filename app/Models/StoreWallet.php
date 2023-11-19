@@ -17,7 +17,6 @@ class StoreWallet extends WalletModel
 
     public function getAmountAttribute($value)
     {
-        dd($this->attributes);
         return $this->convertBaseAmountByRate($value, $this->attributes['base_rate']);
     }
 
