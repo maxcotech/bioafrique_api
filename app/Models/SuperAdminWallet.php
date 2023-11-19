@@ -14,6 +14,12 @@ class SuperAdminWallet extends WalletModel
         'next_row_hash', 'base_rate'
     ];
 
+    public function getAmountAttribute($value)
+    {
+        return $this->convertBaseAmountByRate($value, $this->attributes['base_rate']);
+    }
+
+
     public function orderCommissionLock()
     {
         return $this->hasOne(OrderCommissionLock::class, 'wallet_fund_id');

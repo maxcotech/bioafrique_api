@@ -15,6 +15,11 @@ class StoreWallet extends WalletModel
         'transaction_id', 'next_row_hash', 'base_rate'
     ];
 
+    public function getAmountAttribute($value)
+    {
+        return $this->convertBaseAmountByRate($value, $this->attributes['base_rate']);
+    }
+
     public function lock()
     {
         return $this->hasOne(OrderFundLock::class, 'wallet_fund_id');

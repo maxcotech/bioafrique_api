@@ -19,7 +19,7 @@ class WalletModel extends Model
 
     public function getAmountAttribute($value)
     {
-        return $this->convertBaseAmountByRate($value, $this->attributes['base_rate']); //return $this->baseToUserCurrency($value);
+        return $this->baseToUserCurrency($value);
     }
     public function setAmountAttribute($value)
     {
